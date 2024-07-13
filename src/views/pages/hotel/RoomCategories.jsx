@@ -1,6 +1,6 @@
 import { Box, Button, Paper } from '@mui/material'
 import HotelCategoriesForm from 'Forms/HotelCategoriesForm'
-import { getRoomCateAsync } from 'Redux/Slice/hotelSlice'
+import { deleteRoomCateAsync, getRoomCateAsync } from 'Redux/Slice/hotelSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
 import moment from 'moment'
@@ -35,16 +35,17 @@ const RoomCategories = () => {
         setDialogProps({ ...dialogProps, open: true });
     }
 
-    const editState = (id) => {
-        // const state_data = states?.states.find(el => el._id === id)
+    const editCate = (id) => {
+        const state_data = roomCategories?.categories.find(el => el._id === id)
         setDialogTitle("Update RoomCategory");
-        // setDialogContent(<StateForm dialogProps={dialogProps} statedata={state_data} type="edit" />);
+        setDialogContent(<HotelCategoriesForm dialogProps={dialogProps} catdata={state_data} type="edit" />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
-    const deleteState = (id) => {
-        // dispatch(deleteStateAsync({ state_id: id }));
-        // dispatch(getAllStateAsync({ page: 1, page_size: 10 }));
+    const deleteCat = (id) => {
+        dispatch(deleteRoomCateAsync({ id: id })).then(() => {
+            dispatch(getRoomCateAsync());
+        })
     }
     const columns = [
 
@@ -61,12 +62,12 @@ const RoomCategories = () => {
                 return moment(params.value).format('DD/MM/YYYY');
             },
         },
-        // {
-        //     field: '_id',
-        //     headerName: 'Action',
-        //     flex: 2,
-        //     renderCell: (params) => GetTwoAction(params.value, editState, deleteState)
-        // },
+        {
+            field: '_id',
+            headerName: 'Action',
+            flex: 2,
+            renderCell: (params) => GetTwoAction(params.value, editCate, deleteCat)
+        },
     ]
 
     const onChangeCount = (e) => {
@@ -103,7 +104,7 @@ const RoomCategories = () => {
                             },
                         },
                     }}
-                    // rowCount={states?.states?.length}
+                    rowCount={roomCategories?.categories?.length}
                     paginationMode="server"
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}

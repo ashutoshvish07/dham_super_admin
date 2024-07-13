@@ -1,5 +1,6 @@
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { createStateAsync, getCountryBySuperAdminAsync, updateStateAsync } from 'Redux/Slice/locationSlice';
+import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +15,6 @@ const StateForm = (props) => {
         dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 100 }))
     }, []);
 
-    console.log("statedata", statedata)
 
     const formik = useFormik({
         initialValues: {
@@ -37,23 +37,21 @@ const StateForm = (props) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <FormControl fullWidth>
-                            <InputLabel color='secondary' id="country-select-label">Select Country</InputLabel>
-                            <Select
-                                color='secondary'
-                                labelId="country-select-label"
-                                id="country-select"
-                                value={formik.values.country}
+                            <AutoComplete
+                                options={countries?.countries || []}
                                 label="Select Country"
-                                onChange={(e) => formik.setFieldValue('country', e.target.value)}
+                                id="country-select"
+                                name="country"
+                                value={formik.values.country}
+                                onChange={(newValue) => formik.setFieldValue('country', newValue)}
+                                error={formik.touched.country && Boolean(formik.errors.country)}
+                                helperText={formik.touched.country && formik.errors.country}
                                 required
-                            >
-                                {countries?.countries?.map((country) => {
-                                    return <MenuItem key={country._id} value={country._id}>
-                                        {country.name}
-                                    </MenuItem>
-                                }
-                                )}
-                            </Select>
+                                color="secondary"
+                                optionKey="_id"
+                                optionLabel="name"
+                            />
+
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>

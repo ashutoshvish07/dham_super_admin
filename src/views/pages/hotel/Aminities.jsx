@@ -1,6 +1,6 @@
 import { Box, Button, Paper } from '@mui/material';
 import AmenitiesForm from 'Forms/AmenitiesForm';
-import { getAmenitiesAsync } from 'Redux/Slice/hotelSlice';
+import { deleteAmenitiesAsync, getAmenitiesAsync } from 'Redux/Slice/hotelSlice';
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction';
 import AlertDialog from 'components/Dialog/Dialog';
 import moment from 'moment';
@@ -36,15 +36,18 @@ const Aminities = () => {
     }
 
     const editAmenities = (id) => {
-        // const state_data = states?.states.find(el => el._id === id)
+        const aminity_data = amenities?.data.find(el => el._id === id)
         setDialogTitle("Update Amenities");
-        // setDialogContent(<StateForm dialogProps={dialogProps} statedata={state_data} type="edit" />);
+        setDialogContent(<AmenitiesForm dialogProps={dialogProps} aminity_data={aminity_data} type="edit" />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
     const deleteState = (id) => {
-
+        dispatch(deleteAmenitiesAsync({ id: id })).then(() => {
+            dispatch(getAmenitiesAsync());
+        })
     }
+
     const columns = [
 
         {
@@ -102,7 +105,7 @@ const Aminities = () => {
                             },
                         },
                     }}
-                    // rowCount={states?.states?.length}
+                    rowCount={amenities.data?.length}
                     paginationMode="server"
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}

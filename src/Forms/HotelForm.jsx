@@ -69,10 +69,10 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             });
 
 
-            if (files) {
-                // files.map((file) => {
-                formData.append('files[]', files);
-                // });
+            if (files.length) {
+                files.forEach((file, index) => {
+                    formData.append(`files[]`, file);
+                });
             }
 
             if (type === "edit") {
@@ -124,10 +124,18 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="mobile"
                         name="mobile"
                         label="Mobile"
-                        value={formik.values?.mobile}
-                        onChange={formik.handleChange}
-                        error={formik.touched?.mobile && Boolean(formik.errors?.mobile)}
-                        helperText={formik.touched?.mobile && formik.errors.mobile}
+                        inputProps={{
+                            maxLength: 10,
+                            inputMode: 'numeric',
+                            pattern: '[0-9]*'
+                        }}
+                        value={formik.values.mobile}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                            formik.setFieldValue('mobile', value);
+                        }}
+                        error={formik.touched.mobile && Boolean(formik.errors.mobile)}
+                        helperText={formik.touched.mobile && formik.errors.mobile}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -235,18 +243,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     />
                 </Grid>
 
-                {/* <Grid item xs={12} sm={6}>
-                    <TextField
-                        fullWidth
-                        id="location"
-                        name="location"
-                        label="Location"
-                        value={formik.values?.location}
-                        onChange={formik.handleChange}
-                        error={formik.touched?.location && Boolean(formik.errors.location)}
-                        helperText={formik.touched.location && formik.errors.location}
-                    />
-                </Grid> */}
                 <Grid item xs={12}>
                     <ImageUpload files={files} setFiles={handleFileChange} deleteFile={handleDeleteFile} />
                 </Grid>

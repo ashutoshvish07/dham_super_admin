@@ -1,6 +1,7 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { createCountryAsync, editCountryAsync, getCountryBySuperAdminAsync } from 'Redux/Slice/locationSlice';
 import axios from 'axios';
+import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
@@ -44,24 +45,18 @@ const CountryForm = (props) => {
             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <FormControl fullWidth>
-                            <InputLabel color='secondary' id="country-select-label">Select Country</InputLabel>
-                            <Select
-                                color='secondary'
-                                labelId="country-select-label"
-                                id="country-select"
-                                value={formik.values.country}
-                                label="Select Country"
-                                onChange={(e) => formik.setFieldValue('country', e.target.value)}
-                                required
-                            >
-                                {countries.map((country) => (
-                                    <MenuItem key={country} value={country}>
-                                        {country}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <AutoComplete
+                            options={countries}
+                            label="Choose a country"
+                            id="country-select"
+                            name="country"
+                            value={formik.values.country}
+                            onChange={(newValue) => formik.setFieldValue('country', newValue)}
+                            error={formik.touched.country && Boolean(formik.errors.country)}
+                            helperText={formik.touched.country && formik.errors.country}
+                            required
+                            color="secondary"
+                        />
                     </Grid>
                 </Grid>
                 <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }} >

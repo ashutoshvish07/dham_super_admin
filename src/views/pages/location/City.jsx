@@ -43,7 +43,7 @@ const City = () => {
             headerName: "Media",
             width: 200,
             renderCell: (params) => {
-                return <img alt={params?.value?.Bucket} src={params?.value?.Url} height={100} width={100} />
+                return <img alt={params?.value?.Bucket} src={params?.value?.Url} height={140} width={80} />
 
             },
         },

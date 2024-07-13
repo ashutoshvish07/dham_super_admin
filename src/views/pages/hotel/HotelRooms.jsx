@@ -1,4 +1,5 @@
 import { Box, Button, Paper } from '@mui/material';
+import HotelRoomForm from 'Forms/HotelRoomForm';
 import { getAllRoomsAsync } from 'Redux/Slice/hotelSlice';
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction';
 import AlertDialog from 'components/Dialog/Dialog';
@@ -28,20 +29,20 @@ const HotelRooms = () => {
         dispatch(getAllRoomsAsync());
     }, [dispatch]);
 
-    const addCountry = () => {
+    const addRooms = () => {
         setDialogTitle("Add Rooms");
-        // setDialogContent(<CityForm dialogProps={dialogProps} state={states?.states} />);
+        setDialogContent(<HotelRoomForm dialogProps={dialogProps} />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
-    const editState = (id) => {
-        // const state_data = states?.states.find(el => el._id === id)
+    const editRooms = (id) => {
+        const room_data = rooms?.rooms.find(el => el._id === id)
         setDialogTitle("Update Rooms");
-        // setDialogContent(<StateForm dialogProps={dialogProps} statedata={state_data} type="edit" />);
+        setDialogContent(<HotelRoomForm dialogProps={dialogProps} room_data={room_data} type="edit" />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
-    const deleteState = (id) => {
+    const deleteRooms = (id) => {
         // dispatch(deleteStateAsync({ state_id: id }));
         // dispatch(getAllStateAsync({ page: 1, page_size: 10 }));
     }
@@ -91,7 +92,7 @@ const HotelRooms = () => {
             field: '_id',
             headerName: 'Action',
             flex: 1,
-            renderCell: (params) => GetTwoAction(params.value, editState, deleteState)
+            renderCell: (params) => GetTwoAction(params.value, editRooms, deleteRooms)
         },
     ]
 
@@ -112,7 +113,7 @@ const HotelRooms = () => {
                 dialogProps={dialogProps}
             />
             <Box sx={{ display: 'flex', justifyContent: "flex-end", marginBottom: 2 }}>
-                <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addCountry} startIcon={<FaPlus size={14} />} >
+                <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addRooms} startIcon={<FaPlus size={14} />} >
                     Rooms
                 </Button>
             </Box>

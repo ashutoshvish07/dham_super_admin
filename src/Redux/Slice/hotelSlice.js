@@ -35,18 +35,23 @@ export const updateHotelAsync = createAsyncThunk(
 
     async ({ formData, id }, { rejectWithValue }) => {
         try {
-            // Extract hotel_id from formData
-            // const hotel_id = formData.get('hotel_id');
-
-            // if (!hotel_id) {
-            //     throw new Error('hotel_id is required for update');
-            // }
-
             const response = await Axios.put(`/update-hotel/${id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response?.data || err.message);
+        }
+    }
+);
+export const deleteHotelAsync = createAsyncThunk(
+    'hotel/deleteHotelAsync',
+
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-hotel/${id}`);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response?.data || err.message);
@@ -67,6 +72,8 @@ export const getRoomCateAsync = createAsyncThunk(
         }
     }
 );
+
+// room-category is created
 export const createRoomCateAsync = createAsyncThunk(
     'hotel/createRoomCateAsync',
 
@@ -79,6 +86,34 @@ export const createRoomCateAsync = createAsyncThunk(
         }
     }
 );
+
+// update room categories
+
+export const updateRoomCateAsync = createAsyncThunk(
+    'hotel/updateRoomCateAsync',
+
+    async ({ id, name }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.put(`/update-room-category/${id}`, { name: name });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+export const deleteRoomCateAsync = createAsyncThunk(
+    'hotel/deleteRoomCateAsync',
+
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-room-category/${id}`);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+
 
 // amenities
 export const getAmenitiesAsync = createAsyncThunk(
@@ -99,6 +134,30 @@ export const createAmenitiesAsync = createAsyncThunk(
     async (formData, { rejectWithValue }) => {
         try {
             const response = await Axios.post(`/create-amenity`, formData);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+export const updateAmenitiesAsync = createAsyncThunk(
+    'hotel/updateAmenitiesAsync',
+
+    async ({ id, formData }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.put(`update-amenity/${id}`, formData);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+export const deleteAmenitiesAsync = createAsyncThunk(
+    'hotel/deleteAmenitiesAsync',
+
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-amenity/${id}`);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -126,11 +185,16 @@ export const getAllRoomsAsync = createAsyncThunk(
 export const createRoomAsync = createAsyncThunk(
     'hotel/createRoomAsync',
 
-    async ({ hotelId, roomType, roomCategoryId, amenitiesId, price, offerPrice, totalNoOfRooms, area, floor, bedSize, files }, { rejectWithValue }) => {
+    async (formData, { rejectWithValue }) => {
         try {
-            const response = await Axios.post(`/create-room-by-admin`, { hotelId, roomType, roomCategoryId, amenitiesId, price, offerPrice, totalNoOfRooms, area, floor, bedSize, files });
+            const response = await Axios.post(`/create-room-by-admin`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             return response.data;
         } catch (err) {
+
             return rejectWithValue(err.response.data);
         }
     }

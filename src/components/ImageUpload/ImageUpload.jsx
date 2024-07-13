@@ -11,7 +11,7 @@ const ImageUpload = ({ files, setFiles, deleteFile, multiple = true }) => {
         const selectedFiles = Array.from(e.target.files);
 
         if (multiple) {
-            setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+            setFiles([...files, ...Array.from(event.target.files)]);
         } else {
             setFiles(selectedFiles);
         }
@@ -19,7 +19,6 @@ const ImageUpload = ({ files, setFiles, deleteFile, multiple = true }) => {
 
     const handleDelete = (fileToDelete) => {
         deleteFile(fileToDelete);
-        setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToDelete));
     };
 
     return (

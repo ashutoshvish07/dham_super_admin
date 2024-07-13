@@ -42,7 +42,7 @@ export const GetTwoAction = (id, edit, deletefn) => {
                 <ListItemIcon size="small">
                     <RiDeleteBinLine />
                 </ListItemIcon>
-                <ListItemText variant="body2" color="text.secondary">Edit</ListItemText>
+                <ListItemText variant="body2" color="text.secondary">Delete</ListItemText>
             </MenuItem>
         </Menu>
     </Box>

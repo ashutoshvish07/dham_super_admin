@@ -1,6 +1,6 @@
 import { Box, Button, Paper } from '@mui/material'
 import HotelForm from 'Forms/HotelForm'
-import { getHotelAsync } from 'Redux/Slice/hotelSlice'
+import { deleteHotelAsync, getHotelAsync } from 'Redux/Slice/hotelSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
 import moment from 'moment'
@@ -43,8 +43,9 @@ const Hotel = () => {
     }
 
     const deleteState = (id) => {
-        // dispatch(deleteStateAsync({ state_id: id }));
-        // dispatch(getAllStateAsync({ page: 1, page_size: 10 }));
+        dispatch(deleteHotelAsync({ id: id })).then(() => {
+            dispatch(getHotelAsync());
+        })
     }
 
 

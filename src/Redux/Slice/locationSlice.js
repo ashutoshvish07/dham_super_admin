@@ -108,10 +108,13 @@ export const getAllStateAsync = createAsyncThunk(
 // City -->>>  get , create , update , delete
 export const createCityAsync = createAsyncThunk(
     'location/createCityAsync',
-    async ({ name, stateId, file }, { rejectWithValue }) => {
-        debugger
+    async (formData, { rejectWithValue }) => {
         try {
-            const response = await Axios.post(`/create-city`, { name, stateId, file });
+            const response = await Axios.post(`/create-city`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);

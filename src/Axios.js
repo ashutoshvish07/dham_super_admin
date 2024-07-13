@@ -1,6 +1,8 @@
 
 import axios from 'axios';
 
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
 const Axios = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_URL || '',
     headers: {

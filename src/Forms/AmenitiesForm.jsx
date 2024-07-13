@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { TextField, Button, Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { createAmenitiesAsync } from 'Redux/Slice/hotelSlice';
+import { createAmenitiesAsync, getAmenitiesAsync, updateAmenitiesAsync } from 'Redux/Slice/hotelSlice';
 
 const AmenitiesForm = (props) => {
-
+    const { aminity_data } = props
     const [selectedImage, setSelectedImage] = useState(null);
 
     const dispatch = useDispatch()
@@ -18,26 +18,27 @@ const AmenitiesForm = (props) => {
     const handleSubmit = (values, { setSubmitting }) => {
         const formData = new FormData();
         formData.append('name', values.name);
-        debugger
         if (values.image) {
             formData.append('file', values.image);
         }
 
-        // Display FormData content for testing
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
+        if (type === " edit") {
+            dispatch(updateAmenitiesAsync({ id: aminity_data._id, formData: formData })).then(() => {
+                dispatch(getAmenitiesAsync())
+            })
         }
-        dispatch(createAmenitiesAsync(formData))
-
-        // Handle form submission, e.g., send formData to the server
-        // Example: axios.post('/api/upload', formData);
+        else {
+            dispatch(createAmenitiesAsync(formData)).then(() => {
+                dispatch(getAmenitiesAsync())
+            })
+        }
         props.dialogProps.onClose()
         setSubmitting(false);
     };
 
     return (
         <Formik
-            initialValues={{ name: '', file: null }}
+            initialValues={{ name: aminity_data?.name || '', file: null }}
             onSubmit={handleSubmit}
         >
             {({ setFieldValue }) => (

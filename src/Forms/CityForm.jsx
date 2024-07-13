@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Autocomplete, Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -7,6 +7,7 @@ import { MdClose } from 'react-icons/md';
 import { createCityAsync, getAllStateAsync } from 'Redux/Slice/locationSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
+import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 
 
 
@@ -26,19 +27,23 @@ const CityForm = (props) => {
 
     const formik = useFormik({
         initialValues: {
-            state: '',
-            city: '',
+            stateId: '',
+            name: '',
         },
-        validationSchema: Yup.object({
-            state: Yup.string().required('State is required'),
-            city: Yup.string().required('City name is required'),
-        }),
         onSubmit: (values) => {
-            const formData = {
-                ...values,
-                files,
-            };
-            dispatch(createCityAsync({ name: formData.city, stateId: formData.state, file: formData.files[0] }))
+            const formData = new FormData()
+            formData.append("name", values.name)
+            formData.append("stateId", values?.stateId?._id)
+
+
+            if (files) {
+                files.map((file) => {
+                    formData.append('file', file);
+                });
+            }
+
+
+            dispatch(createCityAsync(formData))
             dispatch(getAllCityAsync())
             // Perform submission logic here
         },
@@ -58,7 +63,23 @@ const CityForm = (props) => {
             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <FormControl fullWidth error={formik.touched.state && Boolean(formik.errors.state)}>
+                        <AutoComplete
+                            options={states || []}
+                            label="Select State"
+                            id="state-select"
+                            name="stateId"
+                            value={formik.values.stateId}
+                            onChange={(newValue) => {
+                                formik.setFieldValue('stateId', newValue || '');
+                            }}
+                            error={formik.touched.stateId && Boolean(formik.errors.stateId)}
+                            helperText={formik.touched.stateId && formik.errors.stateId}
+                            required
+                            optionKey="_id"
+                            optionLabel="name"
+                            color="secondary"
+                        />
+                        {/* <FormControl fullWidth error={formik.touched.state && Boolean(formik.errors.state)}>
                             <InputLabel id="state-select-label">Select State</InputLabel>
                             <Select
                                 labelId="state-select-label"
@@ -76,18 +97,18 @@ const CityForm = (props) => {
                             {formik.touched.state && formik.errors.state && (
                                 <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.state}</div>
                             )}
-                        </FormControl>
+                        </FormControl> */}
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            id="city"
-                            name="city"
+                            id="name"
+                            name="name"
                             label="City Name"
-                            value={formik.values.city}
+                            value={formik.values.name}
                             onChange={formik.handleChange}
-                            error={formik.touched.city && Boolean(formik.errors.city)}
-                            helperText={formik.touched.city && formik.errors.city}
+                            error={formik.touched.name && Boolean(formik.errors.name)}
+                            helperText={formik.touched.name && formik.errors.name}
                         />
                     </Grid>
 
