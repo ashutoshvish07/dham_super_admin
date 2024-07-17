@@ -51,6 +51,8 @@ const AmenitiesForm = (props) => {
                                     label="Name"
                                     variant="outlined"
                                     fullWidth
+                                    color='secondary'
+
                                 />
                             )}
                         </Field>

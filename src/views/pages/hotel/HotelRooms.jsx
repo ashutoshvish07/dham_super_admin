@@ -1,6 +1,6 @@
 import { Box, Button, Paper } from '@mui/material';
 import HotelRoomForm from 'Forms/HotelRoomForm';
-import { getAllRoomsAsync } from 'Redux/Slice/hotelSlice';
+import { deleteRoomAsync, getAllRoomsAsync } from 'Redux/Slice/hotelSlice';
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction';
 import AlertDialog from 'components/Dialog/Dialog';
 import moment from 'moment';
@@ -43,8 +43,9 @@ const HotelRooms = () => {
     }
 
     const deleteRooms = (id) => {
-        // dispatch(deleteStateAsync({ state_id: id }));
-        // dispatch(getAllStateAsync({ page: 1, page_size: 10 }));
+        dispatch(deleteRoomAsync({ id: id })).then(() => {
+            dispatch(getAllRoomsAsync());
+        })
     }
     const columns = [
 

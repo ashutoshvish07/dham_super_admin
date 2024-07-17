@@ -10,18 +10,17 @@ const icons = {
 // ==============================|| EXTRA HOTEL MENU ITEMS ||============================== //
 
 const hotel = {
-    id: 'hotel',
+    id: 'hotelmanagements',
     type: 'group',
     children: [
         {
-            id: 'authentication',
+            id: 'hotelmanagement',
             title: 'Hotel Management',
             type: 'collapse',
             icon: icons.FaHotel,
-
             children: [
                 {
-                    id: 'hotel',
+                    id: 'hotels',
                     title: 'Hotels',
                     type: 'item',
                     url: '/pages/hotel/hotels',

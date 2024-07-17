@@ -30,7 +30,6 @@ export const GetTwoAction = (id, edit, deletefn) => {
                 vertical: 'top',
                 horizontal: 'left',
             }}
-            getContentAnchorEl={null}
         >
             <MenuItem onClick={() => edit(id)} >
                 <ListItemIcon size="small">

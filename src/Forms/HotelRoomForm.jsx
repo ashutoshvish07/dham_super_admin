@@ -20,31 +20,36 @@ import * as Yup from 'yup';
 
 
 const HotelRoomForm = (props) => {
-
     const { dialogProps, room_data, type } = props
     const [files, setFiles] = useState([]);
-
     const { hotels, roomCategories, amenities } = useSelector(state => state.hotel)
-
     const dispatch = useDispatch()
 
-
     useEffect(() => {
-        dispatch(getAmenitiesAsync());
-        dispatch(getRoomCateAsync())
-        dispatch(getHotelAsync());
-    }, [])
+        const fetchData = async () => {
+            try {
+                await Promise.all([
+                    dispatch(getAmenitiesAsync()),
+                    dispatch(getRoomCateAsync()),
+                    dispatch(getHotelAsync())
+                ]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, [dispatch]);
 
     const initialValues = {
-        userId: '',
-        roomCategory: '',
-        amenities: [],
-        price: '',
-        offerPrice: '',
-        totalNoOfRooms: '',
-        area: '',
-        floor: '',
-        bedSize: '',
+        userId: room_data?.userId?.name || '',
+        roomCategory: room_data?.roomCategoryId?._id || '',
+        amenities: room_data?.amenitiesId || [],
+        price: room_data?.price || '',
+        offerPrice: room_data?.offerPrice || '',
+        totalNoOfRooms: room_data?.totalNoOfRooms || '',
+        area: room_data?.area || '',
+        floor: room_data?.floor || '',
+        bedSize: room_data?.bedSize || '',
     };
     const validationSchema = Yup.object({
         amenities: Yup.array().min(1, 'Select at least one amenity').required('Amenities are required'),
@@ -112,7 +117,8 @@ const HotelRoomForm = (props) => {
                     <Form>
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={6}>
-                                <FormControl fullWidth error={touched.userId && Boolean(errors.userId)}>
+                                <FormControl fullWidth error={touched.userId && Boolean(errors.userId)} color='secondary'
+                                >
                                     <InputLabel id="rooms-label">Hotel Name</InputLabel>
                                     <Select
                                         labelId="hotle-label"
@@ -137,7 +143,8 @@ const HotelRoomForm = (props) => {
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <FormControl fullWidth error={touched.roomCategory && Boolean(errors.roomCategory)}>
+                                <FormControl fullWidth error={touched.roomCategory && Boolean(errors.roomCategory)} color='secondary'
+                                >
                                     <InputLabel id="roomCategory-label">Room Category</InputLabel>
                                     <Select
                                         labelId="roomCategory-label"
@@ -162,7 +169,8 @@ const HotelRoomForm = (props) => {
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12}>
-                                <FormControl fullWidth error={touched.amenities && Boolean(errors.amenities)}>
+                                <FormControl fullWidth error={touched.amenities && Boolean(errors.amenities)} color='secondary'
+                                >
                                     <InputLabel id="amenities-label">Amenities</InputLabel>
                                     <Select
                                         labelId="amenities-label"
@@ -188,6 +196,8 @@ const HotelRoomForm = (props) => {
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <TextField
+                                    color='secondary'
+
                                     fullWidth
                                     name="price"
                                     label="Price"
@@ -202,6 +212,8 @@ const HotelRoomForm = (props) => {
                             <Grid item xs={12} md={6}>
                                 <TextField
                                     fullWidth
+                                    color='secondary'
+
                                     name="offerPrice"
                                     label="Offer Price"
                                     variant="outlined"
@@ -214,6 +226,8 @@ const HotelRoomForm = (props) => {
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <TextField
+                                    color='secondary'
+
                                     fullWidth
                                     name="totalNoOfRooms"
                                     label="Total Number of Rooms"
@@ -229,6 +243,8 @@ const HotelRoomForm = (props) => {
                                 <TextField
                                     fullWidth
                                     name="area"
+                                    color='secondary'
+
                                     label="Area"
                                     variant="outlined"
                                     value={values.area}
@@ -242,6 +258,8 @@ const HotelRoomForm = (props) => {
                                 <TextField
                                     fullWidth
                                     name="floor"
+                                    color='secondary'
+
                                     label="Floor"
                                     variant="outlined"
                                     value={values.floor}
@@ -254,6 +272,8 @@ const HotelRoomForm = (props) => {
                             <Grid item xs={12} md={6}>
                                 <TextField
                                     fullWidth
+                                    color='secondary'
+
                                     name="bedSize"
                                     label="Bed Size"
                                     variant="outlined"

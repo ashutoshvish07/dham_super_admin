@@ -2,13 +2,19 @@ import { Autocomplete, Box, Button, FormControl, Grid, InputLabel, MenuItem, Sel
 import { createCountryAsync, editCountryAsync, getCountryBySuperAdminAsync } from 'Redux/Slice/locationSlice';
 import axios from 'axios';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
+import CustomSnackBar from 'components/Comtrol/SnackBar/CustomSnackBar';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { FALSE } from 'sass';
 
 const CountryForm = (props) => {
     const { dialogProps, type } = props
     const [countries, setCountries] = useState([]);
+    const { status } = useSelector(state => state.location)
+    console.log("Status", status)
+    const [open, setOpen] = useState(false)
+    const [message, setMessage] = useState('');
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -32,8 +38,22 @@ const CountryForm = (props) => {
         onSubmit: (values) => {
             if (type == "edit") {
                 dispatch(editCountryAsync({ name: values.country, id: props.countrydata?._id }))
+                if (status == "success") {
+                    setMessage('Country updated successfully')
+                    setOpen(true)
+                } else {
+                    setMessage('Error occurred while updating country')
+                    setOpen(true)
+                }
             } else {
                 dispatch(createCountryAsync({ name: values.country }))
+                if (status == "success") {
+                    setMessage('Country created successfully')
+                    setOpen(true)
+                } else {
+                    setMessage('Error occurred while creating country')
+                    setOpen(true)
+                }
             }
             dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 10 }))
             dialogProps?.onClose();
@@ -42,6 +62,7 @@ const CountryForm = (props) => {
 
     return (
         <div>
+            <CustomSnackBar open={open} message={message} />
             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>

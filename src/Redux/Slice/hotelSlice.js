@@ -4,7 +4,6 @@ import Axios from '../../Axios';
 
 export const getHotelAsync = createAsyncThunk(
     'hotel/getHotelAsync',
-
     async (_, { rejectWithValue }) => {
         try {
             const response = await Axios.get(`/get-my-hotels`);
@@ -199,6 +198,23 @@ export const createRoomAsync = createAsyncThunk(
         }
     }
 );
+export const deleteRoomAsync = createAsyncThunk(
+    'hotel/deleteRoomAsync',
+
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-room/${id}`, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (err) {
+
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
 
 
 
@@ -245,10 +261,10 @@ const hotelSlice = createSlice({
             })
             .addCase(updateHotelAsync.fulfilled, (state, action) => {
                 state.status = false;
-                const index = state.hotels.findIndex((hotel) => hotel._id === action.payload._id);
-                if (index !== -1) {
-                    state.hotels[index] = action.payload;
-                }
+                // const index = state.hotels.findIndex((hotel) => hotel._id === action.payload._id);
+                // if (index !== -1) {
+                //     state.hotels[index] = action.payload;
+                // }
             })
             .addCase(updateHotelAsync.rejected, (state, action) => {
                 state.status = false;
@@ -272,7 +288,7 @@ const hotelSlice = createSlice({
             })
             .addCase(createRoomCateAsync.fulfilled, (state, action) => {
                 state.status = false;
-                state.roomCategories.push(action.payload);
+                // state.roomCategories.push(action.payload);
             })
             .addCase(createRoomCateAsync.rejected, (state, action) => {
                 state.status = false;

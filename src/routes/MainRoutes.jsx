@@ -19,6 +19,8 @@ const Hotel = Loadable(lazy(() => import("views/pages/hotel/Hotel")))
 const RoomCategory = Loadable(lazy(() => import("views/pages/hotel/RoomCategories")))
 const Aminities = Loadable(lazy(() => import("views/pages/hotel/Aminities")))
 const HotleRooms = Loadable(lazy(() => import("views/pages/hotel/HotelRooms")))
+const GuidPage = Loadable(lazy(() => import('views/guid')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -28,6 +30,10 @@ const MainRoutes = {
     {
       path: '/',
       element: <DashboardDefault />
+    },
+    {
+      path: '/guid',
+      element: <GuidPage />
     },
     {
       path: 'dashboard',
@@ -47,7 +53,8 @@ const MainRoutes = {
         }
       ]
 
-    }, {
+    },
+    {
       path: '/',
       children: [
         {
@@ -74,7 +81,8 @@ const MainRoutes = {
           element: <Hotel />,
         }
       ]
-    }, {
+    },
+    {
       path: '/',
       children: [
         {
@@ -82,7 +90,8 @@ const MainRoutes = {
           element: <RoomCategory />,
         }
       ]
-    }, {
+    },
+    {
       path: '/',
       children: [
         {
@@ -90,7 +99,8 @@ const MainRoutes = {
           element: <Aminities />,
         }
       ]
-    }, {
+    },
+    {
       path: '/',
       children: [
         {

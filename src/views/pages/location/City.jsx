@@ -97,7 +97,7 @@ const City = () => {
                             },
                         },
                     }}
-                    // rowCount={states?.states?.length}
+                    rowCount={cities?.cities?.length}
                     paginationMode="server"
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}

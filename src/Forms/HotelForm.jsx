@@ -96,6 +96,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                     <TextField
+                        color='secondary'
                         fullWidth
                         id="name"
                         name="name"
@@ -108,6 +109,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <TextField
+                        color='secondary'
+
                         fullWidth
                         id="email"
                         name="email"
@@ -121,6 +124,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 <Grid item xs={12} sm={6}>
                     <TextField
                         fullWidth
+                        color='secondary'
+
                         id="mobile"
                         name="mobile"
                         label="Mobile"
@@ -141,6 +146,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 <Grid item xs={12} sm={6}>
                     <TextField
                         fullWidth
+                        color='secondary'
+
                         id="password"
                         name="password"
                         label="Password"
@@ -152,7 +159,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={formik.touched.countryId && Boolean(formik.errors.countryId)}>
+                    <FormControl fullWidth error={formik.touched.countryId && Boolean(formik.errors.countryId)} color='secondary'
+                    >
                         <InputLabel id="countryId-label">Country</InputLabel>
                         <Select
                             labelId="countryId-label"
@@ -175,7 +183,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={formik.touched.stateId && Boolean(formik.errors.stateId)}>
+                    <FormControl fullWidth error={formik.touched.stateId && Boolean(formik.errors.stateId)} color='secondary'
+                    >
                         <InputLabel id="stateId-label">State</InputLabel>
                         <Select
                             labelId="stateId-label"
@@ -197,7 +206,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={formik.touched.cityId && Boolean(formik.errors.cityId)}>
+                    <FormControl fullWidth error={formik.touched.cityId && Boolean(formik.errors.cityId)} color='secondary'
+                    >
                         <InputLabel id="cityId-label">City</InputLabel>
                         <Select
                             labelId="cityId-label"
@@ -220,6 +230,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <TextField
+                        color='secondary'
+
                         fullWidth
                         id="pincode"
                         name="pincode"
@@ -232,6 +244,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
+                        color='secondary'
+
                         fullWidth
                         id="address"
                         name="address"

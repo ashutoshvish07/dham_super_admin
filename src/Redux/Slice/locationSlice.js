@@ -165,7 +165,8 @@ const locationSlice = createSlice({
         states: [],
         cities: [],
         loading: false,
-        error: null
+        error: null,
+        status: 'idle',
     },
     reducers: {
         clearError: (state) => {
@@ -178,118 +179,146 @@ const locationSlice = createSlice({
             .addCase(createCountryAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(createCountryAsync.fulfilled, (state, action) => {
                 state.loading = false;
+                state.status = 'success';
+
                 // state.countries.push(action.payload.data);
             })
             .addCase(createCountryAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             .addCase(editCountryAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(editCountryAsync.fulfilled, (state, action) => {
                 state.loading = false;
+                state.status = 'success';
             })
             .addCase(editCountryAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Get Countries by Super Admin
             .addCase(getCountryBySuperAdminAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(getCountryBySuperAdminAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.countries = action.payload;
+                state.status = 'success';
             })
             .addCase(getCountryBySuperAdminAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Create State
             .addCase(createStateAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(createStateAsync.fulfilled, (state, action) => {
                 state.loading = false;
+                state.status = 'success';
             })
             .addCase(createStateAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Get All States
             .addCase(getAllStateAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(getAllStateAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.states = action.payload;
+                state.status = 'success';
             })
             .addCase(getAllStateAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Create City
             .addCase(createCityAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(createCityAsync.fulfilled, (state, action) => {
                 state.loading = false;
+                state.status = 'success';
                 // state.cities.push(action.payload);
             })
             .addCase(createCityAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Update City
             .addCase(updateCityAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(updateCityAsync.fulfilled, (state, action) => {
                 state.loading = false;
-                const index = state.cities.findIndex(city => city.id === action.payload.id);
-                if (index !== -1) {
-                    state.cities[index] = action.payload;
-                }
+                state.status = 'success';
+                // const index = state.cities.findIndex(city => city.id === action.payload.id);
+                // if (index !== -1) {
+                //     state.cities[index] = action.payload;
+                // }
             })
             .addCase(updateCityAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Get All Cities
             .addCase(getAllCityAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(getAllCityAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.cities = action.payload;
+                state.status = 'success';
             })
             .addCase(getAllCityAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             })
             // Get City By State
             .addCase(getCityByStateAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.status = 'loading';
             })
             .addCase(getCityByStateAsync.fulfilled, (state, action) => {
                 state.loading = false;
                 state.cities = action.payload;
+                state.status = 'success';
             })
             .addCase(getCityByStateAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.status = 'failed';
             });
     }
 });
