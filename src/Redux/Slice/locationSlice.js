@@ -125,7 +125,7 @@ export const updateCityAsync = createAsyncThunk(
     'location/updateCityAsync',
     async ({ city_id, file }, { rejectWithValue }) => {
         try {
-            const response = await Axios.post(`/create-city/${city_id}`, { file });
+            const response = await Axios.put(`/create-city/${city_id}`, { file });
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -156,6 +156,22 @@ export const getCityByStateAsync = createAsyncThunk(
     }
 );
 
+export const createNearByAsync = createAsyncThunk(
+    'location/createNearByAsync',
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await Axios.post(`/create-nearby/`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+
 
 
 const locationSlice = createSlice({
@@ -164,6 +180,7 @@ const locationSlice = createSlice({
         countries: [],
         states: [],
         cities: [],
+        nearBy: [],
         loading: false,
         error: null,
         status: 'idle',
@@ -316,6 +333,22 @@ const locationSlice = createSlice({
                 state.status = 'success';
             })
             .addCase(getCityByStateAsync.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.status = 'failed';
+            })
+            // Create NearBy
+            .addCase(createNearByAsync.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.status = 'loading';
+            })
+            .addCase(createNearByAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.status = 'success';
+                // state.nearBy.push(action.payload);
+            })
+            .addCase(createNearByAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
                 state.status = 'failed';

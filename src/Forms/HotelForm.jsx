@@ -67,8 +67,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             Object.keys(values).forEach(key => {
                 formData.append(key, values[key]);
             });
-
-
             if (files.length) {
                 files.forEach((file, index) => {
                     formData.append(`files[]`, file);
@@ -85,9 +83,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 dialogProps?.onClose();
             }
         },
-
-
-
     });
 
 

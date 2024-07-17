@@ -20,6 +20,7 @@ const RoomCategory = Loadable(lazy(() => import("views/pages/hotel/RoomCategorie
 const Aminities = Loadable(lazy(() => import("views/pages/hotel/Aminities")))
 const HotleRooms = Loadable(lazy(() => import("views/pages/hotel/HotelRooms")))
 const GuidPage = Loadable(lazy(() => import('views/guid')));
+const NearBy = Loadable(lazy(() => import('views/NearBy/NearBy')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -34,6 +35,10 @@ const MainRoutes = {
     {
       path: '/guid',
       element: <GuidPage />
+    },
+    {
+      path: '/nearby',
+      element: <NearBy />
     },
     {
       path: 'dashboard',
