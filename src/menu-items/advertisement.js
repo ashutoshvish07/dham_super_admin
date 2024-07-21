@@ -1,9 +1,10 @@
 // assets
-import { GrUserManager } from "react-icons/gr";
-import { IoMan } from "react-icons/io5";
+import { FcAdvertising } from "react-icons/fc";
+
+
 
 // constant
-const icons = { IoMan };
+const icons = { FcAdvertising };
 
 
 const advertisement = {
@@ -16,7 +17,7 @@ const advertisement = {
             title: 'Advertisement',
             type: 'item',
             url: '/advertisement',
-            icon: icons.IoMan,
+            icon: icons.FcAdvertising,
             breadcrumbs: false
         }
     ]

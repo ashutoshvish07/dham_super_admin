@@ -16,7 +16,6 @@ const pages = {
       title: 'Location Settings',
       type: 'collapse',
       icon: icons.IconKey,
-
       children: [
         {
           id: 'country',

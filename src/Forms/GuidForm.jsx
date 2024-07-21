@@ -58,10 +58,11 @@ const GuidForm = (props) => {
             mobile: guid_data?.mobile || '',
             pincode: guid_data?.pincode || '',
             address: guid_data?.address || '',
-            cityId: guid_data?.cityId?._id,
+            cityId: guid_data?.cityId?._id || '',
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
+
             const formData = new FormData()
             formData.append("name", values.name)
             formData.append("email", values.email)

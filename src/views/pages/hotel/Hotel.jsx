@@ -3,14 +3,17 @@ import HotelForm from 'Forms/HotelForm'
 import { deleteHotelAsync, getHotelAsync } from 'Redux/Slice/hotelSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
+import SearchBar from 'components/SearchBar/SearchBar'
+import { debounce } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import DataTable from 'ui-component/DataTable/DataTable'
 
 const Hotel = () => {
 
+    const [searchTerm, setSearchTerm] = useState("");
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
     const [dialogProps, setDialogProps] = useState({
@@ -48,12 +51,11 @@ const Hotel = () => {
         })
     }
 
-
     const columns = [
         {
-            field: 'hotelName',
+            field: 'name',
             headerName: 'Hotel name',
-            flex: 1,
+            flex: 2,
         },
         {
             field: 'cityId',
@@ -121,6 +123,26 @@ const Hotel = () => {
             setPaginationModel({ page: 1, pageSize: e.pageSize })
         }
     }
+
+    const debouncedDispatch = useCallback(
+        debounce((value) => {
+            dispatch(getHotelAsync({ page: 1, page_size: 10, search: value }));
+        }, 1000),
+        []
+    );
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        debouncedDispatch(value);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            dispatch(getNearByAsync({ page: 1, page_size: 10, search: searchTerm }));
+        }
+    };
+
     return (
         <>
             <AlertDialog
@@ -128,7 +150,18 @@ const Hotel = () => {
                 content={dialogContent}
                 dialogProps={dialogProps}
             />
-            <Box sx={{ display: 'flex', justifyContent: "flex-end", marginBottom: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                <Box>
+                    <SearchBar
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Search..."
+                        size='small'
+                        color="secondary"
+                        onKeyPress={handleKeyPress}
+                    />
+
+                </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addState} startIcon={<FaPlus size={14} />} >
                     Hotles
                 </Button>

@@ -178,9 +178,13 @@ export const getCityByStateAsync = createAsyncThunk(
 
 export const getNearByAsync = createAsyncThunk(
     'location/getNearByAsync',
-    async ({ page, page_size }, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`get-all-nearby?page=${page}&page_size=${page_size}`, {
+            let url = `get-all-nearby?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`;
+            }
+            const response = await Axios.get(url, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

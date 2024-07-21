@@ -7,23 +7,33 @@ const icons = {
     FaHotel
 };
 
-// ==============================|| EXTRA HOTEL MENU ITEMS ||============================== //
 
-const hotel = {
-    id: 'hotelmanagements',
+const ManageHotel = {
+    id: 'hotel',
     type: 'group',
+
     children: [
         {
             id: 'hotelmanagement',
             title: 'Hotel Management',
             type: 'collapse',
             icon: icons.FaHotel,
+
             children: [
+
                 {
                     id: 'hotels',
                     title: 'Hotels',
                     type: 'item',
                     url: '/pages/hotel/hotels',
+                    target: false,
+                    breadcrumbs: false,
+                },
+                {
+                    id: 'rooms',
+                    title: 'Hotel Rooms',
+                    type: 'item',
+                    url: 'pages/hotel/rooms',
                     target: false,
                     breadcrumbs: false
                 },
@@ -43,17 +53,9 @@ const hotel = {
                     target: false,
                     breadcrumbs: false
                 },
-                {
-                    id: 'rooms',
-                    title: 'Hotel Rooms',
-                    type: 'item',
-                    url: 'pages/hotel/rooms',
-                    target: false,
-                    breadcrumbs: false
-                },
             ]
         }
     ]
 };
 
-export default hotel;
+export default ManageHotel;

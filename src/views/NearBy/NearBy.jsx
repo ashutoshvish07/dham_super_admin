@@ -1,12 +1,14 @@
-import { Box, Button, Paper, Typography } from '@mui/material'
+import { Box, Button, IconButton, InputAdornment, Paper, TextField, Typography } from '@mui/material'
 import NearByForm from 'Forms/NearByForm'
 import { deleteNearByAsync, getNearByAsync } from 'Redux/Slice/locationSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
+import SearchBar from 'components/SearchBar/SearchBar'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
+import React, { useCallback, useEffect, useState } from 'react'
+import { FaPlus, FaSearch } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
+import { debounce } from 'lodash';
 import DataTable from 'ui-component/DataTable/DataTable'
 
 const NearBy = () => {
@@ -21,6 +23,12 @@ const NearBy = () => {
         page: 0,
         pageSize: 10,
     });
+
+    const [searchTerm, setSearchTerm] = useState("");
+
+
+
+
 
     const { nearBy, loading, status, error } = useSelector((state) => state.location)
     const dispatch = useDispatch();
@@ -37,7 +45,6 @@ const NearBy = () => {
 
     const editNearBy = (id) => {
         const near_by_data = nearBy?.nearbies.find(el => el._id === id)
-        debugger
         setDialogTitle("Update NearBy Locations");
         setDialogContent(<NearByForm dialogProps={dialogProps} near_by_data={near_by_data} edit="edit" />);
         setDialogProps({ ...dialogProps, open: true });
@@ -101,7 +108,18 @@ const NearBy = () => {
             renderCell: (params) => GetTwoAction(params.value, editNearBy, deleteNearBy)
         },
     ]
+    const debouncedDispatch = useCallback(
+        debounce((value) => {
+            dispatch(getNearByAsync({ page: 1, page_size: 10, search: value }));
+        }, 3000), // Adjust the debounce delay as needed
+        []
+    );
 
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        debouncedDispatch(value);
+    };
 
 
 
@@ -112,10 +130,17 @@ const NearBy = () => {
                 content={dialogContent}
                 dialogProps={dialogProps}
             />
-            <Typography variant='h3'>
-                NearBy Page
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: "flex-end", marginBottom: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                <Box>
+                    <SearchBar
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Search..."
+                        size='small'
+                        color="secondary"
+                    />
+
+                </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addnearBY} startIcon={<FaPlus size={14} />} >
                     Near by
                 </Button>

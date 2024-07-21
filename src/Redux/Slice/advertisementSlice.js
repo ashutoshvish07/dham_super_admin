@@ -18,7 +18,7 @@ export const createAdvertisement = createAsyncThunk(
     'advertisement/createAdvertisement',
     async (formData, { rejectWithValue }) => {
         try {
-            const response = await Axios.post(`/get-advertisement-for-admin`, formData,
+            const response = await Axios.post(`/create-advertisement`, formData,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -34,7 +34,7 @@ export const updateAdvertisement = createAsyncThunk(
     'advertisement/updateAdvertisement',
     async ({ formData, id }, { rejectWithValue }) => {
         try {
-            const response = await Axios.put(`/get-advertisement-for-admin/${id}`, formData,
+            const response = await Axios.put(`/update-advertisement/${id}`, formData,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'

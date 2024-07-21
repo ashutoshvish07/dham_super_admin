@@ -4,9 +4,13 @@ import Axios from '../../Axios';
 
 export const getHotelAsync = createAsyncThunk(
     'hotel/getHotelAsync',
-    async ({ page, page_size }, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-my-hotels?page=${page}&page_size=${page_size}`)
+            let url = `/get-my-hotels?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`
+            }
+            const response = await Axios.get(url)
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);

@@ -31,15 +31,15 @@ const Advertisement = () => {
     }, [dispatch]);
 
     const addState = () => {
-        setDialogTitle("Add Hotle");
+        setDialogTitle("Add Advertisement");
         setDialogContent(<AdvertisementForm dialogProps={dialogProps} />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
     const editHotle = (id) => {
-        const hotle_data = hotels?.hotels.find(el => el._id === id)
-        setDialogTitle("Update Hotel");
-        setDialogContent(<HotelForm dialogProps={dialogProps} hotle_data={hotle_data} type="edit" />);
+        const advertisement_data = advertisements?.advertisements.find(el => el._id === id)
+        setDialogTitle("Update Advertisement");
+        setDialogContent(<AdvertisementForm dialogProps={dialogProps} advertisement_data={advertisement_data} edit={true} />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
