@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import config from 'config';
 
 const initialState = {
-    isOpen: [], // for active default menu
+    isOpen: [],
     defaultId: 'default',
     fontFamily: config.fontFamily,
     borderRadius: config.borderRadius,

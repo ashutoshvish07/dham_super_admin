@@ -1,5 +1,7 @@
 import { Box, Button, Paper } from '@mui/material'
+import AdvertisementForm from 'Forms/AdvertisementForm'
 import HotelForm from 'Forms/HotelForm'
+import { getAdvertisement } from 'Redux/Slice/advertisementSlice'
 import { deleteHotelAsync, getHotelAsync } from 'Redux/Slice/hotelSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
@@ -9,8 +11,7 @@ import { FaPlus } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import DataTable from 'ui-component/DataTable/DataTable'
 
-const Hotel = () => {
-
+const Advertisement = () => {
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
     const [dialogProps, setDialogProps] = useState({
@@ -23,15 +24,15 @@ const Hotel = () => {
     });
 
     const dispatch = useDispatch();
-    const { hotels, loading, error } = useSelector(state => state.hotel);
+    const { advertisements, loading, error } = useSelector(state => state.advertisement);
 
     useEffect(() => {
-        dispatch(getHotelAsync({ page: 1, page_size: 10 }));
+        dispatch(getAdvertisement({ page: 1, page_size: 10 }));
     }, [dispatch]);
 
     const addState = () => {
         setDialogTitle("Add Hotle");
-        setDialogContent(<HotelForm dialogProps={dialogProps} />);
+        setDialogContent(<AdvertisementForm dialogProps={dialogProps} />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
@@ -44,61 +45,56 @@ const Hotel = () => {
 
     const deleteState = (id) => {
         dispatch(deleteHotelAsync({ id: id })).then(() => {
-            dispatch(getHotelAsync({ page: 1, page_size: 10 }));
+            dispatch(getAdvertisement({ page: 1, page_size: 10 }));
         })
     }
 
-
     const columns = [
         {
-            field: 'hotelName',
-            headerName: 'Hotel name',
+            field: 'title',
+            headerName: 'Title',
             flex: 1,
         },
         {
-            field: 'cityId',
-            headerName: 'City ',
-            flex: 1,
-            renderCell: (params) => {
-                return (params?.value?.name)
-            },
-        },
-        {
-            field: 'stateId',
-            headerName: 'State ',
-            flex: 1,
-            renderCell: (params) => {
-                return (params?.value?.name)
-            },
-        },
-        {
-            field: 'address',
-            headerName: 'Address',
+            field: 'description',
+            headerName: 'Description ',
             flex: 2,
-
         },
         {
-            field: 'email',
-            headerName: 'Email',
+            field: 'offerOnItem',
+            headerName: 'Offer On Item',
             flex: 1,
 
         },
         {
-            field: 'mobile',
-            headerName: 'Mobile',
+            field: 'discountPercentage',
+            headerName: 'Discount Percentage',
             flex: 1,
+            renderCell: (params) => {
+                return (`${params?.value}%`)
+            },
 
         },
         {
-            field: 'status',
-            headerName: 'Status',
+            field: 'createdBy',
+            headerName: 'Created By',
             flex: 1,
+            renderCell: (params) => {
+                return (`${params?.value?.name}`)
+            },
 
         },
-
         {
-            field: 'createdAt',
-            headerName: 'Added Date',
+            field: 'validFrom',
+            headerName: 'Start Date',
+            flex: 1,
+            renderCell: (params) => {
+                return moment(params.value).format('DD/MM/YYYY');
+            },
+        },
+        {
+            field: 'validUpto',
+            headerName: 'End Date',
             flex: 1,
             renderCell: (params) => {
                 return moment(params.value).format('DD/MM/YYYY');
@@ -114,14 +110,15 @@ const Hotel = () => {
 
     const onChangeCount = (e) => {
         if (e.pageSize == paginationModel.pageSize) {
-            dispatch(getHotelAsync({ page: e.page + 1, page_size: e.pageSize }));
+            dispatch(getAdvertisement({ page: e.page + 1, page_size: e.pageSize }));
             setPaginationModel(e)
         } else {
-            dispatch(getHotelAsync({ page: e.page, page_size: e.pageSize }));
+            dispatch(getAdvertisement({ page: e.page, page_size: e.pageSize }));
             setPaginationModel({ page: 1, pageSize: e.pageSize })
         }
     }
     return (
+
         <>
             <AlertDialog
                 title={dialogTitle}
@@ -130,12 +127,12 @@ const Hotel = () => {
             />
             <Box sx={{ display: 'flex', justifyContent: "flex-end", marginBottom: 2 }}>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addState} startIcon={<FaPlus size={14} />} >
-                    Hotles
+                    Advertisement
                 </Button>
             </Box>
             <Paper>
                 <DataTable
-                    data={hotels?.hotels}
+                    data={advertisements?.advertisements}
                     columns={columns}
                     getRowId={(row) => row._id}
                     loading={loading}
@@ -146,7 +143,7 @@ const Hotel = () => {
                             },
                         },
                     }}
-                    rowCount={hotels?.count}
+                    rowCount={advertisements?.count}
                     paginationMode="server"
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}
@@ -157,4 +154,4 @@ const Hotel = () => {
     )
 }
 
-export default Hotel
+export default Advertisement

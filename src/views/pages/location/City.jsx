@@ -1,6 +1,7 @@
 import { Box, Button, Paper } from '@mui/material'
 import CityForm from 'Forms/CityForm'
-import { getAllCityAsync, getAllStateAsync } from 'Redux/Slice/locationSlice'
+import { deleteCityAsync, getAllCityAsync } from 'Redux/Slice/locationSlice'
+import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -27,13 +28,25 @@ const City = () => {
 
 
     useEffect(() => {
-        dispatch(getAllCityAsync());
+        dispatch(getAllCityAsync({ page: 1, page_size: 10 }));
     }, [dispatch]);
 
     const addCountry = () => {
         setDialogTitle("Add City");
         setDialogContent(<CityForm dialogProps={dialogProps} state={states?.states} />);
         setDialogProps({ ...dialogProps, open: true });
+    }
+
+    const editCity = (id) => {
+        const cities_data = cities?.cities.find(el => el._id === id)
+        setDialogTitle("Edit Country");
+        setDialogContent(<CityForm dialogProps={dialogProps} cities_data={cities_data} type="edit" />);
+        setDialogProps({ ...dialogProps, open: true });
+    }
+
+    const deleteCity = (id) => {
+        dispatch(deleteCityAsync({ city_id: id }));
+        dispatch(getAllCityAsync({ page: 1, page_size: 10 }));
     }
 
     const columns = [
@@ -60,14 +73,20 @@ const City = () => {
                 return moment(params.value).format('DD/MM/YYYY');
             },
         },
+        {
+            field: '_id',
+            headerName: 'Action',
+            flex: 1,
+            renderCell: (params) => GetTwoAction(params.value, editCity, deleteCity)
+        },
     ]
 
     const onChangeCount = (e) => {
         if (e.pageSize == paginationModel.pageSize) {
-            dispatch(getCountryBySuperAdminAsync({ page: e.page + 1, page_size: e.pageSize }));
+            dispatch(getAllCityAsync({ page: e.page + 1, page_size: e.pageSize }));
             setPaginationModel(e)
         } else {
-            dispatch(getCountryBySuperAdminAsync({ page: e.page, page_size: e.pageSize }));
+            dispatch(getAllCityAsync({ page: e.page, page_size: e.pageSize }));
             setPaginationModel({ page: 1, pageSize: e.pageSize })
         }
     }

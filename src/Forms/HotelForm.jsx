@@ -6,22 +6,18 @@ import {
     TextField,
     Grid,
     Box,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    CircularProgress,
-    Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { createHotelAsync, getHotelAsync, updateHotelAsync } from 'Redux/Slice/hotelSlice';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { getAllCityAsync, getAllStateAsync, getCountryBySuperAdminAsync } from 'Redux/Slice/locationSlice';
+import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 
 const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const dispatch = useDispatch();
     const [files, setFiles] = useState([]);
     const { countries, states, cities, loading } = useSelector((state) => state.location);
+    console.log("countries", countries, hotle_data)
 
     useEffect(() => {
         dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 10 }));
@@ -37,7 +33,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
         setFiles(files.filter(file => file !== fileToDelete));
     };
 
-    console.log("hotle_data", hotle_data)
     const formik = useFormik({
         initialValues: {
             name: hotle_data?.name || "",
@@ -49,6 +44,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             cityId: hotle_data?.cityId?._id || "",
             address: hotle_data?.address || "",
             pincode: hotle_data?.pincode || "",
+            price: hotle_data?.price || "",
+            offerPrice: hotle_data?.offerPrice || "",
         },
         validationSchema: Yup.object({
             name: Yup.string().required('Required'),
@@ -60,13 +57,24 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             cityId: Yup.string().required('Required'),
             address: Yup.string().required('Required'),
             pincode: Yup.string().required('Required'),
+            price: Yup.number().required('Required'),
+            offerPrice: Yup.number().required('Required'),
         }),
         onSubmit: (values) => {
             const formData = new FormData();
+            formData.append("name", values.name)
+            formData.append("email", values.email)
+            formData.append("mobile", values.mobile)
+            formData.append("password", values.password)
+            formData.append("address", values.address)
+            formData.append("pincode", values.pincode)
+            formData.append("price", values.price)
+            formData.append("offerPrice", values.offerPrice)
+            formData.append("countryId", values?.countryId?._id ? values?.countryId?._id : values?.countryId)
+            formData.append("stateId", values?.stateId?._id ? values?.stateId?._id : values?.stateId)
+            formData.append("cityId", values?.cityId?._id ? values?.cityId?._id : values?.cityId)
 
-            Object.keys(values).forEach(key => {
-                formData.append(key, values[key]);
-            });
+
             if (files.length) {
                 files.forEach((file, index) => {
                     formData.append(`files[]`, file);
@@ -75,11 +83,11 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
 
             if (type === "edit") {
                 dispatch(updateHotelAsync({ formData, id: hotle_data?._id }));
-                dispatch(getHotelAsync());
+                dispatch(getHotelAsync({ page: 1, page_size: 10 }))
                 dialogProps?.onClose();
             } else {
                 dispatch(createHotelAsync(formData));
-                dispatch(getHotelAsync());
+                dispatch(getHotelAsync({ page: 1, page_size: 10 }))
                 dialogProps?.onClose();
             }
         },
@@ -105,7 +113,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                 <Grid item xs={12} sm={6}>
                     <TextField
                         color='secondary'
-
                         fullWidth
                         id="email"
                         name="email"
@@ -120,7 +127,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     <TextField
                         fullWidth
                         color='secondary'
-
                         id="mobile"
                         name="mobile"
                         label="Mobile"
@@ -142,7 +148,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     <TextField
                         fullWidth
                         color='secondary'
-
                         id="password"
                         name="password"
                         label="Password"
@@ -154,79 +159,69 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={formik.touched.countryId && Boolean(formik.errors.countryId)} color='secondary'
-                    >
-                        <InputLabel id="countryId-label">Country</InputLabel>
-                        <Select
-                            labelId="countryId-label"
-                            id="countryId"
-                            name="countryId"
-                            value={formik.values?.countryId}
-                            onChange={formik.handleChange}
-                            label="Country"
-                        >
-                            {countries?.countries?.map((country) => (
-                                <MenuItem key={country._id} value={country._id}>
-                                    {country.name}
-                                </MenuItem>
-                            )
-                            )}
-                        </Select>
-                        {formik.touched.countryId && formik.errors.countryId && (
-                            <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.countryId}</div>
-                        )}
-                    </FormControl>
+                    <AutoComplete
+                        options={countries?.countries || []}
+                        label="Select Country"
+                        id="country-select"
+                        name="countryId"
+                        value={
+                            type === 'edit' ? countries?.countries?.find(c => c._id === hotle_data?.countryId?._id)?.name : formik.values.countryId
+                        }
+                        onChange={(newValue) => {
+                            formik.setFieldValue('countryId', newValue || '');
+                        }}
+                        error={formik.touched.countryId && Boolean(formik.errors.countryId)}
+                        helperText={formik.touched.countryId && formik.errors.countryId}
+                        required
+                        optionKey="_id"
+                        optionLabel="name"
+                        color="secondary"
+                    />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={formik.touched.stateId && Boolean(formik.errors.stateId)} color='secondary'
-                    >
-                        <InputLabel id="stateId-label">State</InputLabel>
-                        <Select
-                            labelId="stateId-label"
-                            id="stateId"
-                            name="stateId"
-                            value={formik.values?.stateId}
-                            onChange={formik.handleChange}
-                            label="State"
-                        >
-                            {states?.states?.map((state) => (
-                                <MenuItem key={state._id} value={state?._id}>
-                                    {state?.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {formik.touched.stateId && formik.errors.stateId && (
-                            <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.stateId}</div>
-                        )}
-                    </FormControl>
+                    <AutoComplete
+                        options={states?.states || []}
+                        label="Select State"
+                        id="state-select"
+                        name="stateId"
+                        value={
+                            type === 'edit' ? states?.states?.find(c => c._id === hotle_data?.stateId?._id)?.name : formik.values.stateId
+                        }
+                        onChange={(newValue) => {
+                            formik.setFieldValue('stateId', newValue || '');
+                        }}
+                        error={formik.touched.stateId && Boolean(formik.errors.stateId)}
+                        helperText={formik.touched.stateId && formik.errors.stateId}
+                        required
+                        optionKey="_id"
+                        optionLabel="name"
+                        color="secondary"
+                    />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={formik.touched.cityId && Boolean(formik.errors.cityId)} color='secondary'
-                    >
-                        <InputLabel id="cityId-label">City</InputLabel>
-                        <Select
-                            labelId="cityId-label"
-                            id="cityId"
-                            name="cityId"
-                            value={formik.values?.cityId}
-                            onChange={formik.handleChange}
-                            label="City"
-                        >
-                            {cities?.cities?.map((city) => (
-                                <MenuItem key={city._id} value={city?._id}>
-                                    {city?.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {formik.touched.cityId && formik.errors.cityId && (
-                            <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.cityId}</div>
-                        )}
-                    </FormControl>
+
+                    <AutoComplete
+                        options={cities?.cities || []}
+                        label="Select City"
+                        id="city-select"
+                        name="cityId"
+                        value={
+                            type === "edit" ? cities?.cities?.find(c => c._id === hotle_data?.cityId?._id)?.name : formik.values.cityId
+                        }
+                        onChange={(newValue) => {
+                            formik.setFieldValue('cityId', newValue || '');
+                        }}
+                        error={formik.touched.cityId && Boolean(formik.errors.cityId)}
+                        helperText={formik.touched.cityId && formik.errors.cityId}
+                        required
+                        optionKey="_id"
+                        optionLabel="name"
+                        color="secondary"
+                    />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <TextField
                         color='secondary'
-
                         fullWidth
                         id="pincode"
                         name="pincode"
@@ -236,11 +231,36 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         error={formik.touched.pincode && Boolean(formik.errors.pincode)}
                         helperText={formik.touched.pincode && formik.errors.pincode}
                     />
+                </Grid><Grid item xs={12} sm={6}>
+                    <TextField
+                        color='secondary'
+                        fullWidth
+                        id="price"
+                        name="price"
+                        label="Price"
+                        value={formik.values?.price}
+                        onChange={formik.handleChange}
+                        error={formik.touched.price && Boolean(formik.errors.price)}
+                        helperText={formik.touched.price && formik.errors.price}
+                    />
                 </Grid>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        color='secondary'
+                        fullWidth
+                        id="offerPrice"
+                        name="offerPrice"
+                        label="Offer Price"
+                        value={formik.values?.offerPrice}
+                        onChange={formik.handleChange}
+                        error={formik.touched.offerPrice && Boolean(formik.errors.offerPrice)}
+                        helperText={formik.touched.offerPrice && formik.errors.offerPrice}
+                    />
+                </Grid>
+
                 <Grid item xs={12}>
                     <TextField
                         color='secondary'
-
                         fullWidth
                         id="address"
                         name="address"
@@ -251,6 +271,9 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         helperText={formik.touched.address && formik.errors.address}
                     />
                 </Grid>
+
+
+
 
                 <Grid item xs={12}>
                     <ImageUpload files={files} setFiles={handleFileChange} deleteFile={handleDeleteFile} />

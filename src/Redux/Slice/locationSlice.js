@@ -123,9 +123,13 @@ export const createCityAsync = createAsyncThunk(
 );
 export const updateCityAsync = createAsyncThunk(
     'location/updateCityAsync',
-    async ({ city_id, file }, { rejectWithValue }) => {
+    async ({ city_id, formData }, { rejectWithValue }) => {
         try {
-            const response = await Axios.put(`/create-city/${city_id}`, { file });
+            const response = await Axios.put(`/update-city/${city_id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -135,15 +139,28 @@ export const updateCityAsync = createAsyncThunk(
 
 export const getAllCityAsync = createAsyncThunk(
     'location/getAllCityAsync',
-    async (_, { rejectWithValue }) => {
+    async ({ page, page_size }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-all-city`);
+            const response = await Axios.get(`/get-all-city?page=${page}&page_size=${page_size}`);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
         }
     }
 );
+
+export const deleteCityAsync = createAsyncThunk(
+    'location/deleteCityAsync',
+    async ({ city_id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-city/${city_id}`);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+)
+
 export const getCityByStateAsync = createAsyncThunk(
     'location/getCityByStateAsync',
     async ({ city_id }, { rejectWithValue }) => {
@@ -155,6 +172,26 @@ export const getCityByStateAsync = createAsyncThunk(
         }
     }
 );
+
+
+//* Nearby get , create, update and delete  *//
+
+export const getNearByAsync = createAsyncThunk(
+    'location/getNearByAsync',
+    async ({ page, page_size }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.get(`get-all-nearby?page=${page}&page_size=${page_size}`, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+
 
 export const createNearByAsync = createAsyncThunk(
     'location/createNearByAsync',
@@ -171,7 +208,32 @@ export const createNearByAsync = createAsyncThunk(
         }
     }
 );
-
+export const updateNearByAsync = createAsyncThunk(
+    'location/updateNearByAsync',
+    async ({ formData, id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.put(`update-nearby/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+export const deleteNearByAsync = createAsyncThunk(
+    'location/deleteNearByAsync',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-nearby/${id}`,);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
 
 
 const locationSlice = createSlice({
@@ -352,7 +414,41 @@ const locationSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
                 state.status = 'failed';
-            });
+            })
+            // Update NearBy
+            .addCase(updateNearByAsync.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.status = 'loading';
+            })
+            .addCase(updateNearByAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.status = 'success';
+            })
+            .addCase(updateNearByAsync.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.status = 'failed';
+            })
+            // Get All Nearby
+            .addCase(getNearByAsync.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.status = 'loading';
+            })
+            .addCase(getNearByAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.nearBy = action.payload;
+                state.status = 'success';
+            })
+            .addCase(getNearByAsync.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+                state.status = 'failed';
+            })
+        // Get NearBy By City
+
+
     }
 });
 

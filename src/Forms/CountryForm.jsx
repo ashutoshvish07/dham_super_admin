@@ -12,7 +12,6 @@ const CountryForm = (props) => {
     const { dialogProps, type } = props
     const [countries, setCountries] = useState([]);
     const { status } = useSelector(state => state.location)
-    console.log("Status", status)
     const [open, setOpen] = useState(false)
     const [message, setMessage] = useState('');
     const dispatch = useDispatch()

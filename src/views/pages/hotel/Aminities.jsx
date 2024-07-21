@@ -49,6 +49,15 @@ const Aminities = () => {
     }
 
     const columns = [
+        {
+            field: 'file',
+            headerName: "Media",
+            width: 200,
+            renderCell: (params) => {
+                return <img alt={params?.value?.Bucket} src={params?.value?.Url} height={50} width={50} style={{ objectFit: 'contain' }} />
+
+            },
+        },
 
         {
             field: 'name',
@@ -105,7 +114,7 @@ const Aminities = () => {
                             },
                         },
                     }}
-                    rowCount={amenities.data?.length}
+                    rowCount={amenities?.count}
                     paginationMode="server"
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}

@@ -1,10 +1,9 @@
-import { Autocomplete, Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Box, Button, Grid, TextField } from '@mui/material'
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 
 import { MdClose } from 'react-icons/md';
-import { createCityAsync, getAllStateAsync } from 'Redux/Slice/locationSlice';
+import { createCityAsync, getAllStateAsync, updateCityAsync } from 'Redux/Slice/locationSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
@@ -15,7 +14,7 @@ import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 const CityForm = (props) => {
 
     const [files, setFiles] = useState([]);
-
+    const { cities_data, dialogProps, type } = props
     const { states: { states }, } = useSelector(state => state.location);
     const dispatch = useDispatch()
 
@@ -27,8 +26,8 @@ const CityForm = (props) => {
 
     const formik = useFormik({
         initialValues: {
-            stateId: '',
-            name: '',
+            stateId: cities_data?.stateId?._id || '',
+            name: cities_data?.name || '',
         },
         onSubmit: (values) => {
             const formData = new FormData()
@@ -41,11 +40,19 @@ const CityForm = (props) => {
                     formData.append('file', file);
                 });
             }
+            if (type === 'edit') {
+                dispatch(updateCityAsync({ city_id: cities_data?._id, formData: formData })).then(() => {
+                    dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
+                    dialogProps?.onClose()
+                })
+            }
+            else {
+                dispatch(createCityAsync(formData)).then(() => {
+                    dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
+                    dialogProps?.onClose()
 
-
-            dispatch(createCityAsync(formData))
-            dispatch(getAllCityAsync())
-            // Perform submission logic here
+                })
+            }
         },
     });
 
@@ -79,25 +86,6 @@ const CityForm = (props) => {
                             optionLabel="name"
                             color="secondary"
                         />
-                        {/* <FormControl fullWidth error={formik.touched.state && Boolean(formik.errors.state)}>
-                            <InputLabel id="state-select-label">Select State</InputLabel>
-                            <Select
-                                labelId="state-select-label"
-                                id="state-select"
-                                value={formik.values.state}
-                                onChange={formik.handleChange('state')}
-                                label="Select State"
-                            >
-                                {states?.map((state) => (
-                                    <MenuItem key={state._id} value={state?._id}>
-                                        {state?.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                            {formik.touched.state && formik.errors.state && (
-                                <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.state}</div>
-                            )}
-                        </FormControl> */}
                     </Grid>
                     <Grid item xs={12}>
                         <TextField

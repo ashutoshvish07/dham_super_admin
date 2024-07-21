@@ -1,5 +1,5 @@
 import { Button, Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { createNearByAsync, getAllCityAsync } from 'Redux/Slice/locationSlice';
+import { createNearByAsync, getAllCityAsync, getNearByAsync, updateNearByAsync } from 'Redux/Slice/locationSlice';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react'
@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
 const NearByForm = (props) => {
-    const { dialogProps } = props;
+    const { dialogProps, near_by_data, edit } = props;
     const dispatch = useDispatch();
     const [files, setFiles] = useState([]);
     const { cities, loading } = useSelector((state) => state.location);
@@ -26,10 +26,10 @@ const NearByForm = (props) => {
 
     const formik = useFormik({
         initialValues: {
-            name: "",
-            description: "",
-            cityId: "",
-            type: "",
+            name: near_by_data?.name || "",
+            description: near_by_data?.description || "",
+            cityId: near_by_data?.cityId?._id || "",
+            type: near_by_data?.type || "",
         },
         validationSchema: Yup.object({
             name: Yup.string().required('Required'),
@@ -50,8 +50,16 @@ const NearByForm = (props) => {
                     formData.append('file', file);
                 });
             }
-
-            dispatch(createNearByAsync(formData));
+            if (edit === 'edit') {
+                dispatch(updateNearByAsync({ formData: formData, id: near_by_data?._id })).then(() => {
+                    dispatch(getNearByAsync({ page: 1, page_size: 10 }))
+                })
+            }
+            else {
+                dispatch(createNearByAsync(formData)), then(() => {
+                    dispatch(getNearByAsync({ page: 1, page_size: 10 }))
+                })
+            }
             dialogProps?.onClose();
 
         },
