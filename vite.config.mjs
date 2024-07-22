@@ -9,6 +9,9 @@ import jsconfigPaths from 'vite-jsconfig-paths';
 export default defineConfig({
   plugins: [react(), jsconfigPaths()],
   base: '/dham',
+  build: {
+    outDir: 'dist'
+  },
   define: {
     global: 'window'
   },
