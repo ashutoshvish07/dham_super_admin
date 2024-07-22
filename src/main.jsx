@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
 // third party
-import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 
 // project imports
