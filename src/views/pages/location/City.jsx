@@ -3,8 +3,10 @@ import CityForm from 'Forms/CityForm'
 import { deleteCityAsync, getAllCityAsync } from 'Redux/Slice/locationSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
+import SearchSection from 'layout/MainLayout/Header/SearchSection'
+import { debounce } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import DataTable from 'ui-component/DataTable/DataTable'
@@ -13,6 +15,8 @@ const City = () => {
 
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
     const [dialogProps, setDialogProps] = useState({
         open: false,
         onClose: () => setDialogProps({ ...dialogProps, open: false }),
@@ -91,6 +95,20 @@ const City = () => {
         }
     }
 
+    const debouncedDispatch = useCallback(
+        debounce((value) => {
+            dispatch(getAllCityAsync({ page: paginationModel.page + 1, page_size: paginationModel?.pageSize, search: value }));
+        }, 1000),
+        []
+    );
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        debouncedDispatch(value);
+    };
+
+
     return (
         <div>
             <AlertDialog
@@ -98,7 +116,10 @@ const City = () => {
                 content={dialogContent}
                 dialogProps={dialogProps}
             />
-            <Box sx={{ display: 'flex', justifyContent: "flex-end", marginBottom: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                <Box>
+                    <SearchSection value={searchTerm} handleSearchChange={handleSearchChange} />
+                </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addCountry} startIcon={<FaPlus size={14} />} >
                     City
                 </Button>

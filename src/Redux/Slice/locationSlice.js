@@ -139,9 +139,13 @@ export const updateCityAsync = createAsyncThunk(
 
 export const getAllCityAsync = createAsyncThunk(
     'location/getAllCityAsync',
-    async ({ page, page_size }, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-all-city?page=${page}&page_size=${page_size}`);
+            let url = `/get-all-city?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`
+            }
+            const response = await Axios.get(url);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);

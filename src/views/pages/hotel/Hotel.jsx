@@ -138,12 +138,6 @@ const Hotel = () => {
         debouncedDispatch(value);
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            dispatch(getNearByAsync({ page: 1, page_size: 10, search: searchTerm }));
-        }
-    };
-
     return (
         <>
             <AlertDialog
@@ -153,9 +147,7 @@ const Hotel = () => {
             />
             <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
                 <Box>
-                    <SearchSection value={searchTerm}
-                        handleSearchChange={handleSearchChange} />
-
+                    <SearchSection value={searchTerm} handleSearchChange={handleSearchChange} />
                 </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addState} startIcon={<FaPlus size={14} />} >
                     Hotles

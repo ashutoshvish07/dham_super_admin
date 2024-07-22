@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { useDispatch, useSelector } from 'react-redux';
-import { createRoomAsync, getAllRoomsAsync, getAmenitiesAsync, getHotelAsync, getRoomCateAsync } from 'Redux/Slice/hotelSlice';
+import { createRoomAsync, getAllRoomsAsync, getAmenitiesAsync, getHotelAsync, getRoomCateAsync, updateRoomAsync } from 'Redux/Slice/hotelSlice';
 import * as Yup from 'yup';
 
 
@@ -97,18 +97,23 @@ const HotelRoomForm = (props) => {
                             console.log("File", file);
                         });
                     }
-
-                    for (let [key, value] of formData.entries()) {
-                        console.log(`${key}: ${value}`);
-                    }
-
-                    dispatch(createRoomAsync(formData))
-                        .then(() => {
-                            dispatch(getAllRoomsAsync());
+                    if (type === "edit") {
+                        dispatch(updateRoomAsync({ formData: formData, id: room_data?._id })).then(() => {
+                            dispatch(getAllRoomsAsync({ page: 1, page_size: 10 }));
                         })
-                        .catch((error) => {
-                            console.error('Error creating room:', error);
-                        });
+                            .catch((error) => {
+                                console.error('Error creating room:', error);
+                            });
+                    }
+                    else {
+                        dispatch(createRoomAsync(formData))
+                            .then(() => {
+                                dispatch(getAllRoomsAsync({ page: 1, page_size: 10 }));
+                            })
+                            .catch((error) => {
+                                console.error('Error creating room:', error);
+                            });
+                    }
 
                     dialogProps.onClose()
                 }}

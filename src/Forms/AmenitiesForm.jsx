@@ -24,12 +24,12 @@ const AmenitiesForm = (props) => {
 
         if (type === " edit") {
             dispatch(updateAmenitiesAsync({ id: aminity_data._id, formData: formData })).then(() => {
-                dispatch(getAmenitiesAsync())
+                dispatch(getAmenitiesAsync({ page: 1, page_size: 10 }))
             })
         }
         else {
             dispatch(createAmenitiesAsync(formData)).then(() => {
-                dispatch(getAmenitiesAsync())
+                dispatch(getAmenitiesAsync({ page: 1, page_size: 10 }))
             })
         }
         props.dialogProps.onClose()

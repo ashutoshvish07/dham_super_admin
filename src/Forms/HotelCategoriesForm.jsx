@@ -20,11 +20,11 @@ const HotelCategoriesForm = ({ dialogProps, catdata, type }) => {
         onSubmit: (values) => {
             if (type === "edit") {
                 dispatch(updateRoomCateAsync({ id: catdata?._id, name: values?.name })).then(() => {
-                    dispatch(getRoomCateAsync())
+                    dispatch(getRoomCateAsync({ page: 1, page_size: 10 }))
                 })
             } else {
                 dispatch(createRoomCateAsync({ name: values?.name })).then(() => {
-                    dispatch(getRoomCateAsync())
+                    dispatch(getRoomCateAsync({ page: 1, page_size: 10 }))
                 })
             }
             dialogProps.onClose()

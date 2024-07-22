@@ -3,23 +3,32 @@ import GuidForm from 'Forms/GuidForm';
 import { deleteGuidAsync, getGuidAsync } from 'Redux/Slice/guidSlice';
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction';
 import AlertDialog from 'components/Dialog/Dialog';
+import SearchSection from 'layout/MainLayout/Header/SearchSection';
+import { debounce } from 'lodash';
 import moment from 'moment';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from 'ui-component/DataTable/DataTable';
 
 const GuidPage = () => {
 
+    const dispatch = useDispatch()
     const { guids, loading } = useSelector((state) => state.guid)
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
     const [dialogProps, setDialogProps] = useState({
         open: false,
         onClose: () => setDialogProps({ ...dialogProps, open: false }),
     });
 
-    const dispatch = useDispatch()
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 10,
+    });
+
 
 
     useEffect(() => {
@@ -44,6 +53,19 @@ const GuidPage = () => {
             dispatch(getGuidAsync({ page: 1, page_size: 10 }))
         })
     }
+
+    const debouncedDispatch = useCallback(
+        debounce((value) => {
+            dispatch(getGuidAsync({ page: paginationModel.page + 1, page_size: paginationModel?.pageSize, search: value }));
+        }, 1000),
+        []
+    );
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        debouncedDispatch(value);
+    };
 
 
     const columns = [
@@ -118,10 +140,10 @@ const GuidPage = () => {
                 content={dialogContent}
                 dialogProps={dialogProps}
             />
-            <Typography variant='h3'>
-                Guid Page
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: "flex-end", marginBottom: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                <Box>
+                    <SearchSection value={searchTerm} handleSearchChange={handleSearchChange} />
+                </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addRooms} startIcon={<FaPlus size={14} />} >
                     Guid
                 </Button>

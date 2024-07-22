@@ -4,9 +4,14 @@ import Axios from "../../Axios"
 
 export const getAdvertisement = createAsyncThunk(
     'advertisement/getAdvertisement',
-    async ({ page, page_size }, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-advertisement-for-admin?page=${page}&page_size=${page_size}`)
+            let url = `/get-advertisement-for-admin?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`
+            }
+
+            const response = await Axios.get(url)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.message);

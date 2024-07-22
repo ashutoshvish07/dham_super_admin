@@ -66,9 +66,13 @@ export const deleteHotelAsync = createAsyncThunk(
 export const getRoomCateAsync = createAsyncThunk(
     'hotel/getRoomCateAsync',
 
-    async (_, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-all-room-categories`);
+            let url = `/get-all-room-categories?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`;
+            }
+            const response = await Axios.get(url);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -122,9 +126,13 @@ export const deleteRoomCateAsync = createAsyncThunk(
 export const getAmenitiesAsync = createAsyncThunk(
     'hotel/getAmenitiesAsync',
 
-    async (_, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-amenities`);
+            let url = `/get-amenities?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`
+            }
+            const response = await Axios.get(url);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -173,9 +181,13 @@ export const deleteAmenitiesAsync = createAsyncThunk(
 export const getAllRoomsAsync = createAsyncThunk(
     'hotel/getAllRoomsAsync',
 
-    async (_, { rejectWithValue }) => {
+    async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            const response = await Axios.get(`/get-rooms-by-admin`,);
+            let url = `/get-rooms-by-admin?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`;
+            }
+            const response = await Axios.get(url);
             return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -202,6 +214,24 @@ export const createRoomAsync = createAsyncThunk(
         }
     }
 );
+export const updateRoomAsync = createAsyncThunk(
+    'hotel/updateRoomAsync',
+
+    async ({ formData, id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.put(`/update-room-by-admin/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (err) {
+
+            return rejectWithValue(err.response.data);
+        }
+    }
+);
+
 export const deleteRoomAsync = createAsyncThunk(
     'hotel/deleteRoomAsync',
 
