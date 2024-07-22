@@ -8,7 +8,7 @@ import jsconfigPaths from 'vite-jsconfig-paths';
 
 export default defineConfig({
   plugins: [react(), jsconfigPaths()],
-  base: '/dham',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets'
