@@ -10,7 +10,8 @@ export default defineConfig({
   plugins: [react(), jsconfigPaths()],
   base: '/dham',
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    assetsDir: 'assets'
   },
   define: {
     global: 'window'
