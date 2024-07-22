@@ -23,7 +23,6 @@ const CityForm = (props) => {
         dispatch(getAllStateAsync())
 
     }, [])
-
     const formik = useFormik({
         initialValues: {
             stateId: cities_data?.stateId?._id || '',
