@@ -54,7 +54,10 @@ const ProfileSection = () => {
    * */
   const anchorRef = useRef(null);
   const handleLogout = async () => {
-    console.log('Logout');
+    localStorage.removeItem('token')
+    localStorage.removeItem('persist:auth')
+    localStorage.removeItem('persist:root')
+    navigate('/login')
   };
 
   const handleClose = (event) => {
@@ -152,7 +155,7 @@ const ProfileSection = () => {
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
-                  <Box sx={{ p: 2, pb: 0 }}>
+                  {/* <Box sx={{ p: 2, pb: 0 }}>
                     <Stack>
                       <Stack direction="row" spacing={0.5} alignItems="center">
                         <Typography variant="h4">Good Morning,</Typography>
@@ -179,12 +182,12 @@ const ProfileSection = () => {
                       }}
                     />
                     <Divider />
-                  </Box>
+                  </Box> */}
                   <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                     <Box sx={{ p: 2, pt: 0 }}>
-                      <UpgradePlanCard />
-                      <Divider />
-                      <Card
+                      {/* <UpgradePlanCard />
+                      <Divider /> 
+                       <Card
                         sx={{
                           bgcolor: theme.palette.primary.light,
                           my: 2
@@ -226,7 +229,7 @@ const ProfileSection = () => {
                           </Grid>
                         </CardContent>
                       </Card>
-                      <Divider />
+                      <Divider /> */}
                       <List
                         component="nav"
                         sx={{

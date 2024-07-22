@@ -104,9 +104,12 @@ MobileSearch.propTypes = {
 
 // ==============================|| SEARCH INPUT ||============================== //
 
-const SearchSection = () => {
-  const [value, setValue] = useState('');
-
+const SearchSection = (props) => {
+  const [value, setValue] = useState(props?.value);
+  const handleSearch = (e) => {
+    setValue(e.target.value)
+    props?.handleSearchChange(e)
+  }
   return (
     <>
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -146,24 +149,26 @@ const SearchSection = () => {
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <OutlinedInput
           id="input-search-header"
+          size='small'
+          color="secondary"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => handleSearch(e)}
           placeholder="Search"
           startAdornment={
             <InputAdornment position="start">
               <IconSearch stroke={1.5} size="16px" />
             </InputAdornment>
           }
-          endAdornment={
-            <InputAdornment position="end">
-              <HeaderAvatar>
-                <IconAdjustmentsHorizontal stroke={1.5} size="20px" />
-              </HeaderAvatar>
-            </InputAdornment>
-          }
+          // endAdornment={
+          //   <InputAdornment position="end">
+          //     <HeaderAvatar>
+          //       <IconAdjustmentsHorizontal stroke={1.5} size="20px" />
+          //     </HeaderAvatar>
+          //   </InputAdornment>
+          // }
           aria-describedby="search-helper-text"
           inputProps={{ 'aria-label': 'weight', sx: { bgcolor: 'transparent', pl: 0.5 } }}
-          sx={{ width: { md: 250, lg: 434 }, ml: 2, px: 2 }}
+          sx={{ width: { md: 150, lg: 354 }, px: 1 }}
         />
       </Box>
     </>

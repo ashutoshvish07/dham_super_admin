@@ -4,6 +4,7 @@ import { deleteHotelAsync, getHotelAsync } from 'Redux/Slice/hotelSlice'
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
 import SearchBar from 'components/SearchBar/SearchBar'
+import SearchSection from 'layout/MainLayout/Header/SearchSection'
 import { debounce } from 'lodash'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -152,14 +153,8 @@ const Hotel = () => {
             />
             <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
                 <Box>
-                    <SearchBar
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        placeholder="Search..."
-                        size='small'
-                        color="secondary"
-                        onKeyPress={handleKeyPress}
-                    />
+                    <SearchSection value={searchTerm}
+                        handleSearchChange={handleSearchChange} />
 
                 </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addState} startIcon={<FaPlus size={14} />} >
