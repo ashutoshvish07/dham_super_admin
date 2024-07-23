@@ -28,7 +28,7 @@ const GuidForm = (props) => {
 
 
     useEffect(() => {
-        dispatch(getAllCityAsync())
+        dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
     }, [])
 
     const handleFileChange = (newFiles) => {

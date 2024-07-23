@@ -21,7 +21,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
 
     useEffect(() => {
         dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 10 }));
-        dispatch(getAllCityAsync());
+        dispatch(getAllCityAsync({ page: 1, page_size: 10 }));
         dispatch(getAllStateAsync({ page: 1, page_size: 10 }));
     }, [])
 
