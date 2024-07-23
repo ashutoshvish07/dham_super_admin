@@ -52,7 +52,7 @@ export const authSlice = createSlice({
             })
             .addCase(loginAsync.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.email = action.payload.email;
+                state.email = action?.payload?.email;
             })
             .addCase(loginAsync.rejected, (state, action) => {
                 state.status = 'failed';

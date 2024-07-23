@@ -74,15 +74,14 @@ const AuthLogin = ({ ...others }) => {
         onSubmit={(values, { setSubmitting, setErrors }) => {
           dispatch(loginAsync({ email: values.email, password: values.password }))
             .then((res) => {
-              console.log("res at AuthLogin", res)
-              if (res.payload.success) {
+              if (res?.payload?.success) {
                 navigate('/otp-verification')
               }
 
               setSubmitting(false);
             })
             .catch((error) => {
-              setErrors({ submit: error.message });
+              setErrors({ submit: error?.message });
               setSubmitting(false);
             });
         }}
@@ -99,11 +98,10 @@ const AuthLogin = ({ ...others }) => {
                 onBlur={handleBlur}
                 onChange={handleChange}
                 label="Email Address "
-                inputProps={{}}
               />
               {touched.email && errors.email && (
                 <FormHelperText error id="standard-weight-helper-text-email-login">
-                  {errors.email}
+                  {errors?.email}
                 </FormHelperText>
               )}
             </FormControl>
@@ -144,9 +142,9 @@ const AuthLogin = ({ ...others }) => {
                 Forgot Password?
               </Typography>
             </Stack>
-            {errors.submit && (
+            {errors?.submit && (
               <Box sx={{ mt: 3 }}>
-                <FormHelperText error>{errors.submit}</FormHelperText>
+                <FormHelperText error>{errors?.submit}</FormHelperText>
               </Box>
             )}
 
