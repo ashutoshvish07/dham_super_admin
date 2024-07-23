@@ -106,12 +106,12 @@ const AuthLogin = ({ ...others }) => {
               )}
             </FormControl>
 
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
+            <FormControl fullWidth error={Boolean(touched?.password && errors?.password)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-login"
                 type={showPassword ? 'text' : 'password'}
-                value={values.password}
+                value={values?.password}
                 name="password"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -131,9 +131,9 @@ const AuthLogin = ({ ...others }) => {
                 label="Password"
                 inputProps={{}}
               />
-              {touched.password && errors.password && (
+              {touched.password && errors?.password && (
                 <FormHelperText error id="standard-weight-helper-text-password-login">
-                  {errors.password}
+                  {errors?.password}
                 </FormHelperText>
               )}
             </FormControl>
