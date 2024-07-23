@@ -15,7 +15,6 @@ const AuthOTP = ({ ...others }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const email = useSelector((state) => state.auth.email);
-    console.log("email", email)
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -72,33 +71,10 @@ const AuthOTP = ({ ...others }) => {
                         </FormControl>
 
                         <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-                            {/* <InputLabel htmlFor="outlined-adornment-password-login">Enter OTP</InputLabel> */}
-                            {/* <OutlinedInput
-                                id="outlined-adornment-password-login"
-                                type={showPassword ? 'text' : 'password'}
-                                value={values.password}
-                                name="password"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                            size="large"
-                                        >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                label="Password"
-                                inputProps={{}}
-                            /> */}
                             <MuiOtpInput
                                 name="otp"
                                 autoFocus
+                                sx={{ gap: { xs: "2px", sm: "12px", md: "20px", lg: "24px" } }}
                                 value={values.otp}
                                 onChange={(newValue) => {
                                     handleChange({ target: { name: 'otp', value: newValue } });
