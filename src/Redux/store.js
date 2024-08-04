@@ -8,6 +8,7 @@ import locationSlice from './Slice/locationSlice';
 import hotelSlice from './Slice/hotelSlice';
 import guidSlice from './Slice/guidSlice';
 import advertisementSlice from './Slice/advertisementSlice';
+import blogSlice from './Slice/blogSlice';
 
 const authPersistConfig = {
     key: 'auth',
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
     location: locationSlice,
     hotel: hotelSlice,
     guid: guidSlice,
-    advertisement: advertisementSlice
+    advertisement: advertisementSlice,
+    blogs: blogSlice,
 
 });
 const persistConfig = {

@@ -3,7 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, StyledEngineProvider } from '@mui/material';
-
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 // routing
 import router from 'routes';
 
