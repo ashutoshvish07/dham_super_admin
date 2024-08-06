@@ -17,6 +17,20 @@ export const getblogsAsync = createAsyncThunk(
         }
     }
 )
+
+export const getblogsDataByIdAsync = createAsyncThunk(
+    'blogs/getblogsDataByIdAsync',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            let url = `/get-blog-by-id/${id}`
+            const response = await Axios.get(url)
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
 export const createblogsAsync = createAsyncThunk(
     'blogs/createblogsAsync',
     async (formData, { rejectWithValue }) => {
@@ -79,27 +93,44 @@ const blogsSlice = createSlice({
     name: 'blogs',
     initialState: {
         blogs: [],
-        status: false,
+        singleBlog: {},
+        loading: false,
         error: null,
     },
-    reducers: {},
+    reducers: {
+        clearSingleBlog: (state) => {
+            state.singleBlog = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             // Get Hotels
             .addCase(getblogsAsync.pending, (state) => {
-                state.status = true;
+                state.loading = true;
             })
             .addCase(getblogsAsync.fulfilled, (state, action) => {
-                state.status = false;
+                state.loading = false;
                 state.blogs = action.payload;
             })
             .addCase(getblogsAsync.rejected, (state, action) => {
-                state.status = false;
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(getblogsDataByIdAsync.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getblogsDataByIdAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.singleBlog = action.payload.data;
+            })
+            .addCase(getblogsDataByIdAsync.rejected, (state, action) => {
+                state.loading = false;
                 state.error = action.payload;
             })
 
 
     },
 });
+export const { clearSingleBlog } = blogsSlice.actions;
 
 export default blogsSlice.reducer;

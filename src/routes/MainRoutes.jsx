@@ -48,6 +48,10 @@ const MainRoutes = {
       element: <BlogForm />
     },
     {
+      path: '/edit-blogs/:id',
+      element: <BlogForm />
+    },
+    {
       path: '/nearby',
       element: <NearBy />
     },

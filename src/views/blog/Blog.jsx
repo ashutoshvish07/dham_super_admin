@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getblogsAsync } from 'Redux/Slice/blogSlice';
+import { getblogsAsync, updateblogsStatusAsync } from 'Redux/Slice/blogSlice';
 import DataTable from 'ui-component/DataTable/DataTable';
 
 const Blog = () => {
@@ -37,15 +37,18 @@ const Blog = () => {
         navigate('/create-blogs')
     }
 
-    const editAmenities = (id) => {
-        const aminity_data = amenities?.data.find(el => el._id === id)
-        setDialogTitle("Update Amenities");
-        // setDialogContent(<AmenitiesForm dialogProps={dialogProps} aminity_data={aminity_data} type="edit" />);
-        setDialogProps({ ...dialogProps, open: true });
+    const editBlog = (id) => {
+        navigate(`/edit-blogs/${id}`)
     }
 
     const deleteState = (id) => {
-        dispatch(deleteAmenitiesAsync({ id: id })).then(() => {
+        // dispatch(deleteAmenitiesAsync({ id: id })).then(() => {
+        //     dispatch(getblogsAsync({ page: 1, page_size: 10 }));
+        // })
+    }
+
+    const statusUpdate = (id) => {
+        dispatch(updateblogsStatusAsync({ id: id, })).then(() => {
             dispatch(getblogsAsync({ page: 1, page_size: 10 }));
         })
     }
@@ -60,7 +63,6 @@ const Blog = () => {
             headerName: 'Tags ',
             flex: 2,
         },
-
         {
             field: 'cityId',
             headerName: 'City ',
@@ -90,7 +92,7 @@ const Blog = () => {
             field: '_id',
             headerName: 'Action',
             flex: 2,
-            renderCell: (params) => GetTwoAction(params.value, editAmenities, deleteState)
+            renderCell: (params) => GetTwoAction(params.value, editBlog, null, statusUpdate)
         },
     ]
 
@@ -145,7 +147,7 @@ const Blog = () => {
                             },
                         },
                     }}
-                    rowCount={blogs?.count}
+                    rowCount={blogs?.count || 0}
                     paginationMode='server'
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}

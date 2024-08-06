@@ -15,13 +15,13 @@ import {
     IconButton,
 } from '@mui/material';
 import JoditEditor from 'jodit-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync } from 'Redux/Slice/locationSlice';
-import { createblogsAsync } from 'Redux/Slice/blogSlice';
+import { clearSingleBlog, createblogsAsync, getblogsDataByIdAsync, updateblogsAsync } from 'Redux/Slice/blogSlice';
 
 
 
@@ -29,31 +29,54 @@ import { createblogsAsync } from 'Redux/Slice/blogSlice';
 const BlogForm = (props) => {
     const { edit } = props
     const navigate = useNavigate()
-    const [content, setContent] = useState('');
+    const [files, setFiles] = useState([]);
+    const { singleBlog } = useSelector(state => state.blogs)
+    console.log("singleBlog", singleBlog)
+    const { cities: { cities }, } = useSelector(state => state.location)
+    const [content, setContent] = useState(singleBlog?.content || '');
+    const { id } = useParams()
+    const [values, setValues] = useState({
+        title: singleBlog?.title || '',
+        content: singleBlog?.content || '',
+        tags: singleBlog?.tags || [],
+        cityId: singleBlog?.cityId?.name || '',
+    });
 
-    const initialValues = {
-        title: '',
-        content: '',
-        tags: [],
-        cityId: '',
-    };
 
     const validationSchema = Yup.object().shape({
         title: Yup.string().required('Title is required'),
         tags: Yup.array().of(Yup.string()),
     });
 
-    const [files, setFiles] = useState([]);
 
-    const { cities: { cities }, } = useSelector(state => state.location);
 
 
     const dispatch = useDispatch()
 
-
     useEffect(() => {
-        dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
-    }, [])
+        dispatch(getAllCityAsync({ page: 1, page_size: 10 }));
+        if (id) {
+            dispatch(getblogsDataByIdAsync({ id }));
+        } else {
+            dispatch(clearSingleBlog());
+        }
+        return () => {
+            dispatch(clearSingleBlog());
+        };
+    }, [dispatch, id]);
+
+
+    // useEffect(() => {
+    //     if (singleBlog) {
+    //         debugger
+    //         setValues({
+    //             title: singleBlog.title || '',
+    //             content: singleBlog.content || '',
+    //             tags: singleBlog.tags || [],
+    //             cityId: singleBlog.cityId || '',
+    //         });
+    //     }
+    // }, [singleBlog]);
 
     const handleFileChange = (newFiles) => {
         setFiles(newFiles);
@@ -64,7 +87,6 @@ const BlogForm = (props) => {
     };
 
     const handleSubmit = (values, { setSubmitting }) => {
-        // const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
         const formData = new FormData();
         formData.append('title', values.title);
         formData.append('content', values?.content);
@@ -82,8 +104,9 @@ const BlogForm = (props) => {
         }
 
         dispatch(createblogsAsync(formData));
-
-        console.log('Form submitted:', formData);
+        if (id) {
+            dispatch(updateblogsAsync({ formData: formData, id: id }));
+        }
         setSubmitting(false);
     };
 
@@ -95,13 +118,13 @@ const BlogForm = (props) => {
                     <IoMdArrowRoundBack />
                 </IconButton>
                 <Typography variant="h2" gutterBottom>
-                    Create Blog Post
+                    {id ? 'Edit Blog Post' : 'Create Blog Post'}
                 </Typography>
             </Grid>
             <Box sx={{ margin: 'auto', paddingTop: 2 }}>
 
                 <Formik
-                    initialValues={initialValues}
+                    initialValues={values}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >

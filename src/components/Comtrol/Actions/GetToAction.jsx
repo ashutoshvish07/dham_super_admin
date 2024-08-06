@@ -3,8 +3,9 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { TfiMoreAlt } from "react-icons/tfi";
+import { FaCheckCircle } from "react-icons/fa";
 
-export const GetTwoAction = (id, edit, deletefn) => {
+export const GetTwoAction = (id, edit, deletefn, status) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -31,18 +32,25 @@ export const GetTwoAction = (id, edit, deletefn) => {
                 horizontal: 'left',
             }}
         >
-            <MenuItem onClick={() => edit(id)} >
+            {edit && <MenuItem onClick={() => edit(id)} >
                 <ListItemIcon size="small">
                     <FaEdit />
                 </ListItemIcon>
                 <ListItemText variant="body2" color="text.secondary">Edit</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => deletefn(id)} >
+            </MenuItem>}
+            {deletefn && <MenuItem onClick={() => deletefn(id)} >
                 <ListItemIcon size="small">
                     <RiDeleteBinLine />
                 </ListItemIcon>
                 <ListItemText variant="body2" color="text.secondary">Delete</ListItemText>
-            </MenuItem>
+            </MenuItem>}
+            {status && <MenuItem onClick={() => status(id)} >
+                <ListItemIcon size="small">
+                    <FaCheckCircle />
+                </ListItemIcon>
+                <ListItemText variant="body2" color="text.secondary">Publish</ListItemText>
+            </MenuItem>}
+
         </Menu>
     </Box>
 }
