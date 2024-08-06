@@ -19,7 +19,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/backend': {
-        target: 'https://dham-backend.onrender.com/backend/api/v1',
+        target: 'http://13.232.173.109:4000/backend/api/v1',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/backend/, '')
       }
