@@ -20,7 +20,6 @@ const ManageHotel = {
             icon: icons.FaHotel,
 
             children: [
-
                 {
                     id: 'hotels',
                     title: 'Hotels',
@@ -50,6 +49,14 @@ const ManageHotel = {
                     title: 'Aminities',
                     type: 'item',
                     url: 'pages/hotel/aminities',
+                    target: false,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'properties',
+                    title: 'Properties',
+                    type: 'item',
+                    url: 'pages/hotel/properties',
                     target: false,
                     breadcrumbs: false
                 },

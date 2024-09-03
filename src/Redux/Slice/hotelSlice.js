@@ -250,6 +250,40 @@ export const deleteRoomAsync = createAsyncThunk(
     }
 );
 
+export const createPropertiesAsync = createAsyncThunk(
+    'hotel/createPropertiesAsync',
+
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await Axios.post(`/create-property-type`, formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+)
+
+
+export const getAllPropertiesAsync = createAsyncThunk(
+    'hotel/getAllPropertiesAsync',
+    async ({ page, page_size, search }, { rejectWithValue }) => {
+        try {
+            let url = `/get-all-property-type?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`;
+            }
+            const response = await Axios.get(url);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+)
+
 
 
 const hotelSlice = createSlice({
@@ -259,6 +293,7 @@ const hotelSlice = createSlice({
         roomCategories: [],
         amenities: [],
         rooms: [],
+        properties: [],
         status: false,
         error: null,
     },
@@ -372,6 +407,29 @@ const hotelSlice = createSlice({
                 state.status = false;
             })
             .addCase(createRoomAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+            })
+            // Properties types
+            .addCase(createPropertiesAsync.pending, (state) => {
+                state.status = true;
+            })
+            .addCase(createPropertiesAsync.fulfilled, (state, action) => {
+                state.status = false;
+            })
+            .addCase(createPropertiesAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+            })
+            // Get All Properties
+            .addCase(getAllPropertiesAsync.pending, (state) => {
+                state.status = true;
+            })
+            .addCase(getAllPropertiesAsync.fulfilled, (state, action) => {
+                state.status = false;
+                state.properties = action.payload;
+            })
+            .addCase(getAllPropertiesAsync.rejected, (state, action) => {
                 state.status = false;
                 state.error = action.payload;
             })

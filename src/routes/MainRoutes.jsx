@@ -19,6 +19,7 @@ const Hotel = Loadable(lazy(() => import("views/pages/hotel/Hotel")))
 const RoomCategory = Loadable(lazy(() => import("views/pages/hotel/RoomCategories")))
 const Aminities = Loadable(lazy(() => import("views/pages/hotel/Aminities")))
 const HotleRooms = Loadable(lazy(() => import("views/pages/hotel/HotelRooms")))
+const Properties = Loadable(lazy(() => import("views/pages/hotel/Properties")))
 const GuidPage = Loadable(lazy(() => import('views/guid')));
 const NearBy = Loadable(lazy(() => import('views/NearBy/NearBy')));
 const Advertisement = Loadable(lazy(() => import('views/pages/advertisement/Advertisement')));
@@ -121,6 +122,15 @@ const MainRoutes = {
         {
           path: 'pages/hotel/aminities',
           element: <Aminities />,
+        }
+      ]
+    },
+    {
+      path: '/',
+      children: [
+        {
+          path: 'pages/hotel/properties',
+          element: <Properties />,
         }
       ]
     },
