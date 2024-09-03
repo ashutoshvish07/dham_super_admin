@@ -36,7 +36,7 @@ const State = (props) => {
 
     const editState = (id) => {
         const state_data = states?.states.find(el => el._id === id)
-        setDialogTitle("Update Country");
+        setDialogTitle("Update State");
         setDialogContent(<StateForm dialogProps={dialogProps} statedata={state_data} type="edit" />);
         setDialogProps({ ...dialogProps, open: true });
     }

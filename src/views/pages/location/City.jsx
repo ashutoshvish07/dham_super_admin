@@ -42,8 +42,9 @@ const City = () => {
     }
 
     const editCity = (id) => {
-        const cities_data = cities?.cities.find(el => el._id === id)
-        setDialogTitle("Edit Country");
+        const cities_data = cities?.cities.find(el => el.id === id)
+        setDialogTitle("Edit City");
+
         setDialogContent(<CityForm dialogProps={dialogProps} cities_data={cities_data} type="edit" />);
         setDialogProps({ ...dialogProps, open: true });
     }
@@ -61,7 +62,6 @@ const City = () => {
             width: 200,
             renderCell: (params) => {
                 return <img alt={params?.value?.Bucket} src={params?.value?.Url} height={140} width={80} />
-
             },
         },
         {
@@ -78,7 +78,7 @@ const City = () => {
             },
         },
         {
-            field: '_id',
+            field: 'id',
             headerName: 'Action',
             flex: 1,
             renderCell: (params) => GetTwoAction(params.value, editCity, deleteCity)
@@ -128,7 +128,6 @@ const City = () => {
                 <DataTable
                     data={cities?.cities}
                     columns={columns}
-                    getRowId={(row) => row._id}
                     loading={loading}
                     initialState={{
                         pagination: {
@@ -142,6 +141,7 @@ const City = () => {
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}
                     disableRowSelectionOnClick
+                    getRowId={(row) => row.id}
                 />
             </Paper>
         </div>

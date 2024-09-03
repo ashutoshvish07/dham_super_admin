@@ -1,8 +1,8 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { createStateAsync, getCountryBySuperAdminAsync, updateStateAsync } from 'Redux/Slice/locationSlice';
+import { Box, Button, FormControl, Grid, TextField } from '@mui/material';
+import { createStateAsync, getAllStateAsync, getCountryBySuperAdminAsync, updateStateAsync } from 'Redux/Slice/locationSlice';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { useFormik } from 'formik';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 const StateForm = (props) => {
@@ -15,20 +15,23 @@ const StateForm = (props) => {
         dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 100 }))
     }, []);
 
-
     const formik = useFormik({
         initialValues: {
-            country: statedata?.countryId?._id || '',
+            country: statedata?.countryId?.name || '',
             state: statedata?.name || "",
         },
         onSubmit: (values) => {
             if (type === "edit") {
-                dispatch(updateStateAsync({ state: values.state, countryId: values.country, stateId: statedata._id }))
+                dispatch(updateStateAsync({ state: values.state, countryId: values.country?._id, stateId: statedata._id })).then(() => {
+                    dispatch(getAllStateAsync({ page: 1, page_size: 10 }))
+                    dialogProps?.onClose();
+                })
             } else {
-                dispatch(createStateAsync({ state: values.state, countryId: values.country }))
+                dispatch(createStateAsync({ state: values.state, countryId: values.country?._id })).then(() => {
+                    dispatch(getAllStateAsync({ page: 1, page_size: 10 }))
+                    dialogProps?.onClose();
+                })
             }
-            dialogProps?.onClose();
-            dispatch(getAllStateAsync({ page: 1, page_size: 10 }))
         },
     });
     return (

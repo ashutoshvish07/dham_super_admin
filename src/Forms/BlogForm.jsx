@@ -13,6 +13,7 @@ import {
     Typography,
     Grid,
     IconButton,
+    TextareaAutosize,
 } from '@mui/material';
 import JoditEditor from 'jodit-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -22,6 +23,7 @@ import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync } from 'Redux/Slice/locationSlice';
 import { clearSingleBlog, createblogsAsync, getblogsDataByIdAsync, updateblogsAsync } from 'Redux/Slice/blogSlice';
+import { borderRadius } from '@mui/system';
 
 
 
@@ -39,6 +41,7 @@ const BlogForm = (props) => {
         title: singleBlog?.title || '',
         content: singleBlog?.content || '',
         tags: singleBlog?.tags || [],
+        shortNote: singleBlog?.shortNote || "",
         cityId: singleBlog?.cityId?.name || '',
     });
 
@@ -46,6 +49,7 @@ const BlogForm = (props) => {
     const validationSchema = Yup.object().shape({
         title: Yup.string().required('Title is required'),
         tags: Yup.array().of(Yup.string()),
+        shortNote: Yup.string().required('Short Note is required'),
     });
 
 
@@ -86,11 +90,12 @@ const BlogForm = (props) => {
         setFiles(files.filter(file => file !== fileToDelete));
     };
 
-    const handleSubmit = (values, { setSubmitting }) => {
+    const handleSubmit = (values, { setSubmitting, resetForm }) => {
         const formData = new FormData();
         formData.append('title', values.title);
         formData.append('content', values?.content);
-        formData.append('cityId', values.cityId?._id);
+        formData.append('cityId', values.cityId?.id);
+        formData.append('shortNote', values.shortNote)
         if (values.tags) {
             values.tags.map((file) => {
                 formData.append('tags[]', file);
@@ -103,11 +108,14 @@ const BlogForm = (props) => {
             });
         }
 
-        dispatch(createblogsAsync(formData));
         if (id) {
             dispatch(updateblogsAsync({ formData: formData, id: id }));
+        } else {
+            dispatch(createblogsAsync(formData))
+            setFiles([])
         }
         setSubmitting(false);
+        resetForm()
     };
 
 
@@ -122,7 +130,6 @@ const BlogForm = (props) => {
                 </Typography>
             </Grid>
             <Box sx={{ margin: 'auto', paddingTop: 2 }}>
-
                 <Formik
                     initialValues={values}
                     validationSchema={validationSchema}
@@ -194,6 +201,24 @@ const BlogForm = (props) => {
                                         color="secondary"
                                     />
                                 </Grid>
+                                <Grid item xs={12}>
+                                    <Field
+                                        as={TextareaAutosize}
+                                        color="secondary"
+                                        minRows={3}
+                                        style={{ width: '100%', padding: '8px', fontSize: '16px', borderRadius: "8px" }}
+                                        name="shortNote"
+                                        placeholder="Short Note"
+                                    />
+                                    {touched.shortNote && errors.shortNote && (
+                                        <Typography color="error" variant="caption">
+                                            {errors.shortNote}
+                                        </Typography>
+                                    )}
+                                </Grid>
+
+
+
                                 <Grid item xs={12}>
                                     <JoditEditor
                                         value={content}

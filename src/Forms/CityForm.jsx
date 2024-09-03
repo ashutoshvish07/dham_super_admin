@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 
 import { MdClose } from 'react-icons/md';
-import { createCityAsync, getAllStateAsync, updateCityAsync } from 'Redux/Slice/locationSlice';
+import { createCityAsync, getAllCityAsync, getAllStateAsync, updateCityAsync } from 'Redux/Slice/locationSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
@@ -25,13 +25,13 @@ const CityForm = (props) => {
     }, [])
     const formik = useFormik({
         initialValues: {
-            stateId: cities_data?.stateId?._id || '',
+            stateId: cities_data?.stateId?.name || '',
             name: cities_data?.name || '',
         },
         onSubmit: (values) => {
             const formData = new FormData()
             formData.append("name", values.name)
-            formData.append("stateId", values?.stateId?._id)
+            formData.append("stateId", type === 'edit' ? cities_data?.stateId._id : values?.stateId?._id)
 
 
             if (files) {
@@ -40,7 +40,7 @@ const CityForm = (props) => {
                 });
             }
             if (type === 'edit') {
-                dispatch(updateCityAsync({ city_id: cities_data?._id, formData: formData })).then(() => {
+                dispatch(updateCityAsync({ city_id: cities_data?.id, formData: formData })).then(() => {
                     dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
                     dialogProps?.onClose()
                 })
@@ -49,7 +49,6 @@ const CityForm = (props) => {
                 dispatch(createCityAsync(formData)).then(() => {
                     dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
                     dialogProps?.onClose()
-
                 })
             }
         },

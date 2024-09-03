@@ -39,9 +39,9 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             email: hotle_data?.email || "",
             mobile: hotle_data?.mobile || "",
             password: hotle_data?.password || "",
-            countryId: hotle_data?.countryId?._id || "",
-            stateId: hotle_data?.stateId?._id || "",
-            cityId: hotle_data?.cityId?._id || "",
+            countryId: hotle_data?.countryId?.name || "",
+            stateId: hotle_data?.stateId?.name || "",
+            cityId: hotle_data?.cityId?.name || "",
             address: hotle_data?.address || "",
             pincode: hotle_data?.pincode || "",
             price: hotle_data?.price || "",
@@ -70,9 +70,9 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             formData.append("pincode", values.pincode)
             formData.append("price", values.price)
             formData.append("offerPrice", values.offerPrice)
-            formData.append("countryId", values?.countryId?._id ? values?.countryId?._id : values?.countryId)
-            formData.append("stateId", values?.stateId?._id ? values?.stateId?._id : values?.stateId)
-            formData.append("cityId", values?.cityId?._id ? values?.cityId?._id : values?.cityId)
+            formData.append("countryId", hotle_data?.countryId?._id ? hotle_data?.countryId?._id : values?.countryId)
+            formData.append("stateId", hotle_data?.stateId?._id ? hotle_data?.stateId?._id : values?.stateId)
+            formData.append("cityId", hotle_data?.cityId?._id ? hotle_data?.cityId?._id : values?.cityId)
 
 
             if (files.length) {
@@ -165,7 +165,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="country-select"
                         name="countryId"
                         value={
-                            type === 'edit' ? countries?.countries?.find(c => c._id === hotle_data?.countryId?._id)?.name : formik.values.countryId
+                            formik.values.countryId
                         }
                         onChange={(newValue) => {
                             formik.setFieldValue('countryId', newValue || '');
@@ -185,7 +185,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="state-select"
                         name="stateId"
                         value={
-                            type === 'edit' ? states?.states?.find(c => c._id === hotle_data?.stateId?._id)?.name : formik.values.stateId
+                            formik.values.stateId
                         }
                         onChange={(newValue) => {
                             formik.setFieldValue('stateId', newValue || '');
@@ -206,7 +206,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="city-select"
                         name="cityId"
                         value={
-                            type === "edit" ? cities?.cities?.find(c => c._id === hotle_data?.cityId?._id)?.name : formik.values.cityId
+                            formik.values.cityId
                         }
                         onChange={(newValue) => {
                             formik.setFieldValue('cityId', newValue || '');
