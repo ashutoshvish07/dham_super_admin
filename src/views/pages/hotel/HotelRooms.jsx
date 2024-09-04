@@ -54,6 +54,12 @@ const HotelRooms = () => {
     const columns = [
 
         {
+            field: 'userId',
+            headerName: 'Hotel Name ',
+            renderCell: (params) => (params.value?.name),
+            flex: 1,
+        },
+        {
             field: 'area',
             headerName: 'Room Size ',
             flex: 1,

@@ -29,9 +29,9 @@ const HotelRoomForm = (props) => {
         const fetchData = async () => {
             try {
                 await Promise.all([
-                    dispatch(getAmenitiesAsync()),
-                    dispatch(getRoomCateAsync()),
-                    dispatch(getHotelAsync())
+                    dispatch(getAmenitiesAsync({ page: 1, page_size: 10 })),
+                    dispatch(getRoomCateAsync({ page: 1, page_size: 10 })),
+                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
                 ]);
             } catch (error) {
                 console.error('Error fetching data:', error);

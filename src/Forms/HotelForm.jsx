@@ -6,9 +6,16 @@ import {
     TextField,
     Grid,
     Box,
+    FormControl,
+    InputLabel,
+    Select,
+    OutlinedInput,
+    MenuItem,
+    Checkbox,
+    ListItemText,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { createHotelAsync, getHotelAsync, updateHotelAsync } from 'Redux/Slice/hotelSlice';
+import { createHotelAsync, getAllPropertiesAsync, getAmenitiesAsync, getHotelAsync, updateHotelAsync } from 'Redux/Slice/hotelSlice';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { getAllCityAsync, getAllStateAsync, getCountryBySuperAdminAsync } from 'Redux/Slice/locationSlice';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
@@ -17,13 +24,26 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const dispatch = useDispatch();
     const [files, setFiles] = useState([]);
     const { countries, states, cities, loading } = useSelector((state) => state.location);
-    console.log("countries", countries, hotle_data)
+    const { amenities, properties } = useSelector(state => state.hotel)
+    console.log(`hotleData`, hotle_data)
 
     useEffect(() => {
-        dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 10 }));
-        dispatch(getAllCityAsync({ page: 1, page_size: 10 }));
-        dispatch(getAllStateAsync({ page: 1, page_size: 10 }));
-    }, [])
+        const fetchData = async () => {
+            try {
+                await Promise.all([
+                    dispatch(getCountryBySuperAdminAsync({ page: 1, page_size: 10 })),
+                    dispatch(getAllCityAsync({ page: 1, page_size: 10 })),
+                    dispatch(getAllStateAsync({ page: 1, page_size: 10 })),
+                    dispatch(getAmenitiesAsync({ page: 1, page_size: 10 })),
+                    dispatch(getAllPropertiesAsync({ page: 1, page_size: 10 })),
+                ]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+
+    }, [dispatch])
 
     const handleFileChange = (newFiles) => {
         setFiles(newFiles);
@@ -42,23 +62,24 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             countryId: hotle_data?.countryId?.name || "",
             stateId: hotle_data?.stateId?.name || "",
             cityId: hotle_data?.cityId?.name || "",
+            propertyTypeId: hotle_data?.propertyTypeId || "",
             address: hotle_data?.address || "",
             pincode: hotle_data?.pincode || "",
+
             price: hotle_data?.price || "",
             offerPrice: hotle_data?.offerPrice || "",
+            amenities: hotle_data?.amenitiesId || [],
         },
         validationSchema: Yup.object({
             name: Yup.string().required('Required'),
             email: Yup.string().email('Invalid email').required('Required'),
             mobile: Yup.string().required('Required'),
             password: Yup.string(),
-            countryId: Yup.string().required('Required'),
-            stateId: Yup.string().required('Required'),
-            cityId: Yup.string().required('Required'),
             address: Yup.string().required('Required'),
             pincode: Yup.string().required('Required'),
             price: Yup.number().required('Required'),
             offerPrice: Yup.number().required('Required'),
+
         }),
         onSubmit: (values) => {
             const formData = new FormData();
@@ -70,14 +91,21 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             formData.append("pincode", values.pincode)
             formData.append("price", values.price)
             formData.append("offerPrice", values.offerPrice)
-            formData.append("countryId", hotle_data?.countryId?._id ? hotle_data?.countryId?._id : values?.countryId)
-            formData.append("stateId", hotle_data?.stateId?._id ? hotle_data?.stateId?._id : values?.stateId)
-            formData.append("cityId", hotle_data?.cityId?._id ? hotle_data?.cityId?._id : values?.cityId)
+            formData.append("propertyTypeId", hotle_data?.propertyTypeId?.id ? hotle_data?.propertyTypeId?.id : values?.propertyTypeId?.id)
+            formData.append("countryId", hotle_data?.countryId?._id ? hotle_data?.countryId?._id : values?.countryId?._id)
+            formData.append("stateId", hotle_data?.stateId?._id ? hotle_data?.stateId?._id : values?.stateId?._id)
+            formData.append("cityId", hotle_data?.cityId?._id ? hotle_data?.cityId?._id : values?.cityId?.id)
 
 
             if (files.length) {
                 files.forEach((file, index) => {
                     formData.append(`files[]`, file);
+                });
+            }
+
+            if (values.amenities) {
+                values.amenities.forEach((amenity) => {
+                    formData.append('amenitiesId[]', amenity._id);
                 });
             }
 
@@ -199,7 +227,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-
                     <AutoComplete
                         options={cities?.cities || []}
                         label="Select City"
@@ -226,6 +253,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="pincode"
                         name="pincode"
                         label="Pincode"
+                        type='number'
                         value={formik.values?.pincode}
                         onChange={formik.handleChange}
                         error={formik.touched.pincode && Boolean(formik.errors.pincode)}
@@ -238,6 +266,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="price"
                         name="price"
                         label="Price"
+                        type='number'
                         value={formik.values?.price}
                         onChange={formik.handleChange}
                         error={formik.touched.price && Boolean(formik.errors.price)}
@@ -251,11 +280,54 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="offerPrice"
                         name="offerPrice"
                         label="Offer Price"
+                        type='number'
                         value={formik.values?.offerPrice}
                         onChange={formik.handleChange}
                         error={formik.touched.offerPrice && Boolean(formik.errors.offerPrice)}
                         helperText={formik.touched.offerPrice && formik.errors.offerPrice}
                     />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <AutoComplete
+                        options={properties?.propertyType || []}
+                        label="Select Property Type"
+                        id="property-select"
+                        name="propertyTypeId"
+                        value={
+                            formik.values.propertyTypeId
+                        }
+                        onChange={(newValue) => {
+                            formik.setFieldValue('propertyTypeId', newValue || '');
+                        }}
+                        error={formik.touched.propertyTypeId && Boolean(formik.errors.propertyTypeId)}
+                        helperText={formik.touched.propertyTypeId && formik.errors.propertyTypeId}
+                        required
+                        optionKey="_id"
+                        optionLabel="name"
+                        color="secondary"
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth color='secondary'>
+                        <InputLabel id="amenities-label">Amenities</InputLabel>
+                        <Select
+                            labelId="amenities-label"
+                            id="amenities"
+                            name="amenities"
+                            multiple
+                            value={formik.values.amenities}
+                            onChange={(event) => formik.setFieldValue('amenities', event.target.value)}
+                            input={<OutlinedInput label="Amenities" />}
+                            renderValue={(selected) => selected.map((item) => item.name).join(', ')}
+                        >
+                            {amenities?.data?.map((amenity) => (
+                                <MenuItem key={amenity._id} value={amenity}>
+                                    <Checkbox checked={formik.values.amenities.some((item) => item._id === amenity._id)} />
+                                    <ListItemText primary={amenity.name} />
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Grid>
 
                 <Grid item xs={12}>
@@ -265,6 +337,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         id="address"
                         name="address"
                         label="Address"
+                        minRows={3}
                         value={formik.values?.address}
                         onChange={formik.handleChange}
                         error={formik.touched?.address && Boolean(formik.errors?.address)}
