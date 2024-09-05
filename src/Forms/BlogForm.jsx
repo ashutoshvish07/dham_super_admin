@@ -29,20 +29,17 @@ import { borderRadius } from '@mui/system';
 
 
 const BlogForm = (props) => {
-    const { edit } = props
     const navigate = useNavigate()
     const [files, setFiles] = useState([]);
-    const { singleBlog } = useSelector(state => state.blogs)
-    console.log("singleBlog", singleBlog)
     const { cities: { cities }, } = useSelector(state => state.location)
-    const [content, setContent] = useState(singleBlog?.content || '');
+    const [content, setContent] = useState('');
     const { id } = useParams()
     const [values, setValues] = useState({
-        title: singleBlog?.title || '',
-        content: singleBlog?.content || '',
-        tags: singleBlog?.tags || [],
-        shortNote: singleBlog?.shortNote || "",
-        cityId: singleBlog?.cityId?.name || '',
+        title: '',
+        content: '',
+        tags: [],
+        shortNote: "",
+        cityId: '',
     });
 
 
@@ -60,7 +57,20 @@ const BlogForm = (props) => {
     useEffect(() => {
         dispatch(getAllCityAsync({ page: 1, page_size: 10 }));
         if (id) {
-            dispatch(getblogsDataByIdAsync({ id }));
+            dispatch(getblogsDataByIdAsync({ id })).then((result) => {
+                const { data } = result?.payload;
+                console.log("result: blogForm ", data);
+                setValues({
+                    title: data?.title,
+                    content: data?.content,
+                    tags: data?.tags || [],
+                    shortNote: data?.shortNote,
+                    cityId: data?.cityId,
+                })
+                setContent(data?.content)
+            }).catch((err) => {
+                console.log("error: ", err);
+            });
         } else {
             dispatch(clearSingleBlog());
         }
@@ -69,18 +79,6 @@ const BlogForm = (props) => {
         };
     }, [dispatch, id]);
 
-
-    // useEffect(() => {
-    //     if (singleBlog) {
-    //         debugger
-    //         setValues({
-    //             title: singleBlog.title || '',
-    //             content: singleBlog.content || '',
-    //             tags: singleBlog.tags || [],
-    //             cityId: singleBlog.cityId || '',
-    //         });
-    //     }
-    // }, [singleBlog]);
 
     const handleFileChange = (newFiles) => {
         setFiles(newFiles);
@@ -94,7 +92,7 @@ const BlogForm = (props) => {
         const formData = new FormData();
         formData.append('title', values.title);
         formData.append('content', values?.content);
-        formData.append('cityId', values.cityId?.id);
+        formData.append('cityId', values.cityId?._id ? values.cityId?._id : values.cityId?.id);
         formData.append('shortNote', values.shortNote)
         if (values.tags) {
             values.tags.map((file) => {
@@ -109,10 +107,21 @@ const BlogForm = (props) => {
         }
 
         if (id) {
-            dispatch(updateblogsAsync({ formData: formData, id: id }));
+            dispatch(updateblogsAsync({ formData: formData, id: id })).then((res) => {
+                const { data } = res?.payload;
+                if (data) {
+                    navigate('/blogs')
+                }
+                setFiles([])
+            })
         } else {
-            dispatch(createblogsAsync(formData))
-            setFiles([])
+            dispatch(createblogsAsync(formData)).then((res) => {
+                const { data } = res?.payload;
+                if (data.length) {
+                    navigate('/blogs')
+                }
+                setFiles([])
+            })
         }
         setSubmitting(false);
         resetForm()
@@ -132,6 +141,7 @@ const BlogForm = (props) => {
             <Box sx={{ margin: 'auto', paddingTop: 2 }}>
                 <Formik
                     initialValues={values}
+                    enableReinitialize
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
