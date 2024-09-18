@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getblogsAsync, updateblogsStatusAsync } from 'Redux/Slice/blogSlice';
+import { deleteblogsAsync, getblogsAsync, updateblogsStatusAsync } from 'Redux/Slice/blogSlice';
 import DataTable from 'ui-component/DataTable/DataTable';
 
 const Blog = () => {
@@ -41,10 +41,10 @@ const Blog = () => {
         navigate(`/edit-blogs/${id}`)
     }
 
-    const deleteState = (id) => {
-        // dispatch(deleteAmenitiesAsync({ id: id })).then(() => {
-        //     dispatch(getblogsAsync({ page: 1, page_size: 10 }));
-        // })
+    const deleteBlog = (id) => {
+        dispatch(deleteblogsAsync({ id: id })).then(() => {
+            dispatch(getblogsAsync({ page: 1, page_size: 10 }));
+        })
     }
 
     const statusUpdate = (id) => {
@@ -92,7 +92,7 @@ const Blog = () => {
             field: '_id',
             headerName: 'Action',
             flex: 2,
-            renderCell: (params) => GetTwoAction(params.value, editBlog, null, statusUpdate)
+            renderCell: (params) => GetTwoAction(params.value, editBlog, deleteBlog, statusUpdate)
         },
     ]
 

@@ -63,18 +63,20 @@ export const updateblogsAsync = createAsyncThunk(
         }
     }
 )
-// export const deleteblogsAsync = createAsyncThunk(
-//     'blogs/deleteblogsAsync',
-//     async ({ id }, { rejectWithValue }) => {
-//         try {
-//             const response = await Axios.delete(`/delete-blogs/${id}`)
-//             return response.data;
 
-//         } catch (err) {
-//             return rejectWithValue(err.message);
-//         }
-//     }
-// )
+export const deleteblogsAsync = createAsyncThunk(
+    'blogs/deleteblogsAsync',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-blog/${id}`)
+            return response.data;
+
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
 export const updateblogsStatusAsync = createAsyncThunk(
     'blogs/updateblogsStatusAsync',
     async ({ id }, { rejectWithValue }) => {

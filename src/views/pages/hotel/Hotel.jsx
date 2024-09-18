@@ -157,7 +157,7 @@ const Hotel = () => {
                 <DataTable
                     data={hotels?.hotels}
                     columns={columns}
-                    getRowId={(row) => row._id}
+                    getRowId={(row) => row._id ? row._id : row.id}
                     loading={loading}
                     initialState={{
                         pagination: {

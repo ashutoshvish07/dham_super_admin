@@ -113,14 +113,18 @@ const BlogForm = (props) => {
                     navigate('/blogs')
                 }
                 setFiles([])
+                setContent('')
             })
         } else {
             dispatch(createblogsAsync(formData)).then((res) => {
+
+
                 const { data } = res?.payload;
-                if (data.length) {
+                if (data) {
                     navigate('/blogs')
                 }
                 setFiles([])
+                setContent('')
             })
         }
         setSubmitting(false);

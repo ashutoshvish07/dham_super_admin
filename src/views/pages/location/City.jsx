@@ -141,7 +141,7 @@ const City = () => {
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}
                     disableRowSelectionOnClick
-                    getRowId={(row) => row.id}
+                    getRowId={(row) => row._id ? row._id : row.id}
                 />
             </Paper>
         </div>

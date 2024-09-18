@@ -272,6 +272,7 @@ export const getAllPropertiesAsync = createAsyncThunk(
     'hotel/getAllPropertiesAsync',
     async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
+            debugger
             let url = `/get-all-property-type?page=${page}&page_size=${page_size}`
             if (search) {
                 url += `&search=${search}`;
