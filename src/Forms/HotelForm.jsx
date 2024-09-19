@@ -22,7 +22,7 @@ import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 
 const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const dispatch = useDispatch();
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState(hotle_data?.files || []);
     const { countries, states, cities, loading } = useSelector((state) => state.location);
     const { amenities, properties } = useSelector(state => state.hotel)
     console.log(`hotleData`, hotle_data)
@@ -52,7 +52,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const handleDeleteFile = (fileToDelete) => {
         setFiles(files.filter(file => file !== fileToDelete));
     };
-
+    debugger
     const formik = useFormik({
         initialValues: {
             name: hotle_data?.name || "",
@@ -62,24 +62,47 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             countryId: hotle_data?.countryId?.name || "",
             stateId: hotle_data?.stateId?.name || "",
             cityId: hotle_data?.cityId?.name || "",
-            propertyTypeId: hotle_data?.propertyTypeId || "",
+            propertyTypeId: hotle_data?.propertyTypeId?._id || "",
             address: hotle_data?.address || "",
             pincode: hotle_data?.pincode || "",
-
             price: hotle_data?.price || "",
             offerPrice: hotle_data?.offerPrice || "",
             amenities: hotle_data?.amenitiesId || [],
         },
         validationSchema: Yup.object({
-            name: Yup.string().required('Required'),
-            email: Yup.string().email('Invalid email').required('Required'),
-            mobile: Yup.string().required('Required'),
-            password: Yup.string(),
-            address: Yup.string().required('Required'),
-            pincode: Yup.string().required('Required'),
-            price: Yup.number().required('Required'),
-            offerPrice: Yup.number().required('Required'),
+            name: Yup.string()
+                .min(2, 'Name must be at least 2 characters')
+                .max(50, 'Name cannot exceed 50 characters')
+                .required('Name is required'),
 
+            email: Yup.string()
+                .email('Invalid email format')
+                .required('Email is required'),
+
+            mobile: Yup.string()
+                .matches(/^[0-9]{10}$/, 'Mobile number must be exactly 10 digits')
+                .required('Mobile number is required'),
+
+            password: Yup.string()
+                .min(8, 'Password must be at least 8 characters')
+                .max(20, 'Password cannot exceed 20 characters'),
+
+            address: Yup.string()
+                .min(10, 'Address must be at least 10 characters')
+                .required('Address is required'),
+
+            pincode: Yup.string()
+                .matches(/^[1-9][0-9]{5}$/, 'Pincode must be a valid 6-digit number')
+                .required('Pincode is required'),
+
+            price: Yup.number()
+                .min(1, 'Price must be greater than 0')
+                .required('Price is required'),
+
+            offerPrice: Yup.number()
+                .min(1, 'Offer price must be greater than 0')
+                .lessThan(Yup.ref('price'), 'Offer price must be less than the original price')
+                .required('Offer price is required'),
         }),
         onSubmit: (values) => {
             const formData = new FormData();
@@ -91,7 +114,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             formData.append("pincode", values.pincode)
             formData.append("price", values.price)
             formData.append("offerPrice", values.offerPrice)
-            formData.append("propertyTypeId", hotle_data?.propertyTypeId?.id ? hotle_data?.propertyTypeId?.id : values?.propertyTypeId?.id)
+            formData.append("propertyTypeId", hotle_data?.propertyTypeId?._id ? hotle_data?.propertyTypeId?._id : values?.propertyTypeId?.id)
             formData.append("countryId", hotle_data?.countryId?._id ? hotle_data?.countryId?._id : values?.countryId?._id)
             formData.append("stateId", hotle_data?.stateId?._id ? hotle_data?.stateId?._id : values?.stateId?._id)
             formData.append("cityId", hotle_data?.cityId?._id ? hotle_data?.cityId?._id : values?.cityId?.id)
@@ -110,12 +133,14 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             }
 
             if (type === "edit") {
-                dispatch(updateHotelAsync({ formData, id: hotle_data?._id }));
-                dispatch(getHotelAsync({ page: 1, page_size: 10 }))
+                dispatch(updateHotelAsync({ formData, id: hotle_data?._id })).then(() => {
+                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
+                })
                 dialogProps?.onClose();
             } else {
-                dispatch(createHotelAsync(formData));
-                dispatch(getHotelAsync({ page: 1, page_size: 10 }))
+                dispatch(createHotelAsync(formData)).then(() => {
+                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
+                })
                 dialogProps?.onClose();
             }
         },

@@ -42,22 +42,28 @@ const ImageUpload = ({ files, setFiles, deleteFile, multiple = true }) => {
                 </Button>
             </label>
             <ImageList rowHeight={180} cols={3}>
-                {files.map((file, index) => (
-                    <ImageListItem key={index}>
-                        <img
-                            src={URL.createObjectURL(file)}
-                            alt={`uploaded ${index}`}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                        <ImageListItemBar
-                            actionIcon={
-                                <IconButton onClick={() => handleDelete(file)}>
-                                    <MdClose style={{ color: 'white' }} />
-                                </IconButton>
-                            }
-                        />
-                    </ImageListItem>
-                ))}
+                {files.map((file, index) => {
+                    const imageUrl = file.Url ? file.Url : URL.createObjectURL(file)
+
+                    return (
+                        <ImageListItem key={index}>
+                            <img
+                                src={imageUrl}
+                                alt={`uploaded ${index}`}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                            <ImageListItemBar
+                                actionIcon={
+                                    <IconButton onClick={() => handleDelete(file)}>
+                                        <MdClose style={{ color: 'white' }} />
+                                    </IconButton>
+                                }
+                            />
+                        </ImageListItem>
+                    )
+                }
+
+                )}
             </ImageList>
         </Box>
     );

@@ -25,7 +25,7 @@ const NearBy = Loadable(lazy(() => import('views/NearBy/NearBy')));
 const Advertisement = Loadable(lazy(() => import('views/pages/advertisement/Advertisement')));
 const Blog = Loadable(lazy(() => import('views/blog/Blog')));
 const BlogForm = Loadable(lazy(() => import('Forms/BlogForm')));
-
+const EventTours = Loadable(lazy(() => import("views/pages/EventTour/EventTour")))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -44,7 +44,8 @@ const MainRoutes = {
     {
       path: '/blogs',
       element: <Blog />
-    }, {
+    },
+    {
       path: '/create-blogs',
       element: <BlogForm />
     },
@@ -61,6 +62,10 @@ const MainRoutes = {
       element: <Advertisement />
     },
     {
+      path: '/event-tours',
+      element: <EventTours />
+    },
+    {
       path: 'dashboard',
       children: [
         {
@@ -69,6 +74,7 @@ const MainRoutes = {
         }
       ]
     },
+
     {
       path: '/',
       children: [
