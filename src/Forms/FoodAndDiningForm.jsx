@@ -7,8 +7,7 @@ import * as Yup from 'yup';
 
 
 const FoodAndDiningForm = (props) => {
-    const { dialogProps, guid_data, edit } = props;
-
+    const { dialogProps, data, edit } = props;
 
     const dispatch = useDispatch()
 
@@ -20,7 +19,7 @@ const FoodAndDiningForm = (props) => {
 
     const formik = useFormik({
         initialValues: {
-            name: guid_data?.name || '',
+            name: data?.name || '',
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
@@ -29,7 +28,7 @@ const FoodAndDiningForm = (props) => {
             formData.append("name", values.name)
 
             if (edit) {
-                dispatch(updateFoodAndDiningAsync({ formData: formData, id: guid_data?._id, })).then(() => {
+                dispatch(updateFoodAndDiningAsync({ formData: formData, id: data?._id, })).then(() => {
                     dispatch(getAllFoodAndDiningAsync({ page: 1, page_size: 10 }))
                 })
             }

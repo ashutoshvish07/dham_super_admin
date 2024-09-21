@@ -39,9 +39,9 @@ const FoodAndDining = () => {
     }
 
     const editAmenities = (id) => {
-        const aminity_data = foodAndDining?.data.find(el => el._id === id)
+        const data = foodAndDining?.data.find(el => el._id === id)
         setDialogTitle("Update Food and Dining");
-        setDialogContent(<FoodAndDiningForm dialogProps={dialogProps} aminity_data={aminity_data} type="edit" />);
+        setDialogContent(<FoodAndDiningForm dialogProps={dialogProps} data={data} type="edit" />);
         setDialogProps({ ...dialogProps, open: true });
     }
 
