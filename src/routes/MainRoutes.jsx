@@ -26,6 +26,7 @@ const Advertisement = Loadable(lazy(() => import('views/pages/advertisement/Adve
 const Blog = Loadable(lazy(() => import('views/blog/Blog')));
 const BlogForm = Loadable(lazy(() => import('Forms/BlogForm')));
 const EventTours = Loadable(lazy(() => import("views/pages/EventTour/EventTour")))
+const FoodAndDining = Loadable(lazy(() => import("views/pages/hotel/FoodAndDining")))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -79,7 +80,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/location/country',
+          path: '/location/country',
           element: <Country />,
         }
       ]
@@ -89,7 +90,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/location/state',
+          path: '/location/state',
           element: <State />,
         }
       ]
@@ -99,7 +100,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/location/city',
+          path: '/location/city',
           element: <City />,
         }
       ]
@@ -108,7 +109,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/hotel/hotels',
+          path: '/hotel/hotels',
           element: <Hotel />,
         }
       ]
@@ -117,7 +118,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/hotel/roomcategory',
+          path: '/hotel/roomcategory',
           element: <RoomCategory />,
         }
       ]
@@ -126,7 +127,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/hotel/aminities',
+          path: '/hotel/aminities',
           element: <Aminities />,
         }
       ]
@@ -135,7 +136,7 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/hotel/properties',
+          path: '/hotel/properties',
           element: <Properties />,
         }
       ]
@@ -144,8 +145,17 @@ const MainRoutes = {
       path: '/',
       children: [
         {
-          path: 'pages/hotel/rooms',
+          path: '/hotel/rooms',
           element: <HotleRooms />,
+        }
+      ]
+    },
+    {
+      path: '/',
+      children: [
+        {
+          path: '/hotel/food-and-dining',
+          element: <FoodAndDining />,
         }
       ]
     },

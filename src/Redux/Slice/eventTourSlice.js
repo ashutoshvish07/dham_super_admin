@@ -6,7 +6,7 @@ export const geteventTourAsync = createAsyncThunk(
     'eventtour/geteventTourAsync',
     async ({ page, page_size, search }, { rejectWithValue }) => {
         try {
-            let url = `/get-blog-by-admin?page=${page}&page_size=${page_size}`
+            let url = `/all-events-tours?page=${page}&page_size=${page_size}`
             if (search) {
                 url += `&search=${search}`;
             }
@@ -35,7 +35,7 @@ export const createeventtourAsync = createAsyncThunk(
     'eventtour/createeventTourAsync',
     async (formData, { rejectWithValue }) => {
         try {
-            const response = await Axios.post(`/create-blog`, formData, {
+            const response = await Axios.post(`/create-tour-event`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -79,7 +79,7 @@ export const deleteeventTourAsync = createAsyncThunk(
 
 
 const eventTourSlice = createSlice({
-    name: 'event',
+    name: 'eventtours',
     initialState: {
         eventTour: [],
         loading: false,

@@ -52,7 +52,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const handleDeleteFile = (fileToDelete) => {
         setFiles(files.filter(file => file !== fileToDelete));
     };
-    debugger
     const formik = useFormik({
         initialValues: {
             name: hotle_data?.name || "",

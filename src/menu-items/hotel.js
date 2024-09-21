@@ -11,20 +11,18 @@ const icons = {
 const ManageHotel = {
     id: 'hotel',
     type: 'group',
-
     children: [
         {
-            id: 'hotelmanagement',
+            id: 'authentication',
             title: 'Hotel Management',
             type: 'collapse',
             icon: icons.FaHotel,
-
             children: [
                 {
                     id: 'hotels',
                     title: 'Hotels',
                     type: 'item',
-                    url: '/pages/hotel/hotels',
+                    url: 'hotel/hotels',
                     target: false,
                     breadcrumbs: false,
                 },
@@ -32,7 +30,7 @@ const ManageHotel = {
                     id: 'rooms',
                     title: 'Hotel Rooms',
                     type: 'item',
-                    url: 'pages/hotel/rooms',
+                    url: 'hotel/rooms',
                     target: false,
                     breadcrumbs: false
                 },
@@ -40,7 +38,7 @@ const ManageHotel = {
                     id: 'roomscategories',
                     title: 'Room Categories',
                     type: 'item',
-                    url: 'pages/hotel/roomcategory',
+                    url: 'hotel/roomcategory',
                     target: false,
                     breadcrumbs: false
                 },
@@ -48,7 +46,7 @@ const ManageHotel = {
                     id: 'aminities',
                     title: 'Aminities',
                     type: 'item',
-                    url: 'pages/hotel/aminities',
+                    url: 'hotel/aminities',
                     target: false,
                     breadcrumbs: false
                 },
@@ -56,7 +54,15 @@ const ManageHotel = {
                     id: 'properties',
                     title: 'Properties',
                     type: 'item',
-                    url: 'pages/hotel/properties',
+                    url: 'hotel/properties',
+                    target: false,
+                    breadcrumbs: false
+                },
+                {
+                    id: 'foodanddining',
+                    title: 'Food and Dining',
+                    type: 'item',
+                    url: 'hotel/food-and-dining',
                     target: false,
                     breadcrumbs: false
                 },

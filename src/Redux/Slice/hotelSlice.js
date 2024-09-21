@@ -284,6 +284,67 @@ export const getAllPropertiesAsync = createAsyncThunk(
     }
 )
 
+export const createFoodandDiningAsync = createAsyncThunk(
+    'hotel/createFoodAndDiningAsync',
+    async (formData, { rejectWithValue }) => {
+        try {
+            const response = await Axios.post(`/create-food-and-dining`, formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data
+
+        } catch (error) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+)
+
+export const updateFoodAndDiningAsync = createAsyncThunk(
+    'hotel/updateFoodAndDiningAsync',
+    async ({ id, formData }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.put(`/update-food-and-dining/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(err.response.data);
+        }
+    })
+
+
+export const getAllFoodAndDiningAsync = createAsyncThunk(
+    'hotel/getAllFoodAndDiningAsync',
+    async ({ page, page_size, search }, { rejectWithValue }) => {
+        try {
+            let url = `/get-food-and-dining?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`;
+            }
+            const response = await Axios.get(url);
+            return response.data;
+
+        } catch (error) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+)
+
+
+export const deleteFoodAndDiningAsync = createAsyncThunk(
+    'hotel/deleteFoodAndDiningAsync',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.delete(`/delete-food-and-dining/${id}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(err.response.data);
+        }
+    })
 
 
 const hotelSlice = createSlice({
@@ -294,8 +355,10 @@ const hotelSlice = createSlice({
         amenities: [],
         rooms: [],
         properties: [],
+        foodAndDining: [],
         status: false,
         error: null,
+        loading: false,
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -432,6 +495,61 @@ const hotelSlice = createSlice({
             .addCase(getAllPropertiesAsync.rejected, (state, action) => {
                 state.status = false;
                 state.error = action.payload;
+            })
+            // Create Food and Dining
+            .addCase(createFoodandDiningAsync.pending, (state) => {
+                state.status = true;
+                state.loading = true;
+            })
+            .addCase(createFoodandDiningAsync.fulfilled, (state, action) => {
+                state.status = false;
+                state.loading = false;
+            })
+            .addCase(createFoodandDiningAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+                state.loading = false;
+            })
+            // Update Food and Dining
+            .addCase(updateFoodAndDiningAsync.pending, (state) => {
+                state.status = true;
+            })
+            .addCase(updateFoodAndDiningAsync.fulfilled, (state, action) => {
+                state.status = false;
+                state.loading = false;
+            })
+            .addCase(updateFoodAndDiningAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+                state.loading = false;
+            })
+            // Delete Food and Dining
+            .addCase(deleteFoodAndDiningAsync.pending, (state) => {
+                state.status = true;
+            })
+            .addCase(deleteFoodAndDiningAsync.fulfilled, (state, action) => {
+                state.status = false;
+                state.loading = false;
+            })
+            .addCase(deleteFoodAndDiningAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+                state.loading = false;
+            })
+            // Get Food and Dining
+            .addCase(getAllFoodAndDiningAsync.pending, (state) => {
+                state.status = true;
+                state.loading = true;
+            })
+            .addCase(getAllFoodAndDiningAsync.fulfilled, (state, action) => {
+                state.status = false;
+                state.foodAndDining = action.payload;
+                state.loading = false;
+            })
+            .addCase(getAllFoodAndDiningAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+                state.loading = false;
             })
 
     },

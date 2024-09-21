@@ -21,7 +21,7 @@ const pages = {
           id: 'country',
           title: 'Country',
           type: 'item',
-          url: '/pages/location/country',
+          url: '/location/country',
           target: false,
           breadcrumbs: false
         },
@@ -29,7 +29,7 @@ const pages = {
           id: 'state',
           title: 'State',
           type: 'item',
-          url: '/pages/location/state',
+          url: '/location/state',
           target: false,
           breadcrumbs: false
         },
@@ -37,7 +37,7 @@ const pages = {
           id: 'city',
           title: 'City',
           type: 'item',
-          url: '/pages/location/city',
+          url: '/location/city',
           target: false,
           breadcrumbs: false
         },

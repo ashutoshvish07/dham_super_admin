@@ -21,7 +21,7 @@ import * as Yup from 'yup';
 
 const HotelRoomForm = (props) => {
     const { dialogProps, room_data, type } = props
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState(room_data?.files || []);
     const { hotels, roomCategories, amenities } = useSelector(state => state.hotel)
     const dispatch = useDispatch()
 

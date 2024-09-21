@@ -10,6 +10,7 @@ import { FaPlus, FaSearch } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import { debounce } from 'lodash';
 import DataTable from 'ui-component/DataTable/DataTable'
+import { geteventTourAsync } from 'Redux/Slice/eventTourSlice'
 
 const EventTour = () => {
     const [dialogTitle, setDialogTitle] = useState("");
@@ -29,11 +30,11 @@ const EventTour = () => {
 
 
 
-    const { nearBy, loading, status, error } = useSelector((state) => state.location)
+    const { eventTour, loading, status, error } = useSelector((state) => state?.eventTour)
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getNearByAsync({ page: 1, page_size: 10 }))
+        dispatch(geteventTourAsync({ page: 1, page_size: 10 }))
     }, [dispatch])
 
     const addnearBY = () => {
@@ -144,7 +145,7 @@ const EventTour = () => {
             </Box>
             <Paper>
                 <DataTable
-                    data={nearBy?.nearbies}
+                    data={eventTour?.nearbies}
                     columns={columns}
                     getRowId={(row) => row._id}
                     loading={loading}
@@ -155,7 +156,7 @@ const EventTour = () => {
                             },
                         },
                     }}
-                    rowCount={nearBy?.count}
+                    rowCount={eventTour?.count}
                     paginationMode="server"
                     onPaginationModelChange={onChangeCount}
                     pageSizeOptions={[10]}
