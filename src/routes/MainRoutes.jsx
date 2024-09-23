@@ -27,7 +27,8 @@ const Blog = Loadable(lazy(() => import('views/blog/Blog')));
 const BlogForm = Loadable(lazy(() => import('Forms/BlogForm')));
 const EventTours = Loadable(lazy(() => import("views/pages/EventTour/EventTour")))
 const FoodAndDining = Loadable(lazy(() => import("views/pages/hotel/FoodAndDining")))
-
+const HotelFrom = Loadable(lazy(() => import("Forms/HotelForm")))
+const EventFrom = Loadable(lazy(() => import("Forms/EventTourForm")))
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -66,6 +67,14 @@ const MainRoutes = {
       path: '/event-tours',
       element: <EventTours />
     },
+    {
+      path: '/event-tours/create',
+      element: <EventFrom />
+    }, {
+      path: '/event-tours/edit/:id',
+      element: <EventFrom />
+    },
+
     {
       path: 'dashboard',
       children: [
@@ -114,6 +123,24 @@ const MainRoutes = {
         }
       ]
     },
+    {
+      path: '/',
+      children: [
+        {
+          path: '/hotel/hotels/create',
+          element: <HotelFrom />,
+        }
+      ]
+    }, {
+      path: '/',
+      children: [
+        {
+          path: '/hotel/hotels/edit/:id',
+          element: <HotelFrom />,
+        }
+      ]
+    },
+
     {
       path: '/',
       children: [

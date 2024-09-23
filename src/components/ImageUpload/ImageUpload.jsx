@@ -42,8 +42,8 @@ const ImageUpload = ({ files, setFiles, deleteFile, multiple = true }) => {
                 </Button>
             </label>
             <ImageList rowHeight={180} cols={3}>
-                {files.map((file, index) => {
-                    const imageUrl = file.Url ? file.Url : URL.createObjectURL(file)
+                {files?.map((file, index) => {
+                    const imageUrl = file?.Url ? file?.Url : URL.createObjectURL(file)
 
                     return (
                         <ImageListItem key={index}>

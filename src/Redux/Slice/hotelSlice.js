@@ -18,6 +18,18 @@ export const getHotelAsync = createAsyncThunk(
     }
 );
 
+export const getHotelByIdAsync = createAsyncThunk(
+    'hotel/getHotelByIdAsync',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await Axios.get(`/get-hotel-by-id/${id}`);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+)
+
 export const createHotelAsync = createAsyncThunk(
     'hotel/createHotelAsync',
     async (formData, { rejectWithValue }) => {
@@ -49,6 +61,7 @@ export const updateHotelAsync = createAsyncThunk(
         }
     }
 );
+
 export const deleteHotelAsync = createAsyncThunk(
     'hotel/deleteHotelAsync',
 
@@ -351,6 +364,7 @@ const hotelSlice = createSlice({
     name: 'hotel',
     initialState: {
         hotels: [],
+        hotelData: {},
         roomCategories: [],
         amenities: [],
         rooms: [],
@@ -360,7 +374,11 @@ const hotelSlice = createSlice({
         error: null,
         loading: false,
     },
-    reducers: {},
+    reducers: {
+        clearhotelData: (state) => {
+            state.hotelData = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             // Get Hotels
@@ -372,6 +390,18 @@ const hotelSlice = createSlice({
                 state.hotels = action.payload;
             })
             .addCase(getHotelAsync.rejected, (state, action) => {
+                state.status = false;
+                state.error = action.payload;
+            })
+            //Get single Hotel  data 
+            .addCase(getHotelByIdAsync.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getHotelByIdAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.hotelData = action.payload?.data;
+            })
+            .addCase(getHotelByIdAsync.rejected, (state, action) => {
                 state.status = false;
                 state.error = action.payload;
             })
@@ -554,5 +584,7 @@ const hotelSlice = createSlice({
 
     },
 });
+
+export const { clearhotelData } = hotelSlice.actions
 
 export default hotelSlice.reducer;

@@ -10,7 +10,9 @@ import { FaPlus, FaSearch } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import { debounce } from 'lodash';
 import DataTable from 'ui-component/DataTable/DataTable'
-import { geteventTourAsync } from 'Redux/Slice/eventTourSlice'
+import { deleteeventTourAsync, geteventTourAsync } from 'Redux/Slice/eventTourSlice'
+import EventTourForm from 'Forms/EventTourForm'
+import { useNavigate, useNavigation } from 'react-router-dom'
 
 const EventTour = () => {
     const [dialogTitle, setDialogTitle] = useState("");
@@ -26,11 +28,12 @@ const EventTour = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
 
-
+    const navigate = useNavigate()
 
 
 
     const { eventTour, loading, status, error } = useSelector((state) => state?.eventTour)
+    console.log("event", eventTour)
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -38,16 +41,11 @@ const EventTour = () => {
     }, [dispatch])
 
     const addnearBY = () => {
-        setDialogTitle("Add NearBy Locations");
-        setDialogContent(<NearByForm dialogProps={dialogProps} />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate("/event-tours/create")
     }
 
     const editNearBy = (id) => {
-        const near_by_data = nearBy?.nearbies.find(el => el._id === id)
-        setDialogTitle("Update NearBy Locations");
-        setDialogContent(<NearByForm dialogProps={dialogProps} near_by_data={near_by_data} edit="edit" />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate(`/event-tours/edit/${id}`)
     }
 
 
@@ -65,12 +63,14 @@ const EventTour = () => {
 
 
     const deleteNearBy = (id) => {
-        dispatch(deleteNearByAsync({ id: id }));
+        dispatch(deleteeventTourAsync({ id: id })).then(() => {
+            dispatch(geteventTourAsync({ page: paginationModel.page, page_size: paginationModel.pageSize }))
+        })
     }
     const columns = [
         {
-            field: 'name',
-            headerName: 'Name',
+            field: 'title',
+            headerName: 'Title',
             flex: 1,
         },
         {
@@ -94,6 +94,41 @@ const EventTour = () => {
 
         },
         {
+            field: 'cost',
+            headerName: 'Cost',
+            flex: 1,
+
+        },
+        {
+            field: 'duration',
+            headerName: 'Duration',
+            flex: 1,
+
+        },
+        {
+            field: 'departure_from',
+            headerName: 'Departure From',
+            flex: 1,
+
+        },
+        {
+            field: 'departure_time',
+            headerName: 'Departure Time',
+            flex: 1,
+            renderCell: (params) => {
+                return moment(params.value, "HH:mm").format("hh:mm A")
+            },
+        },
+        {
+            field: 'departure_date',
+            headerName: 'Departure Date',
+            flex: 1,
+            renderCell: (params) => {
+                return moment(params.value).format('DD/MM/YYYY');
+            },
+        },
+
+        {
             field: 'createdAt',
             headerName: 'Added Date',
             flex: 1,
@@ -101,12 +136,12 @@ const EventTour = () => {
                 return moment(params.value).format('DD/MM/YYYY');
             },
         },
-        {
-            field: '_id',
-            headerName: 'Action',
-            flex: 1,
-            renderCell: (params) => GetTwoAction(params.value, editNearBy, deleteNearBy)
-        },
+        // {
+        //     field: '_id',
+        //     headerName: 'Action',
+        //     flex: 1,
+        //     renderCell: (params) => GetTwoAction(params.value, editNearBy, null)
+        // },
     ]
     const debouncedDispatch = useCallback(
         debounce((value) => {
@@ -140,12 +175,12 @@ const EventTour = () => {
 
                 </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addnearBY} startIcon={<FaPlus size={14} />} >
-                    Near by
+                    Event & Tours
                 </Button>
             </Box>
             <Paper>
                 <DataTable
-                    data={eventTour?.nearbies}
+                    data={eventTour?.allEventsTours}
                     columns={columns}
                     getRowId={(row) => row._id}
                     loading={loading}

@@ -10,10 +10,13 @@ import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import DataTable from 'ui-component/DataTable/DataTable'
 
 const Hotel = () => {
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
@@ -26,7 +29,8 @@ const Hotel = () => {
         pageSize: 10,
     });
 
-    const dispatch = useDispatch();
+
+
     const { hotels, loading, error } = useSelector(state => state.hotel);
 
     useEffect(() => {
@@ -34,16 +38,18 @@ const Hotel = () => {
     }, [dispatch]);
 
     const addState = () => {
-        setDialogTitle("Add Hotle");
-        setDialogContent(<HotelForm dialogProps={dialogProps} />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate("/hotel/hotels/create")
+        // setDialogTitle("Add Hotle");
+        // setDialogContent(<HotelForm dialogProps={dialogProps} />);
+        // setDialogProps({ ...dialogProps, open: true });
     }
 
     const editHotle = (id) => {
-        const hotle_data = hotels?.hotels.find(el => el._id === id)
-        setDialogTitle("Update Hotel");
-        setDialogContent(<HotelForm dialogProps={dialogProps} hotle_data={hotle_data} type="edit" />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate(`/hotel/hotels/edit/${id}`)
+        // const hotle_data = hotels?.hotels.find(el => el._id === id)
+        // setDialogTitle("Update Hotel");
+        // setDialogContent(<HotelForm dialogProps={dialogProps} hotle_data={hotle_data} type="edit" />);
+        // setDialogProps({ ...dialogProps, open: true });
     }
 
     const deleteState = (id) => {

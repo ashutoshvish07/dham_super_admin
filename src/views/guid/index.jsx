@@ -89,6 +89,12 @@ const GuidPage = () => {
 
         },
         {
+            field: 'about',
+            headerName: 'About',
+            flex: 2,
+
+        },
+        {
             field: 'email',
             headerName: 'Email',
             flex: 1,
@@ -101,9 +107,21 @@ const GuidPage = () => {
 
         },
         {
+            field: 'pricePerHour',
+            headerName: 'Price Per Hour',
+            flex: 1,
+
+        },
+        {
             field: 'status',
             headerName: 'Status',
             flex: 1,
+
+        },
+        {
+            field: 'languages',
+            headerName: 'Languages',
+            flex: 2,
 
         },
 

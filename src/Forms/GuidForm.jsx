@@ -18,11 +18,7 @@ const GuidForm = (props) => {
 
     const { dialogProps, guid_data, edit } = props;
     const [files, setFiles] = useState([]);
-
     const { cities: { cities }, } = useSelector(state => state.location);
-
-    console.log("guid_data", guid_data, cities)
-    console.log(cities?.find(c => c._id === guid_data?.cityId?._id))
 
     const dispatch = useDispatch()
 
@@ -46,19 +42,27 @@ const GuidForm = (props) => {
         email: Yup.string().email('Invalid email address').required('Required'),
         password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
         mobile: Yup.string().matches(/^\d{10}$/, 'Must be a valid 10-digit mobile number').required('Required'),
-        pincode: Yup.string().matches(/^\d{6}$/, 'Must be a valid 6-digit pincode').required('Required'),
+        pincode: Yup.string()
+            .matches(/^[1-9][0-9]{5}$/, 'Pincode must be a valid 6-digit number')
+            .required('Pincode is required'),
         address: Yup.string().required('Required'),
+        pricePerHour: Yup.number().min(0, 'Price must be a positive number').required('Required'),
+        languages: Yup.array().of(Yup.string().required('Language is required')).required('Required'),
+        about: Yup.string().min(20, 'About must be at least 20 characters').required('Required'),
     });
 
     const formik = useFormik({
         initialValues: {
             name: guid_data?.name || '',
             email: guid_data?.email || '',
-            password: '',
+            password: guid_data?.password || '',
             mobile: guid_data?.mobile || '',
             pincode: guid_data?.pincode || '',
             address: guid_data?.address || '',
-            cityId: guid_data?.cityId?._id || '',
+            cityId: guid_data?.cityId?.id || '',
+            pricePerHour: guid_data?.pricePerHour || '',
+            languages: guid_data?.languages || [],
+            about: guid_data?.about || '',
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
@@ -66,15 +70,18 @@ const GuidForm = (props) => {
             const formData = new FormData()
             formData.append("name", values.name)
             formData.append("email", values.email)
-            formData.append("cityId", values?.cityId?._id ? values?.cityId?._id : values?.cityId)
+            formData.append("cityId", values?.cityId?.id ? values?.cityId?.id : values?.cityId)
             formData.append("mobile", values.mobile)
             formData.append("password", values.password)
             formData.append("address", values.address)
             formData.append("pincode", values.pincode)
+            formData.append("pricePerHour", values.pricePerHour);
+            formData.append("languages", values.languages);
+            formData.append("about", values.about);
 
-            if (files) {
-                files.map((file) => {
-                    formData.append('file', file);
+            if (files.length) {
+                files.forEach((file, index) => {
+                    formData.append(`files`, file);
                 });
             }
 
@@ -140,10 +147,10 @@ const GuidForm = (props) => {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
-                            color='secondary'
                             id="mobile"
                             name="mobile"
                             label="Mobile"
+                            color='secondary'
                             inputProps={{
                                 maxLength: 10,
                                 inputMode: 'numeric',
@@ -171,19 +178,36 @@ const GuidForm = (props) => {
                             helperText={formik.touched.pincode && formik.errors.pincode}
                         />
                     </Grid>
+
                     <Grid item xs={12} sm={6}>
                         <TextField
                             fullWidth
-                            id="address"
-                            name="address"
-                            label="Address"
-                            color='secondary'
-                            value={formik.values.address}
+                            id="pricePerHour"
+                            name="pricePerHour"
+                            label="Price per Hour"
+                            color="secondary"
+                            type="number"
+                            value={formik.values.pricePerHour}
                             onChange={formik.handleChange}
-                            error={formik.touched.address && Boolean(formik.errors.address)}
-                            helperText={formik.touched.address && formik.errors.address}
+                            error={formik.touched.pricePerHour && Boolean(formik.errors.pricePerHour)}
+                            helperText={formik.touched.pricePerHour && formik.errors.pricePerHour}
                         />
                     </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <TextField
+                            fullWidth
+                            id="languages"
+                            name="languages"
+                            label="Languages"
+                            color="secondary"
+                            placeholder="Enter languages separated by commas"
+                            value={formik.values.languages.join(', ')}
+                            onChange={(e) => formik.setFieldValue('languages', e.target.value.split(',').map(lang => lang.trim()))}
+                            error={formik.touched.languages && Boolean(formik.errors.languages)}
+                            helperText={formik.touched.languages && formik.errors.languages}
+                        />
+                    </Grid>
+
                     <Grid item xs={12}>
                         <AutoComplete
                             options={cities || []}
@@ -200,6 +224,36 @@ const GuidForm = (props) => {
                             optionKey="_id"
                             optionLabel="name"
                             color="secondary"
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            id="about"
+                            name="about"
+                            label="About"
+                            color="secondary"
+                            multiline
+                            minRows={3}
+                            value={formik.values.about}
+                            onChange={formik.handleChange}
+                            error={formik.touched.about && Boolean(formik.errors.about)}
+                            helperText={formik.touched.about && formik.errors.about}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <TextField
+                            fullWidth
+                            id="address"
+                            name="address"
+                            label="Address"
+                            color='secondary'
+                            multiline
+                            minRows={3}
+                            value={formik.values.address}
+                            onChange={formik.handleChange}
+                            error={formik.touched.address && Boolean(formik.errors.address)}
+                            helperText={formik.touched.address && formik.errors.address}
                         />
                     </Grid>
                     <Grid item xs={12} >
