@@ -223,6 +223,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         <TextField
                             color='secondary'
                             fullWidth
+                            required
                             id="name"
                             name="name"
                             label="Hotel Name"
@@ -236,6 +237,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                         <TextField
                             color='secondary'
                             fullWidth
+                            required
                             id="email"
                             name="email"
                             label="Email"
@@ -252,6 +254,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             id="mobile"
                             name="mobile"
                             label="Mobile"
+                            required
                             inputProps={{
                                 maxLength: 10,
                                 inputMode: 'numeric',
@@ -348,6 +351,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             name="pincode"
                             label="Pincode"
                             type='number'
+                            required
                             value={formik.values?.pincode}
                             onChange={formik.handleChange}
                             error={formik.touched.pincode && Boolean(formik.errors.pincode)}
@@ -361,6 +365,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             name="price"
                             label="Price"
                             type='number'
+                            required
                             value={formik.values?.price}
                             onChange={formik.handleChange}
                             error={formik.touched.price && Boolean(formik.errors.price)}
@@ -395,7 +400,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             }}
                             error={formik.touched.propertyTypeId && Boolean(formik.errors.propertyTypeId)}
                             helperText={formik.touched.propertyTypeId && formik.errors.propertyTypeId}
-                            required
+
                             optionKey="_id"
                             optionLabel="name"
                             color="secondary"
@@ -435,7 +440,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                     <Grid item xs={12} sm={6}>
                         <AutoComplete
                             options={foodAndDining?.data || []}
-                            label="Select Property Type"
+                            label="Select Food & Dining"
                             id="property-select"
                             name="foodAndDiningId"
                             value={
@@ -446,7 +451,6 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             }}
                             error={formik.touched.foodAndDiningId && Boolean(formik.errors.foodAndDiningId)}
                             helperText={formik.touched.foodAndDiningId && formik.errors.foodAndDiningId}
-                            required
                             optionKey="_id"
                             optionLabel="name"
                             color="secondary"

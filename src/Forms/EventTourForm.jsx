@@ -5,14 +5,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import * as Yup from 'yup';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { useNavigate, useNavigation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { Box } from '@mui/system';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync } from 'Redux/Slice/locationSlice';
 import moment from 'moment';
-import { createeventtourAsync } from 'Redux/Slice/eventTourSlice';
+import { createeventtourAsync, geteventtourIdAsync, updateeventtourAsync } from 'Redux/Slice/eventTourSlice';
 
 const validationSchema = Yup.object({
     title: Yup.string().required('Required'),
@@ -66,56 +66,52 @@ const EventTourForm = () => {
                     dispatch(getAllCityAsync({ page: 1, page_size: 10 })),
                 ]);
 
-                // if (id) {
-                //     dispatch(getHotelByIdAsync({ id: id })).then((response) => {
-                //         const { data } = response?.payload;
-                //         setstate({
-                //             name: data?.name || "",
-                //             email: data?.email || "",
-                //             mobile: data?.mobile || "",
-                //             password: data?.password || "",
-                //             countryId: data?.countryId || "",
-                //             stateId: data?.stateId || "",
-                //             cityId: data?.cityId?.name || "",
-                //             propertyTypeId: data?.propertyTypeId || "",
-                //             address: data?.address || "",
-                //             pincode: data?.pincode || "",
-                //             price: data?.price || "",
-                //             offerPrice: data?.offerPrice || "",
-                //             amenities: data?.amenitiesId || [],
-                //             foodAndDiningId: data?.foodAndDiningId || "",
-                //         })
-                //         setFiles(data.files)
-                //     })
-                // } else {
-                //     setstate({
-                //         name: "",
-                //         email: "",
-                //         mobile: "",
-                //         password: "",
-                //         countryId: "",
-                //         stateId: "",
-                //         cityId: "",
-                //         propertyTypeId: "",
-                //         address: "",
-                //         pincode: "",
-                //         price: "",
-                //         offerPrice: "",
-                //         amenities: [],
-                //         foodAndDiningId: "",
-                //     })
-                //     setFiles([])
-                // }
+                if (id) {
+                    dispatch(geteventtourIdAsync({ id: id })).then((response) => {
+                        const { tourAndEvent } = response?.payload;
+                        setInitialValues({
+                            title: tourAndEvent?.title || '',
+                            description: tourAndEvent?.description || '',
+                            start_from: moment(tourAndEvent?.start_from).format('YYYY-MM-DD') || '',
+                            end_at: moment(tourAndEvent?.end_at).format('YYYY-MM-DD') || '',
+                            departure_date: moment(tourAndEvent?.departure_date).format('YYYY-MM-DD') || '',
+                            departure_time: tourAndEvent?.departure_time || '',
+                            cost: tourAndEvent?.cost || null,
+                            duration: tourAndEvent?.duration || '',
+                            plans: tourAndEvent?.plans || [{ day: '', destination: '', description: '' }],
+                            type: tourAndEvent?.type || 'event',
+                            departure_from: tourAndEvent?.departure_from || '',
+                            cityId: tourAndEvent?.cityId || '',
+                        })
+                        setFiles(tourAndEvent.files)
+                    })
+                } else {
+                    setInitialValues({
+                        title: '',
+                        description: '',
+                        start_from: '',
+                        end_at: '',
+                        departure_date: '',
+                        departure_time: '',
+                        cost: '',
+                        duration: '',
+                        plans: [{ day: '', destination: '', description: '' }],
+                        type: 'event',
+                        departure_from: '',
+                        cityId: '',
+                    })
+                    setFiles([])
+                }
 
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-
-
         fetchData();
 
     }, [dispatch, id])
+
+
     const handleFileChange = (newFiles) => {
         setFiles(newFiles);
     };
@@ -137,6 +133,7 @@ const EventTourForm = () => {
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
+                enableReinitialize
                 onSubmit={(values, { setSubmitting }) => {
                     const formData = new FormData();
                     console.log('Form Values:', values);
@@ -151,7 +148,7 @@ const EventTourForm = () => {
                     formData.append("duration", values.duration)
                     formData.append("type", values.type)
                     formData.append("departure_from", values.departure_from)
-                    formData.append("cityId", values.cityId?.id)
+                    formData.append("cityId", values.cityId ? values.cityId : values.cityId?.id)
                     formData.append("plans", JSON.stringify(values.plans))
 
 
@@ -163,6 +160,11 @@ const EventTourForm = () => {
 
                     if (!id) {
                         dispatch(createeventtourAsync(formData)).then((response) => {
+                            console.log('response:', response);
+                            navigate('/event-tours')
+                        })
+                    } else {
+                        dispatch(updateeventtourAsync({ formData: formData, id: id })).then((response) => {
                             console.log('response:', response);
                             navigate('/event-tours')
                         })

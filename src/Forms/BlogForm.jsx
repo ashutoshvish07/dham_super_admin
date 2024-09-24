@@ -68,6 +68,7 @@ const BlogForm = (props) => {
                     cityId: data?.cityId,
                 })
                 setContent(data?.content)
+                setFiles(data?.files)
             }).catch((err) => {
                 console.log("error: ", err);
             });

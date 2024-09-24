@@ -1,4 +1,4 @@
-import { Box, Button, Paper } from '@mui/material';
+import { Box, Button, Chip, Paper } from '@mui/material';
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction';
 import AlertDialog from 'components/Dialog/Dialog';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
@@ -27,7 +27,6 @@ const Blog = () => {
 
     const dispatch = useDispatch();
     const { blogs, loading, error } = useSelector(state => state.blogs);
-    console.log("Blogs", blogs, loading, error);
 
     useEffect(() => {
         dispatch(getblogsAsync({ page: 1, page_size: 10 }));
@@ -71,13 +70,19 @@ const Blog = () => {
                 return (params?.value?.name)
             },
         },
+        {
+            field: 'shortNote',
+            headerName: 'Short Note ',
+            flex: 3,
+
+        },
 
         {
             field: 'status',
             headerName: 'Status ',
-            flex: 1,
+            flex: 1.2,
             renderCell: (params) => {
-                return (params?.value)
+                return <Chip label={params?.value} color={params?.value === "published" ? "secondary" : 'error'} />
             },
         },
         {

@@ -52,17 +52,17 @@ const EventTour = () => {
 
     const onChangeCount = (e) => {
         if (e.pageSize == paginationModel.pageSize) {
-            dispatch(getNearByAsync({ page: e.page + 1, page_size: e.pageSize }))
+            dispatch(geteventTourAsync({ page: e.page + 1, page_size: e.pageSize }))
 
             setPaginationModel(e)
         } else {
-            dispatch(getNearByAsync({ page: e.page, page_size: e.pageSize }));
+            dispatch(geteventTourAsync({ page: e.page, page_size: e.pageSize }));
             setPaginationModel({ page: 1, pageSize: e.pageSize })
         }
     }
 
 
-    const deleteNearBy = (id) => {
+    const deleteEvent = (id) => {
         dispatch(deleteeventTourAsync({ id: id })).then(() => {
             dispatch(geteventTourAsync({ page: paginationModel.page, page_size: paginationModel.pageSize }))
         })
@@ -136,17 +136,17 @@ const EventTour = () => {
                 return moment(params.value).format('DD/MM/YYYY');
             },
         },
-        // {
-        //     field: '_id',
-        //     headerName: 'Action',
-        //     flex: 1,
-        //     renderCell: (params) => GetTwoAction(params.value, editNearBy, null)
-        // },
+        {
+            field: '_id',
+            headerName: 'Action',
+            flex: 1,
+            renderCell: (params) => GetTwoAction(params.value, editNearBy, deleteEvent)
+        },
     ]
     const debouncedDispatch = useCallback(
         debounce((value) => {
-            dispatch(getNearByAsync({ page: 1, page_size: 10, search: value }));
-        }, 3000), // Adjust the debounce delay as needed
+            dispatch(geteventTourAsync({ page: 1, page_size: 10, search: value }));
+        }, 1000), // Adjust the debounce delay as needed
         []
     );
 

@@ -22,7 +22,7 @@ export const geteventtourIdAsync = createAsyncThunk(
     'eventtour/geteventTourIdAsync',
     async ({ id }, { rejectWithValue }) => {
         try {
-            let url = `/get-blog-by-id/${id}`
+            let url = `/event-tour-by-id/${id}`
             const response = await Axios.get(url)
             return response.data;
         } catch (err) {
@@ -51,7 +51,7 @@ export const updateeventtourAsync = createAsyncThunk(
     'eventtour/updateeventTourAsync',
     async ({ formData, id }, { rejectWithValue }) => {
         try {
-            const response = await Axios.put(`/update-blog/${id}`, formData, {
+            const response = await Axios.put(`/update-tour-event/${id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -67,7 +67,7 @@ export const deleteeventTourAsync = createAsyncThunk(
     'eventtour/deleteeventTourAsync',
     async ({ id }, { rejectWithValue }) => {
         try {
-            const response = await Axios.delete(`/delete-blogs/${id}`)
+            const response = await Axios.delete(`/delete-event-tour/${id}`)
             return response.data;
 
         } catch (err) {
