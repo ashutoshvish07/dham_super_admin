@@ -29,6 +29,11 @@ const EventTours = Loadable(lazy(() => import("views/pages/EventTour/EventTour")
 const FoodAndDining = Loadable(lazy(() => import("views/pages/hotel/FoodAndDining")))
 const HotelFrom = Loadable(lazy(() => import("Forms/HotelForm")))
 const EventFrom = Loadable(lazy(() => import("Forms/EventTourForm")))
+const RoomForm = Loadable(lazy(() => import("Forms/HotelRoomForm")))
+
+const AdvertisementForm = Loadable(lazy(() => import("Forms/AdvertisementForm")))
+const GuidFrom = Loadable(lazy(() => import("Forms/GuidForm")))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -42,6 +47,14 @@ const MainRoutes = {
     {
       path: '/guid',
       element: <GuidPage />
+    },
+    {
+      path: '/guid/create-guid',
+      element: <GuidFrom />
+    },
+    {
+      path: '/guid/update-guid/:id',
+      element: <GuidFrom />
     },
     {
       path: '/blogs',
@@ -62,6 +75,14 @@ const MainRoutes = {
     {
       path: '/advertisement',
       element: <Advertisement />
+    },
+    {
+      path: '/advertisement/create',
+      element: <AdvertisementForm />
+    },
+    {
+      path: '/advertisement/update/:id',
+      element: <AdvertisementForm />
     },
     {
       path: '/event-tours',
@@ -131,7 +152,8 @@ const MainRoutes = {
           element: <HotelFrom />,
         }
       ]
-    }, {
+    },
+    {
       path: '/',
       children: [
         {
@@ -174,6 +196,24 @@ const MainRoutes = {
         {
           path: '/hotel/rooms',
           element: <HotleRooms />,
+        }
+      ]
+    },
+    {
+      path: '/',
+      children: [
+        {
+          path: '/hotel/rooms/create',
+          element: <RoomForm />,
+        }
+      ]
+    },
+    {
+      path: '/',
+      children: [
+        {
+          path: '/hotel/rooms/update/:id',
+          element: <RoomForm />,
         }
       ]
     },

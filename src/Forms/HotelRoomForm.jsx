@@ -12,33 +12,37 @@ import {
     ListItemText,
     OutlinedInput,
     Grid,
+    IconButton,
+    Typography,
+    Autocomplete,
 } from '@mui/material';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { useDispatch, useSelector } from 'react-redux';
-import { createRoomAsync, getAllRoomsAsync, getAmenitiesAsync, getHotelAsync, getRoomCateAsync, updateRoomAsync } from 'Redux/Slice/hotelSlice';
+import { createRoomAsync, getAllRoomsAsync, getAmenitiesAsync, getHotelAsync, getRoomCateAsync, getRoomsByIdAsync, updateRoomAsync } from 'Redux/Slice/hotelSlice';
 import * as Yup from 'yup';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IoMdArrowRoundBack } from 'react-icons/io';
 
 
 const HotelRoomForm = (props) => {
     const { dialogProps, room_data, type } = props
     const [files, setFiles] = useState(room_data?.files || []);
+    const [state, setState] = useState({
+        userId: '',
+        roomCategory: '',
+        amenities: [],
+        price: '',
+        offerPrice: '',
+        totalNoOfRooms: '',
+        area: '',
+        floor: '',
+        bedSize: '',
+    })
     const { hotels, roomCategories, amenities } = useSelector(state => state.hotel)
+    debugger
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await Promise.all([
-                    dispatch(getAmenitiesAsync({ page: 1, page_size: 10 })),
-                    dispatch(getRoomCateAsync({ page: 1, page_size: 10 })),
-                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
-                ]);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-        fetchData();
-    }, [dispatch]);
+    const { id } = useParams()
+    const navigate = useNavigate();
 
     const initialValues = {
         userId: room_data?.userId?.name || '',
@@ -61,6 +65,44 @@ const HotelRoomForm = (props) => {
         bedSize: Yup.string().required('Bed Size is required'),
     });
 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await Promise.all([
+                    dispatch(getAmenitiesAsync({ page: 1, page_size: 10 })),
+                    dispatch(getRoomCateAsync({ page: 1, page_size: 10 })),
+                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
+                ]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        if (id) {
+            dispatch(getRoomsByIdAsync(id)).then((res) => {
+                const { data } = res.payload;
+                console.log("res", data)
+                setState({
+                    userId: data?.userId,
+                    roomCategory: data?.roomCategoryId?._id,
+                    amenities: data?.amenitiesId || [],
+                    price: data?.price || '',
+                    offerPrice: data?.offerPrice || '',
+                    totalNoOfRooms: data?.totalNoOfRooms || '',
+                    area: data?.area.replace("SqFt", '') || '',
+                    floor: data?.floor || '',
+                    bedSize: data?.bedSize || '',
+                })
+                setFiles(data.files || [])
+
+            })
+        }
+
+        fetchData();
+    }, [dispatch, id]);
+
+
     const handleFileChange = (newFiles) => {
         setFiles(newFiles);
     };
@@ -71,9 +113,19 @@ const HotelRoomForm = (props) => {
 
     return (
         <div>
+            <Grid container justifyContent={'space-between'} alignItems={'center'} sx={{ mb: 2 }} >
+                <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/hotel/rooms")}>
+                    <IoMdArrowRoundBack />
+                </IconButton>
+                <Typography variant="h2" gutterBottom>
+                    {id ? 'Edit Hotel Rooms' : 'Create Hotel Rooms'}
+                </Typography>
+            </Grid>
             <Formik
-                initialValues={initialValues}
+
+                initialValues={state}
                 validationSchema={validationSchema}
+                enableReinitialize={true}
                 onSubmit={(values) => {
                     const formData = new FormData();
                     formData.append('userId', values?.userId?._id);
@@ -84,10 +136,10 @@ const HotelRoomForm = (props) => {
                     formData.append('area', `${values.area}SqFt`);
                     formData.append('floor', values.floor);
                     formData.append('bedSize', values.bedSize);
-
+                    debugger
                     if (values.amenities) {
                         values.amenities.forEach((amenity) => {
-                            formData.append('amenitiesId[]', amenity._id);
+                            formData.append('amenitiesId[]', amenity._id ? amenity._id : amenity);
                         });
                     }
 
@@ -97,18 +149,24 @@ const HotelRoomForm = (props) => {
                             console.log("File", file);
                         });
                     }
-                    if (type === "edit") {
-                        dispatch(updateRoomAsync({ formData: formData, id: room_data?._id })).then(() => {
-                            dispatch(getAllRoomsAsync({ page: 1, page_size: 10 }));
-                        })
-                            .catch((error) => {
-                                console.error('Error creating room:', error);
-                            });
+                    if (id) {
+
+                        dispatch(updateRoomAsync({ formData: formData, id: id })).then((res) => {
+                            const { requestStatus } = res.meta;
+                            if (requestStatus === 'fulfilled') {
+                                navigate("/hotel/rooms")
+                            }
+                        }).catch((error) => {
+                            console.error('Error creating room:', error);
+                        });
                     }
                     else {
                         dispatch(createRoomAsync(formData))
-                            .then(() => {
-                                dispatch(getAllRoomsAsync({ page: 1, page_size: 10 }));
+                            .then((res) => {
+                                const { requestStatus } = res.meta;
+                                if (requestStatus === 'fulfilled') {
+                                    navigate("/hotel/rooms")
+                                }
                             })
                             .catch((error) => {
                                 console.error('Error creating room:', error);
@@ -122,31 +180,29 @@ const HotelRoomForm = (props) => {
                     <Form>
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={6}>
-                                <FormControl fullWidth error={touched.userId && Boolean(errors.userId)} color='secondary'
-                                >
-                                    <InputLabel id="rooms-label">Hotel Name</InputLabel>
-                                    <Select
-                                        labelId="hotle-label"
-                                        id="rooms-label"
-                                        name="userId"
-                                        value={values.userId}
-                                        onChange={(e) => {
-                                            const selectedHotel = hotels.hotels.find(hotel => hotel._id === e.target.value._id);
-                                            setFieldValue("userId", selectedHotel);
-                                        }}
-                                        label="Hotel Name"
-                                    >
-                                        {hotels?.hotels?.map((hotel) => (
-                                            <MenuItem key={hotel._id} value={hotel}>
-                                                <ListItemText primary={hotel.name} />
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                    {touched.userId && errors.userId && (
-                                        <div style={{ color: 'red', fontSize: '12px' }}>{errors.userId}</div>
+                                <Autocomplete
+                                    options={hotels?.hotels || []}
+                                    getOptionLabel={(option) => option.name || ""}
+                                    id="hotel-autocomplete"
+                                    name="userId"
+                                    value={values.userId}
+                                    onChange={(event, newValue) => {
+                                        const selectedHotel = newValue ? newValue : null;
+                                        setFieldValue("userId", selectedHotel);
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Hotel Name"
+                                            error={touched.userId && Boolean(errors.userId)}
+                                            helperText={touched.userId && errors.userId}
+                                            color="secondary"
+                                            fullWidth
+                                        />
                                     )}
-                                </FormControl>
+                                />
                             </Grid>
+
                             <Grid item xs={12} md={6}>
                                 <FormControl fullWidth error={touched.roomCategory && Boolean(errors.roomCategory)} color='secondary'
                                 >
@@ -182,14 +238,23 @@ const HotelRoomForm = (props) => {
                                         id="amenities"
                                         name="amenities"
                                         multiple
+                                        color='secondary'
                                         value={values.amenities}
                                         onChange={(event) => setFieldValue('amenities', event.target.value)}
                                         input={<OutlinedInput label="Amenities" />}
-                                        renderValue={(selected) => selected.map((item) => item.name).join(', ')}
+                                        renderValue={(selected) =>
+                                            amenities?.data
+                                                ?.filter((amenity) => selected.includes(amenity._id))
+                                                .map((item) => item.name)
+                                                .join(', ')
+                                        }
                                     >
                                         {amenities?.data?.map((amenity) => (
-                                            <MenuItem key={amenity._id} value={amenity}>
-                                                <Checkbox checked={values.amenities.some((item) => item._id === amenity._id)} />
+                                            <MenuItem key={amenity._id} value={amenity._id}>
+                                                <Checkbox
+                                                    color="secondary"
+                                                    checked={values?.amenities?.includes(amenity._id)}
+                                                />
                                                 <ListItemText primary={amenity.name} />
                                             </MenuItem>
                                         ))}
@@ -292,7 +357,7 @@ const HotelRoomForm = (props) => {
                             <Grid item xs={12}>
                                 <ImageUpload label="Upload Your Images" files={files} setFiles={handleFileChange} deleteFile={handleDeleteFile} multiple={true} />
                             </Grid>
-                            <Grid item xs={12} justifyContent='flex-end' >
+                            <Grid item xs={12} display='flex' justifyContent='flex-end' alignItems='flex-end' >
                                 <Button type="submit" variant="outlined" color="secondary" >
                                     Submit
                                 </Button>

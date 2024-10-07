@@ -14,26 +14,6 @@ import { getAllCityAsync } from 'Redux/Slice/locationSlice';
 import moment from 'moment';
 import { createeventtourAsync, geteventtourIdAsync, updateeventtourAsync } from 'Redux/Slice/eventTourSlice';
 
-const validationSchema = Yup.object({
-    title: Yup.string().required('Required'),
-    description: Yup.string().required('Required'),
-    start_from: Yup.date().required('Required'),
-    end_at: Yup.date().required('Required').min(Yup.ref('start_from'), 'End date must be after start date'),
-    departure_date: Yup.date().required('Required'),
-    departure_time: Yup.string().required('Required'),
-    cost: Yup.number().positive('Must be positive').required('Required'),
-    duration: Yup.number().positive('Must be positive').integer('Must be an integer').required('Required'),
-    type: Yup.string().required('Required'),
-    departure_from: Yup.string().required('Required'),
-    // cityId: Yup.string().required('Required'),
-    plans: Yup.array().of(
-        Yup.object().shape({
-            day: Yup.number().positive('Must be positive').integer('Must be an integer').required('Required'),
-            destination: Yup.string().required('Required'),
-            description: Yup.string().required('Required'),
-        })
-    ).min(1, 'At least one plan is required'),
-});
 
 const EventTourForm = () => {
 
@@ -51,9 +31,9 @@ const EventTourForm = () => {
         end_at: '',
         departure_date: '',
         departure_time: '',
-        cost: '',
         duration: '',
         plans: [{ day: '', destination: '', description: '' }],
+        packageCost: [{ package: 'Basic', cost: '' }],
         type: 'event',
         departure_from: '',
         cityId: '',
@@ -76,12 +56,13 @@ const EventTourForm = () => {
                             end_at: moment(tourAndEvent?.end_at).format('YYYY-MM-DD') || '',
                             departure_date: moment(tourAndEvent?.departure_date).format('YYYY-MM-DD') || '',
                             departure_time: tourAndEvent?.departure_time || '',
-                            cost: tourAndEvent?.cost || null,
+                            // cost: tourAndEvent?.cost || null,
                             duration: tourAndEvent?.duration || '',
                             plans: tourAndEvent?.plans || [{ day: '', destination: '', description: '' }],
                             type: tourAndEvent?.type || 'event',
                             departure_from: tourAndEvent?.departure_from || '',
                             cityId: tourAndEvent?.cityId || '',
+                            packageCost: tourAndEvent?.packageCost || [{ package: 'Basic', cost: '' }],
                         })
                         setFiles(tourAndEvent.files)
                     })
@@ -93,7 +74,7 @@ const EventTourForm = () => {
                         end_at: '',
                         departure_date: '',
                         departure_time: '',
-                        cost: '',
+                        // cost: '',
                         duration: '',
                         plans: [{ day: '', destination: '', description: '' }],
                         type: 'event',
@@ -120,9 +101,35 @@ const EventTourForm = () => {
         setFiles(files.filter(file => file !== fileToDelete));
     };
 
+    const validationSchema = Yup.object({
+        title: Yup.string().required('Required'),
+        description: Yup.string().required('Required'),
+        start_from: Yup.date().required('Required'),
+        end_at: Yup.date().required('Required').min(Yup.ref('start_from'), 'End date must be after start date'),
+        departure_date: Yup.date().required('Required'),
+        departure_time: Yup.string().required('Required'),
+        duration: Yup.number().positive('Must be positive').integer('Must be an integer').required('Required'),
+        type: Yup.string().required('Required'),
+        departure_from: Yup.string().required('Required'),
+        plans: Yup.array().of(
+            Yup.object().shape({
+                day: Yup.number().positive('Must be positive').integer('Must be an integer').required('Required'),
+                destination: Yup.string().required('Required'),
+                description: Yup.string().required('Required'),
+            })
+        ).min(1, 'At least one plan is required'),
+        packageCost: Yup.array().of(
+            Yup.object().shape({
+                package: Yup.string().oneOf(['VIP', 'Basic']).required('Required'),
+                cost: Yup.number().positive('Must be positive').required('Required'),
+            })
+        ).min(1, 'At least one pricing option is required'),
+    });
+
+
     return (
         <>
-            <Grid container justifyContent={'space-between'} alignItems={'center'} >
+            <Grid container justifyContent={'space-between'} alignItems={'center'} sx={{ mb: 2 }} >
                 <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/event-tours")}>
                     <IoMdArrowRoundBack />
                 </IconButton>
@@ -136,7 +143,6 @@ const EventTourForm = () => {
                 enableReinitialize
                 onSubmit={(values, { setSubmitting }) => {
                     const formData = new FormData();
-                    console.log('Form Values:', values);
 
                     formData.append("title", values.title)
                     formData.append("description", values.description)
@@ -144,12 +150,14 @@ const EventTourForm = () => {
                     formData.append("end_at", moment(values.end_at).format('YYYY-MM-DD'))
                     formData.append("departure_date", moment(values.departure_date).format('YYYY-MM-DD'))
                     formData.append("departure_time", values.departure_time)
-                    formData.append("cost", values.cost)
+                    // formData.append("cost", values.cost)
                     formData.append("duration", values.duration)
                     formData.append("type", values.type)
                     formData.append("departure_from", values.departure_from)
                     formData.append("cityId", values.cityId ? values.cityId : values.cityId?.id)
                     formData.append("plans", JSON.stringify(values.plans))
+                    formData.append("packageCost", JSON.stringify(values.packageCost))
+                    debugger
 
 
                     if (files.length) {
@@ -160,7 +168,6 @@ const EventTourForm = () => {
 
                     if (!id) {
                         dispatch(createeventtourAsync(formData)).then((response) => {
-                            console.log('response:', response);
                             navigate('/event-tours')
                         })
                     } else {
@@ -259,7 +266,7 @@ const EventTourForm = () => {
                                 />
                             </Grid>
 
-                            <Grid item xs={6}>
+                            {/* <Grid item xs={6}>
                                 <Field
                                     as={TextField}
                                     color="secondary"
@@ -270,7 +277,7 @@ const EventTourForm = () => {
                                     error={touched.cost && Boolean(errors.cost)}
                                     helperText={touched.cost && errors.cost}
                                 />
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={6}>
                                 <Field
@@ -335,8 +342,8 @@ const EventTourForm = () => {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Typography variant="h6">Plans</Typography>
-                                <FieldArray name="plans">
+                                <Typography variant="h6" sx={{ mb: 1 }}>Plans</Typography>
+                                <FieldArray name="plans" >
                                     {({ remove, push }) => (
                                         <div>
                                             {values.plans.map((plan, index) => (
@@ -385,11 +392,67 @@ const EventTourForm = () => {
                                                 </Grid>
                                             ))}
                                             <Button
-
                                                 startIcon={<AddIcon />}
                                                 onClick={() => push({ day: '', destination: '', description: '' })}
                                             >
                                                 Add Plan
+                                            </Button>
+                                        </div>
+                                    )}
+                                </FieldArray>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography variant="h6" sx={{ mb: 1 }}>Pricing Options</Typography>
+                                <FieldArray name="packageCost">
+                                    {({ remove, push }) => (
+                                        <div>
+                                            {values?.packageCost?.map((option, index) => (
+                                                <Grid container spacing={2} key={index} alignItems="center" justifyContent='center'>
+                                                    <Grid item xs={4}>
+                                                        <Field
+                                                            as={TextField}
+                                                            fullWidth
+                                                            select
+                                                            label="Package"
+                                                            name={`packageCost.${index}.package`}
+                                                            color="secondary"
+                                                            error={touched.packageCost?.[index]?.package && Boolean(errors.packageCost?.[index]?.package)}
+                                                            helperText={touched.packageCost?.[index]?.package && errors.packageCost?.[index]?.package}
+                                                        >
+                                                            <MenuItem value="none">None</MenuItem>
+                                                            <MenuItem value="VIP">VIP</MenuItem>
+                                                            <MenuItem value="Basic">Basic</MenuItem>
+                                                        </Field>
+                                                    </Grid>
+                                                    <Grid item xs={4}>
+                                                        <Field
+                                                            as={TextField}
+                                                            fullWidth
+                                                            label="Cost"
+                                                            name={`packageCost.${index}.cost`}
+                                                            type="number"
+                                                            color="secondary"
+                                                            error={touched.packageCost?.[index]?.cost && Boolean(errors.packageCost?.[index]?.cost)}
+                                                            helperText={touched.packageCost?.[index]?.cost && errors.packageCost?.[index]?.cost}
+                                                        />
+                                                    </Grid>
+
+                                                    <Grid item xs={2}>
+                                                        <IconButton color='secondary' onClick={() => remove(index)}>
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Grid>
+                                                    <Grid item xs={2} style={{ marginTop: '4px' }}> {/* Added row gap */}
+                                                    </Grid>
+                                                </Grid>
+                                            ))}
+
+                                            <Button
+                                                startIcon={<AddIcon />}
+                                                onClick={() => push({ package: 'Basic', cost: '' })}
+                                            >
+                                                Add Pricing Option
                                             </Button>
                                         </div>
                                     )}

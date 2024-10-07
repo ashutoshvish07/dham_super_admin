@@ -9,11 +9,13 @@ import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import DataTable from 'ui-component/DataTable/DataTable';
 
 const HotelRooms = () => {
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
+
     const [dialogProps, setDialogProps] = useState({
         open: false,
         onClose: () => setDialogProps({ ...dialogProps, open: false }),
@@ -26,6 +28,7 @@ const HotelRooms = () => {
 
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const { rooms, loading, error } = useSelector(state => state.hotel);
 
 
@@ -34,16 +37,13 @@ const HotelRooms = () => {
     }, [dispatch]);
 
     const addRooms = () => {
-        setDialogTitle("Add Rooms");
-        setDialogContent(<HotelRoomForm dialogProps={dialogProps} />);
-        setDialogProps({ ...dialogProps, open: true });
+        // /hotel/rooms / create
+        navigate("/hotel/rooms/create");
     }
 
     const editRooms = (id) => {
-        const room_data = rooms?.rooms.find(el => el._id === id)
-        setDialogTitle("Update Rooms");
-        setDialogContent(<HotelRoomForm dialogProps={dialogProps} room_data={room_data} type="edit" />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate(`/hotel/rooms/update/${id}`);
+
     }
 
     const deleteRooms = (id) => {

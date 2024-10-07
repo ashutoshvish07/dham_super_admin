@@ -15,6 +15,7 @@ import {
     ListItemText,
     IconButton,
     Typography,
+    CircularProgress,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearhotelData, createHotelAsync, getAllFoodAndDiningAsync, getAllPropertiesAsync, getAmenitiesAsync, getHotelAsync, getHotelByIdAsync, updateHotelAsync } from 'Redux/Slice/hotelSlice';
@@ -23,6 +24,7 @@ import { getAllCityAsync, getAllStateAsync, getCountryBySuperAdminAsync } from '
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Grid4x4Rounded } from '@mui/icons-material';
 
 const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const dispatch = useDispatch();
@@ -204,7 +206,9 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
 
 
     if (loading) {
-        return <div>Loading...</div>
+        return <Grid4x4Rounded>
+            <CircularProgress />
+        </Grid4x4Rounded>
     }
 
     return (

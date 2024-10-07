@@ -17,6 +17,19 @@ export const getGuidAsync = createAsyncThunk(
         }
     }
 )
+
+export const getGuidById = createAsyncThunk(
+    'guid/getGuidById',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await Axios.get(`/get-guide-by-id/${id}`)
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
 export const createGuidAsync = createAsyncThunk(
     'guid/createGuidAsync',
     async (formData, { rejectWithValue }) => {
@@ -33,6 +46,7 @@ export const createGuidAsync = createAsyncThunk(
         }
     }
 )
+
 export const updateGuidAsync = createAsyncThunk(
     'guid/updateGuidAsync',
     async ({ formData, id }, { rejectWithValue }) => {
@@ -49,6 +63,7 @@ export const updateGuidAsync = createAsyncThunk(
         }
     }
 )
+
 export const deleteGuidAsync = createAsyncThunk(
     'guid/deleteGuidAsync',
     async ({ id }, { rejectWithValue }) => {

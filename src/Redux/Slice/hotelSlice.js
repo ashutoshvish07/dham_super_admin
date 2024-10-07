@@ -208,6 +208,18 @@ export const getAllRoomsAsync = createAsyncThunk(
     }
 );
 
+export const getRoomsByIdAsync = createAsyncThunk(
+    'hotel/getRoomsByIdAsync',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await Axios.get(`/get-room-by-id/${id}`);
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.response.data);
+        }
+    }
+
+)
 // room is created
 
 export const createRoomAsync = createAsyncThunk(

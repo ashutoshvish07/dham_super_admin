@@ -6,26 +6,64 @@ import {
     Button,
     Box,
     Grid,
+    IconButton,
+    Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync, } from 'Redux/Slice/locationSlice';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
-import { createGuidAsync, getGuidAsync, updateGuidAsync } from 'Redux/Slice/guidSlice';
-
+import { createGuidAsync, getGuidAsync, getGuidById, updateGuidAsync } from 'Redux/Slice/guidSlice';
+import { useNavigate, useParams } from 'react-router-dom';
+import { IoMdArrowRoundBack } from 'react-icons/io';
 
 const GuidForm = (props) => {
 
     const { dialogProps, guid_data, edit } = props;
     const [files, setFiles] = useState([]);
+    const [guid, setguid] = useState({
+        name: '',
+        email: '',
+        password: '',
+        mobile: '',
+        pincode: '',
+        address: '',
+        pricePerHour: '',
+        languages: [],
+        about: '',
+        cityId: '',
+    })
     const { cities: { cities }, } = useSelector(state => state.location);
 
     const dispatch = useDispatch()
+    const { id } = useParams()
+    const navigate = useNavigate()
+
 
 
     useEffect(() => {
         dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
-    }, [])
+        if (id) {
+            dispatch(getGuidById(id)).then((res) => {
+                console.log(res)
+                const { guide } = res.payload
+                console.log(guide);
+                setguid({
+                    name: guide.name,
+                    email: guide.email,
+                    password: guide.password,
+                    mobile: guide.mobile,
+                    pincode: guide.pincode,
+                    address: guide.address,
+                    pricePerHour: guide.pricePerHour,
+                    languages: guide.languages,
+                    about: guide.about,
+                    cityId: guide.cityId,
+                })
+                setFiles([guide?.file])
+            })
+        }
+    }, [dispatch, id])
 
     const handleFileChange = (newFiles) => {
         setFiles(newFiles);
@@ -52,25 +90,14 @@ const GuidForm = (props) => {
     });
 
     const formik = useFormik({
-        initialValues: {
-            name: guid_data?.name || '',
-            email: guid_data?.email || '',
-            password: guid_data?.password || '',
-            mobile: guid_data?.mobile || '',
-            pincode: guid_data?.pincode || '',
-            address: guid_data?.address || '',
-            cityId: guid_data?.cityId?.id || '',
-            pricePerHour: guid_data?.pricePerHour || '',
-            languages: guid_data?.languages || [],
-            about: guid_data?.about || '',
-        },
+        initialValues: guid,
+        enableReinitialize: true,
         validationSchema: validationSchema,
         onSubmit: (values) => {
-
             const formData = new FormData()
             formData.append("name", values.name)
             formData.append("email", values.email)
-            formData.append("cityId", values?.cityId?.id ? values?.cityId?.id : values?.cityId)
+            formData.append("cityId", values?.cityId?._id ? values?.cityId?._id : values?.cityId?.id)
             formData.append("mobile", values.mobile)
             formData.append("password", values.password)
             formData.append("address", values.address)
@@ -81,18 +108,26 @@ const GuidForm = (props) => {
 
             if (files.length) {
                 files.forEach((file, index) => {
-                    formData.append(`files`, file);
+                    formData.append(`file`, file);
                 });
             }
 
-            if (edit) {
-                dispatch(updateGuidAsync({ formData: formData, id: guid_data?._id, })).then(() => {
-                    dispatch(getGuidAsync({ page: 1, page_size: 10 }))
+            if (id) {
+                dispatch(updateGuidAsync({ formData: formData, id: id, })).then((res) => {
+                    const { requestStatus } = res.meta;
+                    console.log("res", requestStatus);
+                    if (requestStatus === 'fulfilled') {
+                        navigate("/guid")
+                    }
                 })
             }
             else {
-                dispatch(createGuidAsync(formData)).then(() => {
-                    dispatch(getGuidAsync({ page: 1, page_size: 10 }))
+                dispatch(createGuidAsync(formData)).then((res) => {
+                    console.log("res", res);
+                    const { requestStatus } = res.meta;
+                    if (requestStatus === 'fulfilled') {
+                        navigate("/guid")
+                    }
                 })
             }
             dialogProps.onClose()
@@ -101,6 +136,14 @@ const GuidForm = (props) => {
     });
     return (
         <div>
+            <Grid container justifyContent={'space-between'} alignItems={'center'} >
+                <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/guid")}>
+                    <IoMdArrowRoundBack />
+                </IconButton>
+                <Typography variant="h2" gutterBottom>
+                    {id ? 'Edit Guid' : 'Create Guid'}
+                </Typography>
+            </Grid>
             <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -214,7 +257,7 @@ const GuidForm = (props) => {
                             label="Select City"
                             id="state-city"
                             name="cityId"
-                            value={edit ? cities?.find(c => c._id === guid_data?.cityId?._id)?.name : formik?.values?.cityId}
+                            value={id ? cities?.find(c => c._id === guid_data?.cityId?._id)?.name : formik?.values?.cityId}
                             onChange={(newValue) => {
                                 formik.setFieldValue('cityId', newValue || '');
                             }}

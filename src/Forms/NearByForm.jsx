@@ -145,7 +145,7 @@ const NearByForm = (props) => {
                                 label="City"
                             >
                                 {cities?.cities?.map((city) => (
-                                    <MenuItem key={city._id} value={city?._id}>
+                                    <MenuItem key={city.id} value={city?.id}>
                                         {city?.name}
                                     </MenuItem>
                                 ))}
@@ -156,7 +156,7 @@ const NearByForm = (props) => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <ImageUpload files={files} setFiles={handleFileChange} deleteFile={handleDeleteFile} multiple={true} />
+                        <ImageUpload files={files} setFiles={handleFileChange} deleteFile={handleDeleteFile} multiple={false} />
                     </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>

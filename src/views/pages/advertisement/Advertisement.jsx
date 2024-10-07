@@ -11,6 +11,7 @@ import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import DataTable from 'ui-component/DataTable/DataTable'
 
 const Advertisement = () => {
@@ -18,6 +19,7 @@ const Advertisement = () => {
     const [dialogContent, setDialogContent] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { advertisements, loading, error } = useSelector(state => state.advertisement);
 
     const [dialogProps, setDialogProps] = useState({
@@ -35,16 +37,11 @@ const Advertisement = () => {
 
 
     const addState = () => {
-        setDialogTitle("Add Advertisement");
-        setDialogContent(<AdvertisementForm dialogProps={dialogProps} />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate("/advertisement/create")
     }
 
     const editHotle = (id) => {
-        const advertisement_data = advertisements?.advertisements.find(el => el._id === id)
-        setDialogTitle("Update Advertisement");
-        setDialogContent(<AdvertisementForm dialogProps={dialogProps} advertisement_data={advertisement_data} edit={true} />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate(`/advertisement/update/${id}`)
     }
 
     const deleteState = (id) => {

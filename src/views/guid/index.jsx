@@ -9,15 +9,18 @@ import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import DataTable from 'ui-component/DataTable/DataTable';
 
 const GuidPage = () => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { guids, loading } = useSelector((state) => state.guid)
     const [dialogTitle, setDialogTitle] = useState("");
     const [dialogContent, setDialogContent] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+
 
     const [dialogProps, setDialogProps] = useState({
         open: false,
@@ -36,16 +39,18 @@ const GuidPage = () => {
     }, [dispatch])
 
     const addRooms = () => {
-        setDialogTitle("Add Guid");
-        setDialogContent(<GuidForm dialogProps={dialogProps} />);
-        setDialogProps({ ...dialogProps, open: true });
+        navigate("/guid/create-guid")
+        // setDialogTitle("Add Guid");
+        // setDialogContent(<GuidForm dialogProps={dialogProps} />);
+        // setDialogProps({ ...dialogProps, open: true });
     }
     const editGuid = (id) => {
-        const guid_data = guids?.guids.find(el => el._id === id)
+        // const guid_data = guids?.guids.find(el => el._id === id)
 
-        setDialogTitle("Update Guid");
-        setDialogContent(<GuidForm dialogProps={dialogProps} guid_data={guid_data} edit={true} />);
-        setDialogProps({ ...dialogProps, open: true });
+        // setDialogTitle("Update Guid");
+        // setDialogContent(<GuidForm dialogProps={dialogProps} guid_data={guid_data} edit={true} />);
+        // setDialogProps({ ...dialogProps, open: true });
+        navigate(`/guid/update-guid/${id}`)
     }
 
     const deleteGuid = (id) => {

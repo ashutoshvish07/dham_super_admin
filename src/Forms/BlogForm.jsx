@@ -6,10 +6,6 @@ import {
     Button,
     Box,
     Chip,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
     Typography,
     Grid,
     IconButton,
@@ -59,7 +55,6 @@ const BlogForm = (props) => {
         if (id) {
             dispatch(getblogsDataByIdAsync({ id })).then((result) => {
                 const { data } = result?.payload;
-                console.log("result: blogForm ", data);
                 setValues({
                     title: data?.title,
                     content: data?.content,

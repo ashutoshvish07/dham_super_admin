@@ -18,6 +18,19 @@ export const getAdvertisement = createAsyncThunk(
         }
     }
 )
+// get - advertisement - by - id
+export const getAdvertisementById = createAsyncThunk(
+    'advertisement/getAdvertisementById',
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await Axios.get(`/get-advertisement-by-id/${id}`)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
 
 export const createAdvertisement = createAsyncThunk(
     'advertisement/createAdvertisement',
