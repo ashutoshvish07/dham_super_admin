@@ -69,7 +69,6 @@ const EventTour = () => {
     }
 
     const handlePreview = (cost) => {
-        debugger
         setDialogTitle("Preview")
         setDialogContent(
             <TableContainer>
