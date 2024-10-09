@@ -1,6 +1,6 @@
-import { Box, Button, IconButton, InputAdornment, Paper, TextField, Typography } from '@mui/material'
-import NearByForm from 'Forms/NearByForm'
-import { deleteNearByAsync, getNearByAsync } from 'Redux/Slice/locationSlice'
+import { Box, Button, IconButton, InputAdornment, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction'
 import AlertDialog from 'components/Dialog/Dialog'
 import SearchBar from 'components/SearchBar/SearchBar'
@@ -67,6 +67,41 @@ const EventTour = () => {
             dispatch(geteventTourAsync({ page: paginationModel.page, page_size: paginationModel.pageSize }))
         })
     }
+
+    const handlePreview = (cost) => {
+        debugger
+        setDialogTitle("Preview")
+        setDialogContent(
+            <TableContainer>
+                <Table size='small'>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Package</TableCell>
+                            <TableCell>Cost</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {cost && cost.length > 0 ? (
+                            cost.map((row) => (
+                                <TableRow key={row._id}>
+                                    <TableCell>{row.package}</TableCell>
+                                    <TableCell>{row.cost}</TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={2} align="center">
+                                    No data
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+
+                </Table>
+            </TableContainer>
+        )
+        setDialogProps({ ...dialogProps, open: true })
+    }
     const columns = [
         {
             field: 'title',
@@ -94,9 +129,18 @@ const EventTour = () => {
 
         },
         {
-            field: 'cost',
+            field: 'packageCost',
             headerName: 'Cost',
             flex: 1,
+            renderCell: (params) => (
+                <IconButton
+                    onClick={() => {
+                        handlePreview(params?.value);
+                    }}
+                >
+                    <VisibilityIcon />
+                </IconButton>
+            ),
 
         },
         {

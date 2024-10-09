@@ -33,7 +33,7 @@ export default function AlertDialog(props) {
                 },
             }}
         >
-            <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+            <DialogTitle id="alert-dialog-title" sx={{ fontSize: "18px", fontWeight: 600 }}>{title}</DialogTitle>
             <Tooltip title='Close'>
                 <IconButton sx={{
                     position: 'absolute',

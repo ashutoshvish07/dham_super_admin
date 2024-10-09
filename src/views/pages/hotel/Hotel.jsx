@@ -60,6 +60,10 @@ const Hotel = () => {
 
     const columns = [
         {
+            field: "hotelName",
+            headerName: "Code",
+        },
+        {
             field: 'name',
             headerName: 'Hotel name',
             flex: 2,
