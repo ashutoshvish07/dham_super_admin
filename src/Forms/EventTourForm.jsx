@@ -10,7 +10,7 @@ import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { Box } from '@mui/system';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllCityAsync } from 'Redux/Slice/locationSlice';
+import { getAllCityAsync, getAllStateAsync } from 'Redux/Slice/locationSlice';
 import moment from 'moment';
 import { createeventtourAsync, geteventtourIdAsync, updateeventtourAsync } from 'Redux/Slice/eventTourSlice';
 import Loader from 'ui-component/Loader';
@@ -22,7 +22,7 @@ const EventTourForm = () => {
     const { id } = useParams()
     const dispatch = useDispatch()
     const [files, setFiles] = useState([]);
-    const { cities, } = useSelector((state) => state.location);
+    const { cities, states } = useSelector((state) => state.location);
     const [loading, setLoading] = useState(false)
 
 
@@ -39,13 +39,16 @@ const EventTourForm = () => {
         type: 'event',
         departure_from: '',
         cityId: '',
+        stateId: "",
     })
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true)
                 await Promise.all([
                     dispatch(getAllCityAsync({ page: 1, page_size: 10 })),
+                    dispatch(getAllStateAsync({ page: 1, page_size: 10 })),
                 ]);
 
                 if (id) {
@@ -59,6 +62,7 @@ const EventTourForm = () => {
                             departure_date: moment(tourAndEvent?.departure_date).format('YYYY-MM-DD') || '',
                             departure_time: tourAndEvent?.departure_time || '',
                             // cost: tourAndEvent?.cost || null,
+                            stateId: tourAndEvent?.stateId || "",
                             duration: tourAndEvent?.duration || '',
                             plans: tourAndEvent?.plans || [{ day: '', destination: '', description: '' }],
                             type: tourAndEvent?.type || 'event',
@@ -67,6 +71,8 @@ const EventTourForm = () => {
                             packageCost: tourAndEvent?.packageCost || [{ package: 'Basic', cost: '' }],
                         })
                         setFiles(tourAndEvent.files)
+                        setLoading(false)
+
                     })
                 } else {
                     setInitialValues({
@@ -78,16 +84,19 @@ const EventTourForm = () => {
                         departure_time: '',
                         // cost: '',
                         duration: '',
+                        stateId: "",
                         plans: [{ day: '', destination: '', description: '' }],
                         type: 'event',
                         departure_from: '',
                         cityId: '',
                     })
                     setFiles([])
+                    setLoading(false)
                 }
 
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setLoading(false)
             }
         };
         fetchData();
@@ -158,9 +167,10 @@ const EventTourForm = () => {
                     formData.append("duration", values.duration)
                     formData.append("type", values.type)
                     formData.append("departure_from", values.departure_from)
-                    formData.append("cityId", values.cityId ? values.cityId : values.cityId?.id)
+                    formData.append("cityId", values.cityId?._id ? values.cityId?._id : values.cityId?.id)
                     formData.append("plans", JSON.stringify(values.plans))
                     formData.append("packageCost", JSON.stringify(values.packageCost))
+                    formData.append("stateId", values?.stateId?._id ? values?.stateId?._id : values?.stateId?._id)
 
 
                     if (files.length) {
@@ -345,6 +355,26 @@ const EventTourForm = () => {
                                     color="secondary"
                                 />
                             </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <AutoComplete
+                                    options={states?.states || []}
+                                    label="Select State"
+                                    id="state-select"
+                                    name="stateId"
+                                    value={
+                                        values.stateId
+                                    }
+                                    onChange={(newValue) => {
+                                        setFieldValue('stateId', newValue || '');
+                                    }}
+                                    error={touched.stateId && Boolean(errors.stateId)}
+                                    helperText={touched.stateId && errors.stateId}
+                                    required
+                                    optionKey="_id"
+                                    optionLabel="name"
+                                    color="secondary"
+                                />
+                            </Grid>
 
                             <Grid item xs={12}>
                                 <Typography variant="h6" sx={{ mb: 1 }}>Plans</Typography>
@@ -411,10 +441,10 @@ const EventTourForm = () => {
                                 <Typography variant="h6" sx={{ mb: 1 }}>Pricing Options</Typography>
                                 <FieldArray name="packageCost">
                                     {({ remove, push }) => (
-                                        <div>
+                                        <Box display={"flex"} flexDirection='column' rowGap={2} justifyContent='center' alignItems='center' >
                                             {values?.packageCost?.map((option, index) => (
-                                                <Grid container spacing={2} key={index} alignItems="center" justifyContent='center'>
-                                                    <Grid item xs={4}>
+                                                <Grid container spacing={2} key={index} alignItems="center" rowGap={2} justifyContent='center'>
+                                                    <Grid item xs={4} >
                                                         <Field
                                                             as={TextField}
                                                             fullWidth
@@ -448,7 +478,7 @@ const EventTourForm = () => {
                                                             <DeleteIcon />
                                                         </IconButton>
                                                     </Grid>
-                                                    <Grid item xs={2} style={{ marginTop: '4px' }}> {/* Added row gap */}
+                                                    <Grid item xs={2} style={{ marginTop: '4px' }}>
                                                     </Grid>
                                                 </Grid>
                                             ))}
@@ -459,7 +489,7 @@ const EventTourForm = () => {
                                             >
                                                 Add Pricing Option
                                             </Button>
-                                        </div>
+                                        </Box>
                                     )}
                                 </FieldArray>
                             </Grid>
