@@ -441,7 +441,7 @@ const EventTourForm = () => {
                                 <Typography variant="h6" sx={{ mb: 1 }}>Pricing Options</Typography>
                                 <FieldArray name="packageCost">
                                     {({ remove, push }) => (
-                                        <Box display={"flex"} flexDirection='column' rowGap={2} justifyContent='center' alignItems='center' >
+                                        <Box display={"flex"} flexDirection='column' rowGap={2} justifyContent='flex-start' alignItems='flex-start' >
                                             {values?.packageCost?.map((option, index) => (
                                                 <Grid container spacing={2} key={index} alignItems="center" rowGap={2} justifyContent='center'>
                                                     <Grid item xs={4} >
