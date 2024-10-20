@@ -18,28 +18,33 @@ import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 
 // chart data
-import chartData from './chart-data/total-growth-bar-chart';
+// import chartData from './chart-data/total-growth-bar-chart';
+import { useSelector } from 'react-redux';
+import { accordionActionsClasses } from '@mui/material';
 
 const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
+  // {
+  //   value: 'today',
+  //   label: 'Today'
+  // },
   {
     value: 'month',
     label: 'This Month'
   },
-  {
-    value: 'year',
-    label: 'This Year'
-  }
+  // {
+  //   value: 'year',
+  //   label: 'This Year'
+  // }
 ];
 
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
 const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = React.useState('today');
+  const [value, setValue] = React.useState('month');
   const theme = useTheme();
+  const { graphData } = useSelector((state) => state?.dashboard)
+  let data = Object.values(graphData)
+  const totalBooking = data.reduce((acc, it) => acc + it, 0)
 
   const { primary } = theme.palette.text;
   const divider = theme.palette.divider;
@@ -79,6 +84,78 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     }
   }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, divider, isLoading, grey500]);
 
+  const chartData = {
+    height: 480,
+    type: 'bar',
+    options: {
+      chart: {
+        id: 'bar-chart',
+        stacked: true,
+        toolbar: {
+          show: true
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: 'bottom',
+              offsetX: -10,
+              offsetY: 0
+            }
+          }
+        }
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '50%'
+        }
+      },
+      xaxis: {
+        type: 'category',
+        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      },
+      legend: {
+        show: true,
+        fontFamily: `'Roboto', sans-serif`,
+        position: 'bottom',
+        offsetX: 20,
+        labels: {
+          useSeriesColors: false
+        },
+        markers: {
+          width: 16,
+          height: 16,
+          radius: 5
+        },
+        itemMargin: {
+          horizontal: 15,
+          vertical: 8
+        }
+      },
+      fill: {
+        type: 'solid'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      grid: {
+        show: true
+      }
+    },
+    series: [
+      {
+        name: 'Booking',
+        data: data
+      }
+    ]
+  };
+
   return (
     <>
       {isLoading ? (
@@ -91,14 +168,14 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Growth</Typography>
+                      <Typography variant="subtitle2">Total Booking</Typography>
                     </Grid>
                     <Grid item>
-                      <Typography variant="h3">2,324.00</Typography>
+                      <Typography variant="h3">{totalBooking}</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item>
+                {/* <Grid item>
                   <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
                     {status.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -106,7 +183,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                       </MenuItem>
                     ))}
                   </TextField>
-                </Grid>
+                </Grid> */}
               </Grid>
             </Grid>
             <Grid
