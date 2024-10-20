@@ -33,6 +33,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Google from 'assets/images/icons/social-google.svg';
 import { useNavigate } from 'react-router-dom';
 import { loginAsync } from 'Redux/Slice/authSlice';
+import CustomSnackBar from 'components/Comtrol/SnackBar/CustomSnackBar';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -44,7 +45,15 @@ const AuthLogin = ({ ...others }) => {
   const customization = useSelector((state) => state.customization);
   const [checked, setChecked] = useState(true);
   const authData = useSelector(state => state.auth)
-  console.log(authData)
+
+  const [open, setOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({
+    message: '',
+    severity: 'success',
+  });
+
+
+
   const googleHandler = async () => {
     console.error('Login');
   };
@@ -58,9 +67,18 @@ const AuthLogin = ({ ...others }) => {
     event.preventDefault();
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
-
+      <CustomSnackBar
+        open={open}
+        message={alertConfig.message}
+        severity={alertConfig.severity}
+        onClose={handleClose}
+      />
       <Formik
         initialValues={{
           email: '',
@@ -77,12 +95,21 @@ const AuthLogin = ({ ...others }) => {
               if (res?.payload?.success) {
                 navigate('/otp-verification')
               }
+              else {
+                setAlertConfig({
+                  message: res?.payload?.message,
+                  severity: 'error',
+                });
+                setOpen(true);
+              }
 
               setSubmitting(false);
             })
             .catch((error) => {
+
               setErrors({ submit: error?.message });
               setSubmitting(false);
+
             });
         }}
       >

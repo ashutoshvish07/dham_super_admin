@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { verifyOtpAsync } from 'Redux/Slice/authSlice';
+import CustomSnackBar from 'components/Comtrol/SnackBar/CustomSnackBar';
 
 
 const AuthOTP = ({ ...others }) => {
@@ -16,16 +17,24 @@ const AuthOTP = ({ ...others }) => {
     const navigate = useNavigate()
     const email = useSelector((state) => state.auth.email);
 
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
+    const [open, setOpen] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({
+        message: '',
+        severity: 'success',
+    });
 
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
+    const handleClose = () => {
+        setOpen(false);
     };
 
     return (
         <div>
+            <CustomSnackBar
+                open={open}
+                message={alertConfig.message}
+                severity={alertConfig.severity}
+                onClose={handleClose}
+            />
             <Formik
                 initialValues={{
                     email: email,
@@ -38,13 +47,34 @@ const AuthOTP = ({ ...others }) => {
                 onSubmit={(values, { setSubmitting, setErrors }) => {
                     dispatch(verifyOtpAsync({ email: values.email, otp: values.otp }))
                         .then((res) => {
-                            if (res.payload.success) {
+                            const role = res.payload?.user?.role
+                            if (res.payload.success && role.toLowerCase() == 'admin') {
                                 navigate('/dashboard/default')
+                                setAlertConfig({
+                                    message: 'Log in successfully!',
+                                    severity: 'success',
+                                });
+                                setOpen(true);
                             }
+                            else if (res.payload.success && role.toLowerCase() == 'hotel') {
+                                navigate('/dashboard/hotel-admin')
+                            } else {
+                                setAlertConfig({
+                                    message: 'Invalid Otp',
+                                    severity: 'error',
+                                });
+                                setOpen(true);
+                            }
+
                             setSubmitting(false);
                         })
                         .catch((error) => {
                             setErrors({ submit: error.message });
+                            setAlertConfig({
+                                message: 'There was an error processing your request.',
+                                severity: 'error',
+                            });
+                            setOpen(true);
                             setSubmitting(false);
                         });
                 }}

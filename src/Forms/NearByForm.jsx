@@ -83,7 +83,7 @@ const NearByForm = (props) => {
         <div>
             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={12}>
                         <TextField
                             color='secondary'
                             fullWidth
@@ -96,20 +96,7 @@ const NearByForm = (props) => {
                             helperText={formik.touched?.name && formik.errors?.name}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            color='secondary'
-                            fullWidth
-                            id="description"
-                            name="description"
-                            label="Description"
-                            minRows={2}
-                            value={formik.values?.description}
-                            onChange={formik.handleChange}
-                            error={formik.touched?.description && Boolean(formik.errors?.description)}
-                            helperText={formik.touched.description && formik.errors.description}
-                        />
-                    </Grid>
+
                     <Grid item xs={12} sm={6}>
                         <FormControl fullWidth error={formik.touched.type && Boolean(formik.errors.type)} color='secondary'>
                             <InputLabel id="type-label">Type</InputLabel>
@@ -154,6 +141,22 @@ const NearByForm = (props) => {
                                 <div style={{ color: 'red', fontSize: '12px' }}>{formik.errors.cityId}</div>
                             )}
                         </FormControl>
+
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <TextField
+                            color='secondary'
+                            fullWidth
+                            id="description"
+                            name="description"
+                            label="Description"
+                            multiline
+                            minRows={2}
+                            value={formik.values?.description}
+                            onChange={formik.handleChange}
+                            error={formik.touched?.description && Boolean(formik.errors?.description)}
+                            helperText={formik.touched.description && formik.errors.description}
+                        />
                     </Grid>
                     <Grid item xs={12}>
                         <ImageUpload files={files} setFiles={handleFileChange} deleteFile={handleDeleteFile} multiple={false} />

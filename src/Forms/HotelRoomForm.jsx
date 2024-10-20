@@ -39,7 +39,6 @@ const HotelRoomForm = (props) => {
         bedSize: '',
     })
     const { hotels, roomCategories, amenities } = useSelector(state => state.hotel)
-    debugger
     const dispatch = useDispatch()
     const { id } = useParams()
     const navigate = useNavigate();
@@ -136,7 +135,7 @@ const HotelRoomForm = (props) => {
                     formData.append('area', `${values.area}SqFt`);
                     formData.append('floor', values.floor);
                     formData.append('bedSize', values.bedSize);
-                    debugger
+
                     if (values.amenities) {
                         values.amenities.forEach((amenity) => {
                             formData.append('amenitiesId[]', amenity._id ? amenity._id : amenity);

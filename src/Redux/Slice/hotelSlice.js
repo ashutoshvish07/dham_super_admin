@@ -275,6 +275,7 @@ export const deleteRoomAsync = createAsyncThunk(
     }
 );
 
+
 export const createPropertiesAsync = createAsyncThunk(
     'hotel/createPropertiesAsync',
 
@@ -308,6 +309,8 @@ export const getAllPropertiesAsync = createAsyncThunk(
         }
     }
 )
+
+
 
 export const createFoodandDiningAsync = createAsyncThunk(
     'hotel/createFoodAndDiningAsync',
@@ -396,13 +399,16 @@ const hotelSlice = createSlice({
             // Get Hotels
             .addCase(getHotelAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true;
             })
             .addCase(getHotelAsync.fulfilled, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.hotels = action.payload;
             })
             .addCase(getHotelAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             //Get single Hotel  data 
@@ -415,81 +421,96 @@ const hotelSlice = createSlice({
             })
             .addCase(getHotelByIdAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Create Hotel
             .addCase(createHotelAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true;
             })
             .addCase(createHotelAsync.fulfilled, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.hotels.push(action.payload);
             })
             .addCase(createHotelAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Update Hotel
             .addCase(updateHotelAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true
             })
             .addCase(updateHotelAsync.fulfilled, (state, action) => {
                 state.status = false;
-                // const index = state.hotels.findIndex((hotel) => hotel._id === action.payload._id);
-                // if (index !== -1) {
-                //     state.hotels[index] = action.payload;
-                // }
+                state.loading = false
             })
             .addCase(updateHotelAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Get Room Categories
             .addCase(getRoomCateAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true
             })
             .addCase(getRoomCateAsync.fulfilled, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.roomCategories = action.payload;
             })
             .addCase(getRoomCateAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Create Room Category
             .addCase(createRoomCateAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true;
             })
             .addCase(createRoomCateAsync.fulfilled, (state, action) => {
                 state.status = false;
+                state.loading = false
                 // state.roomCategories.push(action.payload);
             })
             .addCase(createRoomCateAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Get Amenities
             .addCase(getAmenitiesAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true
             })
             .addCase(getAmenitiesAsync.fulfilled, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.amenities = action.payload;
             })
             .addCase(getAmenitiesAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Create Amenities
             .addCase(createAmenitiesAsync.pending, (state) => {
                 state.status = true;
+                state.loading = true;
             })
             .addCase(createAmenitiesAsync.fulfilled, (state, action) => {
                 state.status = false;
+                state.loading = false;
                 // state.amenities.push(action.payload);
             })
             .addCase(createAmenitiesAsync.rejected, (state, action) => {
                 state.status = false;
+                state.loading = false
                 state.error = action.payload;
             })
             // Get All Rooms

@@ -75,10 +75,10 @@ const Properties = () => {
 
     const onChangeCount = (e) => {
         if (e.pageSize == paginationModel.pageSize) {
-            // dispatch(getAmenitiesAsync({ page: e.page + 1, page_size: e.pageSize }));
+            dispatch(getAllPropertiesAsync({ page: e.page + 1, page_size: e.pageSize }));
             setPaginationModel(e)
         } else {
-            // dispatch(getAmenitiesAsync({ page: e.page, page_size: e.pageSize }));
+            dispatch(getAllPropertiesAsync({ page: e.page, page_size: e.pageSize }));
             setPaginationModel({ page: 1, pageSize: e.pageSize })
         }
     }

@@ -40,16 +40,8 @@ const GuidPage = () => {
 
     const addRooms = () => {
         navigate("/guid/create-guid")
-        // setDialogTitle("Add Guid");
-        // setDialogContent(<GuidForm dialogProps={dialogProps} />);
-        // setDialogProps({ ...dialogProps, open: true });
     }
     const editGuid = (id) => {
-        // const guid_data = guids?.guids.find(el => el._id === id)
-
-        // setDialogTitle("Update Guid");
-        // setDialogContent(<GuidForm dialogProps={dialogProps} guid_data={guid_data} edit={true} />);
-        // setDialogProps({ ...dialogProps, open: true });
         navigate(`/guid/update-guid/${id}`)
     }
 
@@ -127,6 +119,13 @@ const GuidPage = () => {
             field: 'languages',
             headerName: 'Languages',
             flex: 2,
+            renderCell: (params) => {
+                return params.value.map((element, index) => {
+                    if (element?.isKnow) {
+                        return element?.name + ", ";
+                    }
+                });;
+            },
 
         },
 

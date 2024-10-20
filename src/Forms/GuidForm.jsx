@@ -8,6 +8,12 @@ import {
     Grid,
     IconButton,
     Typography,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Checkbox,
+    ListItemText,
+    Select,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync, } from 'Redux/Slice/locationSlice';
@@ -16,10 +22,31 @@ import ImageUpload from 'components/ImageUpload/ImageUpload';
 import { createGuidAsync, getGuidAsync, getGuidById, updateGuidAsync } from 'Redux/Slice/guidSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowRoundBack } from 'react-icons/io';
+import Loader from 'ui-component/Loader';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+const availableLanguages = [
+    { name: 'Hindi', isKnow: false },
+    { name: 'English', isKnow: false },
+    { name: 'Rajasthani', isKnow: false },
+
+    // Add more languages as needed
+];
 
 const GuidForm = (props) => {
 
     const { dialogProps, guid_data, edit } = props;
+    const [loading, setLoading] = useState(false)
     const [files, setFiles] = useState([]);
     const [guid, setguid] = useState({
         name: '',
@@ -29,7 +56,7 @@ const GuidForm = (props) => {
         pincode: '',
         address: '',
         pricePerHour: '',
-        languages: [],
+        languages: availableLanguages,
         about: '',
         cityId: '',
     })
@@ -56,7 +83,10 @@ const GuidForm = (props) => {
                     pincode: guide.pincode,
                     address: guide.address,
                     pricePerHour: guide.pricePerHour,
-                    languages: guide.languages,
+                    languages: availableLanguages.map(lang => ({
+                        ...lang,
+                        isKnow: guide.languages.some(guidLang => guidLang.name === lang.name && guidLang.isKnow),
+                    })),
                     about: guide.about,
                     cityId: guide.cityId,
                 })
@@ -78,14 +108,21 @@ const GuidForm = (props) => {
     const validationSchema = Yup.object({
         name: Yup.string().required('Required'),
         email: Yup.string().email('Invalid email address').required('Required'),
-        password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
+        password: Yup.string().min(6, 'Password must be at least 6 characters'),
         mobile: Yup.string().matches(/^\d{10}$/, 'Must be a valid 10-digit mobile number').required('Required'),
         pincode: Yup.string()
             .matches(/^[1-9][0-9]{5}$/, 'Pincode must be a valid 6-digit number')
             .required('Pincode is required'),
         address: Yup.string().required('Required'),
         pricePerHour: Yup.number().min(0, 'Price must be a positive number').required('Required'),
-        languages: Yup.array().of(Yup.string().required('Language is required')).required('Required'),
+        languages: Yup.array().of(
+            Yup.object().shape({
+                name: Yup.string().required('Language name is required'),
+                isKnow: Yup.boolean().required('Language knowledge is required')
+            })
+        ).test('at-least-one-language', 'At least one language must be known', function (value) {
+            return value.some(lang => lang.isKnow);
+        }),
         about: Yup.string().min(20, 'About must be at least 20 characters').required('Required'),
     });
 
@@ -94,16 +131,17 @@ const GuidForm = (props) => {
         enableReinitialize: true,
         validationSchema: validationSchema,
         onSubmit: (values) => {
+            setLoading(true)
             const formData = new FormData()
             formData.append("name", values.name)
             formData.append("email", values.email)
             formData.append("cityId", values?.cityId?._id ? values?.cityId?._id : values?.cityId?.id)
             formData.append("mobile", values.mobile)
-            formData.append("password", values.password)
+            formData.append("password", values.password ?? null)
             formData.append("address", values.address)
             formData.append("pincode", values.pincode)
             formData.append("pricePerHour", values.pricePerHour);
-            formData.append("languages", values.languages);
+            formData.append("languages", JSON.stringify(values.languages));
             formData.append("about", values.about);
 
             if (files.length) {
@@ -115,27 +153,41 @@ const GuidForm = (props) => {
             if (id) {
                 dispatch(updateGuidAsync({ formData: formData, id: id, })).then((res) => {
                     const { requestStatus } = res.meta;
-                    console.log("res", requestStatus);
                     if (requestStatus === 'fulfilled') {
                         navigate("/guid")
                     }
+                    setLoading(false)
                 })
             }
             else {
                 dispatch(createGuidAsync(formData)).then((res) => {
-                    console.log("res", res);
                     const { requestStatus } = res.meta;
                     if (requestStatus === 'fulfilled') {
                         navigate("/guid")
                     }
+                    setLoading(false)
                 })
             }
             dialogProps.onClose()
 
         },
     });
+
+    const handleLanguageChange = (event) => {
+        const { target: { value } } = event;
+        const selectedLanguages = typeof value === 'string' ? value.split(',') : value;
+        const updatedLanguages = availableLanguages.map(lang => ({
+            ...lang,
+            isKnow: selectedLanguages.includes(lang.name)
+        }));
+
+        formik.setFieldValue('languages', updatedLanguages);
+    };
+
+
     return (
         <div>
+            {loading && <Loader />}
             <Grid container justifyContent={'space-between'} alignItems={'center'} >
                 <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/guid")}>
                     <IoMdArrowRoundBack />
@@ -236,20 +288,33 @@ const GuidForm = (props) => {
                             helperText={formik.touched.pricePerHour && formik.errors.pricePerHour}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <TextField
-                            fullWidth
-                            id="languages"
-                            name="languages"
-                            label="Languages"
-                            color="secondary"
-                            placeholder="Enter languages separated by commas"
-                            value={formik.values.languages.join(', ')}
-                            onChange={(e) => formik.setFieldValue('languages', e.target.value.split(',').map(lang => lang.trim()))}
-                            error={formik.touched.languages && Boolean(formik.errors.languages)}
-                            helperText={formik.touched.languages && formik.errors.languages}
-                        />
+                    <Grid item xs={12}>
+                        <FormControl fullWidth error={formik.touched.languages && Boolean(formik.errors.languages)} >
+                            <InputLabel id="languages-label">Languages</InputLabel>
+                            <Select
+                                labelId="languages-label"
+                                label="Languages"
+                                id="languages"
+                                color="secondary"
+                                multiple
+                                value={formik.values.languages.filter(lang => lang.isKnow).map(lang => lang.name)}
+                                onChange={handleLanguageChange}
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {availableLanguages.map((language) => (
+                                    <MenuItem key={language.name} value={language.name}>
+                                        <Checkbox checked={formik.values.languages.find(lang => lang.name === language.name)?.isKnow || false} color="secondary" />
+                                        <ListItemText primary={language.name} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            {formik.touched.languages && formik.errors.languages && (
+                                <Typography color="error">{formik.errors.languages}</Typography>
+                            )}
+                        </FormControl>
                     </Grid>
+
 
                     <Grid item xs={12}>
                         <AutoComplete

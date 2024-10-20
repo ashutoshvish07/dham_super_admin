@@ -8,10 +8,6 @@ import PrivateRoute from './PrivateRoute';
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
 
-
-// sample page routing
-const SamplePage = Loadable(lazy(() => import('views/sample-page')));
-// import Country from 'views/pages/location/Country';
 const Country = Loadable(lazy(() => import("views/pages/location/Country")))
 const State = Loadable(lazy(() => import("views/pages/location/State")))
 const City = Loadable(lazy(() => import("views/pages/location/City")))
@@ -30,7 +26,8 @@ const FoodAndDining = Loadable(lazy(() => import("views/pages/hotel/FoodAndDinin
 const HotelFrom = Loadable(lazy(() => import("Forms/HotelForm")))
 const EventFrom = Loadable(lazy(() => import("Forms/EventTourForm")))
 const RoomForm = Loadable(lazy(() => import("Forms/HotelRoomForm")))
-
+const Booking = Loadable(lazy(() => import('views/pages/bookings/Bookings')))
+const GuidBookingDetailsPagle = Loadable(lazy(() => import('views/pages/bookings/GuidBookingDetailsPagle')))
 const AdvertisementForm = Loadable(lazy(() => import("Forms/AdvertisementForm")))
 const GuidFrom = Loadable(lazy(() => import("Forms/GuidForm")))
 
@@ -44,10 +41,20 @@ const MainRoutes = {
       path: '/',
       element: <DashboardDefault />
     },
+
     {
       path: '/guid',
       element: <GuidPage />
     },
+    {
+      path: '/booking',
+      element: <Booking />
+    },
+    {
+      path: '/guid-booking',
+      element: <GuidBookingDetailsPagle />
+    },
+
     {
       path: '/guid/create-guid',
       element: <GuidFrom />

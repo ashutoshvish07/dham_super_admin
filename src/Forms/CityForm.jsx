@@ -7,16 +7,18 @@ import { createCityAsync, getAllCityAsync, getAllStateAsync, updateCityAsync } f
 import { useDispatch, useSelector } from 'react-redux';
 import ImageUpload from 'components/ImageUpload/ImageUpload';
 import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
+import Loader from 'ui-component/Loader';
 
 
 
 
 const CityForm = (props) => {
 
-    const [files, setFiles] = useState([]);
     const { cities_data, dialogProps, type } = props
+    const [files, setFiles] = useState([cities_data?.file] || []);
     const { states: { states }, } = useSelector(state => state.location);
     const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false)
 
 
     useEffect(() => {
@@ -25,13 +27,14 @@ const CityForm = (props) => {
     }, [])
     const formik = useFormik({
         initialValues: {
-            stateId: cities_data?.stateId?.name || '',
+            stateId: cities_data?.stateId || '',
             name: cities_data?.name || '',
         },
         onSubmit: (values) => {
+            setLoading(true)
             const formData = new FormData()
             formData.append("name", values.name)
-            formData.append("stateId", type === 'edit' ? cities_data?.stateId._id : values?.stateId?._id)
+            formData.append("stateId", values?.stateId?._id)
 
 
             if (files) {
@@ -43,12 +46,14 @@ const CityForm = (props) => {
                 dispatch(updateCityAsync({ city_id: cities_data?.id, formData: formData })).then(() => {
                     dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
                     dialogProps?.onClose()
+                    setLoading(false)
                 })
             }
             else {
                 dispatch(createCityAsync(formData)).then(() => {
                     dispatch(getAllCityAsync({ page: 1, page_size: 10 }))
                     dialogProps?.onClose()
+                    setLoading(false)
                 })
             }
         },
@@ -65,6 +70,7 @@ const CityForm = (props) => {
 
     return (
         <div>
+            {loading && <Loader />}
             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>

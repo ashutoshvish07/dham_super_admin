@@ -18,6 +18,7 @@ import CustomDatePicker from 'components/DatePicker/CustomDatePicker';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowRoundBack } from 'react-icons/io';
+import Loader from 'ui-component/Loader';
 
 const validationSchema = Yup.object({
     title: Yup.string().required('Required'),
@@ -34,7 +35,7 @@ const AdvertisementForm = (props) => {
 
     const { dialogProps, edit } = props;
     const { cities: { cities } } = useSelector(state => state.location);
-    console.log("cities", cities)
+    const [loading, setLoading] = useSelector(false)
     const [files, setFiles] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -54,6 +55,7 @@ const AdvertisementForm = (props) => {
         validationSchema: validationSchema,
         enableReinitialize: true,
         onSubmit: (values) => {
+            setLoading(true)
             const formData = new FormData();
             formData.append("title", values.title);
             formData.append("description", values.description);
@@ -77,6 +79,7 @@ const AdvertisementForm = (props) => {
                         const { requestStatus } = res.meta;
                         if (requestStatus === 'fulfilled') {
                             navigate("/advertisement")
+                            setLoading(false)
                         }
                     });
             } else {
@@ -85,6 +88,7 @@ const AdvertisementForm = (props) => {
                         const { requestStatus } = res.meta;
                         if (requestStatus === 'fulfilled') {
                             navigate("/advertisement")
+                            setLoading(false)
                         }
                     });
             }
@@ -124,9 +128,9 @@ const AdvertisementForm = (props) => {
 
 
 
-    console.log("formik", formik.initialValues)
     return (
         <>
+            {loading && <Loader />}
             <Grid container justifyContent={'space-between'} alignItems={'center'} >
                 <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/advertisement")}>
                     <IoMdArrowRoundBack />

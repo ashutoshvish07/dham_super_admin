@@ -22,10 +22,12 @@ import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
 import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
+import { useSelector } from 'react-redux';
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const EarningCard = ({ isLoading }) => {
+const EarningCard = ({ isLoading, totalRevenue }) => {
+
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -91,7 +93,7 @@ const EarningCard = ({ isLoading }) => {
                       <img src={EarningIcon} alt="Notification" />
                     </Avatar>
                   </Grid>
-                  <Grid item>
+                  {/* <Grid item>
                     <Avatar
                       variant="rounded"
                       sx={{
@@ -136,13 +138,13 @@ const EarningCard = ({ isLoading }) => {
                         <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
                       </MenuItem>
                     </Menu>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$500.00</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{`₹ ${totalRevenue ? totalRevenue.toFixed(2) : 0}`}</Typography>
                   </Grid>
                   <Grid item>
                     <Avatar

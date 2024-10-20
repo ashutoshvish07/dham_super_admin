@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync } from 'Redux/Slice/locationSlice';
 import moment from 'moment';
 import { createeventtourAsync, geteventtourIdAsync, updateeventtourAsync } from 'Redux/Slice/eventTourSlice';
+import Loader from 'ui-component/Loader';
 
 
 const EventTourForm = () => {
@@ -22,6 +23,7 @@ const EventTourForm = () => {
     const dispatch = useDispatch()
     const [files, setFiles] = useState([]);
     const { cities, } = useSelector((state) => state.location);
+    const [loading, setLoading] = useState(false)
 
 
     const [initialValues, setInitialValues] = useState({
@@ -129,6 +131,7 @@ const EventTourForm = () => {
 
     return (
         <>
+            {loading && <Loader />}
             <Grid container justifyContent={'space-between'} alignItems={'center'} sx={{ mb: 2 }} >
                 <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/event-tours")}>
                     <IoMdArrowRoundBack />
@@ -142,6 +145,7 @@ const EventTourForm = () => {
                 validationSchema={validationSchema}
                 enableReinitialize
                 onSubmit={(values, { setSubmitting }) => {
+                    setLoading(true)
                     const formData = new FormData();
 
                     formData.append("title", values.title)
@@ -157,7 +161,6 @@ const EventTourForm = () => {
                     formData.append("cityId", values.cityId ? values.cityId : values.cityId?.id)
                     formData.append("plans", JSON.stringify(values.plans))
                     formData.append("packageCost", JSON.stringify(values.packageCost))
-                    debugger
 
 
                     if (files.length) {
@@ -169,11 +172,13 @@ const EventTourForm = () => {
                     if (!id) {
                         dispatch(createeventtourAsync(formData)).then((response) => {
                             navigate('/event-tours')
+                            setLoading(false)
                         })
                     } else {
                         dispatch(updateeventtourAsync({ formData: formData, id: id })).then((response) => {
-                            console.log('response:', response);
+
                             navigate('/event-tours')
+                            setLoading(false)
                         })
                     }
 

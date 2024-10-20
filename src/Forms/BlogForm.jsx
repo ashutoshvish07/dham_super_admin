@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllCityAsync } from 'Redux/Slice/locationSlice';
 import { clearSingleBlog, createblogsAsync, getblogsDataByIdAsync, updateblogsAsync } from 'Redux/Slice/blogSlice';
 import { borderRadius } from '@mui/system';
+import Loader from 'ui-component/Loader';
 
 
 
@@ -27,6 +28,8 @@ import { borderRadius } from '@mui/system';
 const BlogForm = (props) => {
     const navigate = useNavigate()
     const [files, setFiles] = useState([]);
+    const [loading, setLoading] = useState(false)
+
     const { cities: { cities }, } = useSelector(state => state.location)
     const [content, setContent] = useState('');
     const { id } = useParams()
@@ -85,6 +88,7 @@ const BlogForm = (props) => {
     };
 
     const handleSubmit = (values, { setSubmitting, resetForm }) => {
+        setLoading(true)
         const formData = new FormData();
         formData.append('title', values.title);
         formData.append('content', values?.content);
@@ -110,10 +114,10 @@ const BlogForm = (props) => {
                 }
                 setFiles([])
                 setContent('')
+                setLoading(false)
             })
         } else {
             dispatch(createblogsAsync(formData)).then((res) => {
-
 
                 const { data } = res?.payload;
                 if (data) {
@@ -121,6 +125,7 @@ const BlogForm = (props) => {
                 }
                 setFiles([])
                 setContent('')
+                setLoading(false)
             })
         }
         setSubmitting(false);
@@ -130,6 +135,7 @@ const BlogForm = (props) => {
 
     return (
         <div>
+            {loading && <Loader />}
             <Grid container justifyContent={'space-between'} alignItems={'center'} >
                 <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/blogs")}>
                     <IoMdArrowRoundBack />

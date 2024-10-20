@@ -25,6 +25,7 @@ import AutoComplete from 'components/Comtrol/AutoComplete/AutoComplete';
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Grid4x4Rounded } from '@mui/icons-material';
+import Loader from 'ui-component/Loader';
 
 const HotelForm = ({ type, dialogProps, hotle_data }) => {
     const dispatch = useDispatch();
@@ -46,6 +47,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
         price: "",
         offerPrice: "",
         amenities: [],
+        foodAndDiningId: '',
     })
 
     const [files, setFiles] = useState([]);
@@ -70,9 +72,8 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             name: data?.name || "",
                             email: data?.email || "",
                             mobile: data?.mobile || "",
-                            password: data?.password || "",
-                            countryId: data?.countryId || "",
-                            stateId: data?.stateId || "",
+                            countryId: data?.countryId?.name || "",
+                            stateId: data?.stateId?.name || "",
                             cityId: data?.cityId?.name || "",
                             propertyTypeId: data?.propertyTypeId || "",
                             address: data?.address || "",
@@ -165,12 +166,12 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
             formData.append("name", values.name)
             formData.append("email", values.email)
             formData.append("mobile", values.mobile)
-            formData.append("password", values.password)
+            formData.append("password", values.password ?? null)
             formData.append("address", values.address)
             formData.append("pincode", values.pincode)
             formData.append("price", values.price)
             formData.append("offerPrice", values.offerPrice)
-            formData.append("propertyTypeId", hotelData?.propertyTypeId ? hotelData?.propertyTypeId : values?.propertyTypeId?.id)
+            formData.append("propertyTypeId", hotelData?.propertyTypeId?._id ? hotelData?.propertyTypeId?._id : values?.propertyTypeId?.id)
             formData.append("countryId", hotelData?.countryId?._id ? hotelData?.countryId?._id : values?.countryId?._id)
             formData.append("stateId", hotelData?.stateId?._id ? hotelData?.stateId?._id : values?.stateId?._id)
             formData.append("cityId", hotelData?.cityId?._id ? hotelData?.cityId?._id : values?.cityId?.id)
@@ -190,29 +191,28 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
 
             if (id) {
                 dispatch(updateHotelAsync({ formData, id: hotelData?._id })).then((res) => {
-                    console.log(res);
-                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
-                    navigate("/hotel/hotels")
+                    const { requestStatus } = res.meta;
+                    if (requestStatus === 'fulfilled') {
+                        navigate("/hotel/hotels")
+                    }
+
                 })
             } else {
                 dispatch(createHotelAsync(formData)).then((res) => {
-                    console.log(res);
-                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
-                    navigate("/hotel/hotels")
+                    const { requestStatus } = res.meta;
+                    if (requestStatus === 'fulfilled') {
+                        navigate("/hotel/hotels")
+                    }
                 })
             }
         },
     });
 
 
-    if (loading) {
-        return <Grid4x4Rounded>
-            <CircularProgress />
-        </Grid4x4Rounded>
-    }
 
     return (
         <>
+            {loading && <Loader />}
             <Grid container justifyContent={'space-between'} alignItems={'center'} >
                 <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/hotel/hotels")}>
                     <IoMdArrowRoundBack />
@@ -294,7 +294,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             id="country-select"
                             name="countryId"
                             value={
-                                id ? countries?.countries?.find(count => count?._id === formik.values.countryId)?.name : formik.values.countryId
+                                formik.values.countryId
                             }
                             onChange={(newValue) => {
                                 formik.setFieldValue('countryId', newValue || '');
@@ -314,7 +314,7 @@ const HotelForm = ({ type, dialogProps, hotle_data }) => {
                             id="state-select"
                             name="stateId"
                             value={
-                                id ? states?.states?.find(stat => stat?._id === formik.values.stateId)?.name : formik.values.stateId
+                                formik.values.stateId
                             }
                             onChange={(newValue) => {
                                 formik.setFieldValue('stateId', newValue || '');

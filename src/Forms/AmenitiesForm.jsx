@@ -5,8 +5,8 @@ import { useDispatch } from 'react-redux';
 import { createAmenitiesAsync, getAmenitiesAsync, updateAmenitiesAsync } from 'Redux/Slice/hotelSlice';
 
 const AmenitiesForm = (props) => {
-    const { aminity_data } = props
-    const [selectedImage, setSelectedImage] = useState(null);
+    const { aminity_data, type } = props
+    const [selectedImage, setSelectedImage] = useState(aminity_data?.file?.Url || null);
 
     const dispatch = useDispatch()
 
@@ -22,7 +22,7 @@ const AmenitiesForm = (props) => {
             formData.append('file', values.image);
         }
 
-        if (type === " edit") {
+        if (type === "edit") {
             dispatch(updateAmenitiesAsync({ id: aminity_data._id, formData: formData })).then(() => {
                 dispatch(getAmenitiesAsync({ page: 1, page_size: 10 }))
             })

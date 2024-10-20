@@ -22,10 +22,12 @@ import ChartDataYear from './chart-data/total-order-year-line-chart';
 // assets
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import EarningIcon from 'assets/images/icons/earning.svg';
 
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
-const TotalOrderLineChartCard = ({ isLoading }) => {
+const TotalOrderLineChartCard = ({ isLoading, thisMonthRevenue }) => {
   const theme = useTheme();
 
   const [timeValue, setTimeValue] = React.useState(false);
@@ -88,7 +90,8 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                         mt: 1
                       }}
                     >
-                      <LocalMallOutlinedIcon fontSize="inherit" />
+                      {/* <LocalMallOutlinedIcon fontSize="inherit" /> */}
+                      <img src={EarningIcon} alt="Notification" />
                     </Avatar>
                   </Grid>
                   <Grid item>
@@ -101,7 +104,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     >
                       Month
                     </Button>
-                    <Button
+                    {/* <Button
                       disableElevation
                       variant={!timeValue ? 'contained' : 'text'}
                       size="small"
@@ -109,7 +112,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                       onClick={(e) => handleChangeTime(e, false)}
                     >
                       Year
-                    </Button>
+                    </Button> */}
                   </Grid>
                 </Grid>
               </Grid>
@@ -118,11 +121,11 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                   <Grid item xs={6}>
                     <Grid container alignItems="center">
                       <Grid item>
-                        {timeValue ? (
-                          <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$108</Typography>
-                        ) : (
-                          <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$961</Typography>
-                        )}
+                        {/* {timeValue ? ( */}
+                        <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{`₹ ${thisMonthRevenue.toFixed(2)}`}</Typography>
+                        {/* ) : (
+                            <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{`₹ ${thisMonthRevenue}`}</Typography>
+                          )} */}
                       </Grid>
                       <Grid item>
                         <Avatar
@@ -133,7 +136,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                             color: 'primary.dark'
                           }}
                         >
-                          <ArrowDownwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
+                          <ArrowUpwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
                         </Avatar>
                       </Grid>
                       <Grid item xs={12}>
@@ -144,14 +147,14 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                             color: 'primary.200'
                           }}
                         >
-                          Total Order
+                          Monthly Earning
                         </Typography>
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs={6}>
+                  {/* <Grid item xs={6} sx={{ display: "hidden" }}>
                     {timeValue ? <Chart {...ChartDataMonth} /> : <Chart {...ChartDataYear} />}
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
             </Grid>

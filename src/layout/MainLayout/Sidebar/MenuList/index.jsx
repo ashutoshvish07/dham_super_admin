@@ -1,7 +1,7 @@
 // material-ui
 import { Typography } from '@mui/material';
 
-// project imports
+// project imports  
 import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
 

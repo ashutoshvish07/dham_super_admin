@@ -4,7 +4,7 @@ import React from 'react'
 
 const DataTable = (props) => {
 
-    const { className, data, ...other } = props
+    const { className, data, rowCount, ...other } = props
 
     function NoRowsOverlay() {
         return (
@@ -18,6 +18,7 @@ const DataTable = (props) => {
             <DataGrid
                 {...other}
                 autoHeight={true}
+                rowCount={rowCount}
                 components={{ ...other.components, NoRowsOverlay: other?.components?.NoRowsOverlay ? other?.components?.NoRowsOverlay : NoRowsOverlay }}
                 className={`${className}`}
                 rows={data}
