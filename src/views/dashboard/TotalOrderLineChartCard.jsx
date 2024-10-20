@@ -122,7 +122,7 @@ const TotalOrderLineChartCard = ({ isLoading, thisMonthRevenue }) => {
                     <Grid container alignItems="center">
                       <Grid item>
                         {/* {timeValue ? ( */}
-                        <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{`₹ ${thisMonthRevenue.toFixed(2)}`}</Typography>
+                        <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{`₹ ${thisMonthRevenue ? thisMonthRevenue?.toFixed(2) : 0}`}</Typography>
                         {/* ) : (
                             <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{`₹ ${thisMonthRevenue}`}</Typography>
                           )} */}
