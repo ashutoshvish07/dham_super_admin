@@ -5,7 +5,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { TfiMoreAlt } from "react-icons/tfi";
 import { FaCheckCircle } from "react-icons/fa";
 
-export const GetTwoAction = (id, edit, deletefn, status) => {
+export const GetTwoAction = (id, edit, deletefn, status, currentStatus) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -44,11 +44,11 @@ export const GetTwoAction = (id, edit, deletefn, status) => {
                 </ListItemIcon>
                 <ListItemText variant="body2" color="text.secondary">Delete</ListItemText>
             </MenuItem>}
-            {status && <MenuItem onClick={() => status(id)} >
+            {status && <MenuItem onClick={() => status(id, currentStatus == "published" ? "draft" : "published")} >
                 <ListItemIcon size="small">
                     <FaCheckCircle />
                 </ListItemIcon>
-                <ListItemText variant="body2" color="text.secondary">Publish</ListItemText>
+                <ListItemText variant="body2" color="text.secondary">{currentStatus == "published" ? "UnPublish" : "Publish"}</ListItemText>
             </MenuItem>}
 
         </Menu>

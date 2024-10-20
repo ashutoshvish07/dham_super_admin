@@ -79,9 +79,9 @@ export const deleteblogsAsync = createAsyncThunk(
 
 export const updateblogsStatusAsync = createAsyncThunk(
     'blogs/updateblogsStatusAsync',
-    async ({ id }, { rejectWithValue }) => {
+    async ({ status, id }, { rejectWithValue }) => {
         try {
-            const response = await Axios.put(`/publish-blog/${id}`)
+            const response = await Axios.put(`/publish-blog/${id}`, { "status": status },)
             return response.data;
 
         } catch (err) {

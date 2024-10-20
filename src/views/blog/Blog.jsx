@@ -46,8 +46,8 @@ const Blog = () => {
         })
     }
 
-    const statusUpdate = (id) => {
-        dispatch(updateblogsStatusAsync({ id: id, })).then(() => {
+    const statusUpdate = (id, status) => {
+        dispatch(updateblogsStatusAsync({ id: id, status: status })).then(() => {
             dispatch(getblogsAsync({ page: 1, page_size: 10 }));
         })
     }
@@ -82,6 +82,7 @@ const Blog = () => {
             headerName: 'Status ',
             flex: 1.2,
             renderCell: (params) => {
+
                 return <Chip label={params?.value} color={params?.value === "published" ? "secondary" : 'error'} />
             },
         },
@@ -97,7 +98,10 @@ const Blog = () => {
             field: '_id',
             headerName: 'Action',
             flex: 2,
-            renderCell: (params) => GetTwoAction(params.value, editBlog, deleteBlog, statusUpdate)
+            renderCell: (params) => {
+                console.log("params--->", params);
+                return GetTwoAction(params.value, editBlog, deleteBlog, statusUpdate, params?.row?.status)
+            }
         },
     ]
 
