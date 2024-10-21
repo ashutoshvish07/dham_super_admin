@@ -35,7 +35,8 @@ const AdvertisementForm = (props) => {
 
     const { dialogProps, edit } = props;
     const { cities: { cities } } = useSelector(state => state.location);
-    const [loading, setLoading] = useSelector(false)
+    const [loading, setLoading] = useState(false)
+
     const [files, setFiles] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate()
