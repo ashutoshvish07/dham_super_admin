@@ -22,6 +22,8 @@ import { createRoomAsync, getAllRoomsAsync, getAmenitiesAsync, getHotelAsync, ge
 import * as Yup from 'yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowRoundBack } from 'react-icons/io';
+import useUser from 'hooks/useUser';
+import { createHotelRoomAsync } from 'Redux/Slice/hotelAdminSlice';
 
 
 const HotelRoomForm = (props) => {
@@ -30,7 +32,7 @@ const HotelRoomForm = (props) => {
     const [state, setState] = useState({
         userId: '',
         roomCategory: '',
-        amenities: [],
+        amenitiesId: [],
         price: '',
         offerPrice: '',
         totalNoOfRooms: '',
@@ -38,24 +40,18 @@ const HotelRoomForm = (props) => {
         floor: '',
         bedSize: '',
     })
+
+
     const { hotels, roomCategories, amenities } = useSelector(state => state.hotel)
+    console.log("amenities", amenities)
     const dispatch = useDispatch()
     const { id } = useParams()
+    const user = useUser()
     const navigate = useNavigate();
+    let path = window.location.pathname === "/rooms/create" ? true : window.location.pathname === `/rooms/update/${id}` ? true : false
 
-    const initialValues = {
-        userId: room_data?.userId?.name || '',
-        roomCategory: room_data?.roomCategoryId?._id || '',
-        amenities: room_data?.amenitiesId || [],
-        price: room_data?.price || '',
-        offerPrice: room_data?.offerPrice || '',
-        totalNoOfRooms: room_data?.totalNoOfRooms || '',
-        area: room_data?.area || '',
-        floor: room_data?.floor || '',
-        bedSize: room_data?.bedSize || '',
-    };
     const validationSchema = Yup.object({
-        amenities: Yup.array().min(1, 'Select at least one amenity').required('Amenities are required'),
+        amenitiesId: Yup.array().min(1, 'Select at least one amenity').required('Amenities are required'),
         price: Yup.number().required('Price is required').positive('Price must be a positive number'),
         offerPrice: Yup.number().required('Offer Price is required').positive('Offer Price must be a positive number'),
         totalNoOfRooms: Yup.number().required('Total Number of Rooms is required').positive('Total Number of Rooms must be a positive number'),
@@ -71,7 +67,7 @@ const HotelRoomForm = (props) => {
                 await Promise.all([
                     dispatch(getAmenitiesAsync({ page: 1, page_size: 10 })),
                     dispatch(getRoomCateAsync({ page: 1, page_size: 10 })),
-                    dispatch(getHotelAsync({ page: 1, page_size: 10 }))
+                    !path && dispatch(getHotelAsync({ page: 1, page_size: 10 }))
                 ]);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -84,8 +80,8 @@ const HotelRoomForm = (props) => {
                 console.log("res", data)
                 setState({
                     userId: data?.userId,
-                    roomCategory: data?.roomCategoryId?._id,
-                    amenities: data?.amenitiesId || [],
+                    roomCategory: data?.roomCategoryId,
+                    amenitiesId: data?.amenitiesId || [],
                     price: data?.price || '',
                     offerPrice: data?.offerPrice || '',
                     totalNoOfRooms: data?.totalNoOfRooms || '',
@@ -113,7 +109,7 @@ const HotelRoomForm = (props) => {
     return (
         <div>
             <Grid container justifyContent={'space-between'} alignItems={'center'} sx={{ mb: 2 }} >
-                <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => navigate("/hotel/rooms")}>
+                <IconButton color="secondary" edge='start' size='large' aria-label="back" onClick={() => path ? navigate("/rooms") : navigate("/hotel/rooms")}>
                     <IoMdArrowRoundBack />
                 </IconButton>
                 <Typography variant="h2" gutterBottom>
@@ -127,8 +123,9 @@ const HotelRoomForm = (props) => {
                 enableReinitialize={true}
                 onSubmit={(values) => {
                     const formData = new FormData();
-                    formData.append('userId', values?.userId?._id);
-                    formData.append('roomCategoryId', values.roomCategory._id);
+
+                    formData.append('userId', path ? user?._id : values?.userId?._id);
+                    formData.append('roomCategoryId', values.roomCategory);
                     formData.append('price', values.price);
                     formData.append('offerPrice', values.offerPrice);
                     formData.append('totalNoOfRooms', values.totalNoOfRooms);
@@ -136,8 +133,8 @@ const HotelRoomForm = (props) => {
                     formData.append('floor', values.floor);
                     formData.append('bedSize', values.bedSize);
 
-                    if (values.amenities) {
-                        values.amenities.forEach((amenity) => {
+                    if (values.amenitiesId) {
+                        values.amenitiesId.forEach((amenity) => {
                             formData.append('amenitiesId[]', amenity._id ? amenity._id : amenity);
                         });
                     }
@@ -153,23 +150,35 @@ const HotelRoomForm = (props) => {
                         dispatch(updateRoomAsync({ formData: formData, id: id })).then((res) => {
                             const { requestStatus } = res.meta;
                             if (requestStatus === 'fulfilled') {
-                                navigate("/hotel/rooms")
+                                path ? navigate("/rooms") : navigate("/hotel/rooms")
                             }
                         }).catch((error) => {
                             console.error('Error creating room:', error);
                         });
                     }
                     else {
-                        dispatch(createRoomAsync(formData))
-                            .then((res) => {
+                        if (path) {
+                            dispatch(createHotelRoomAsync(formData)).then((res) => {
                                 const { requestStatus } = res.meta;
                                 if (requestStatus === 'fulfilled') {
-                                    navigate("/hotel/rooms")
+                                    navigate("/rooms")
                                 }
                             })
-                            .catch((error) => {
-                                console.error('Error creating room:', error);
-                            });
+                                .catch((error) => {
+                                    console.error('Error creating room:', error);
+                                });
+                        } else {
+                            dispatch(createRoomAsync(formData))
+                                .then((res) => {
+                                    const { requestStatus } = res.meta;
+                                    if (requestStatus === 'fulfilled') {
+                                        navigate("/hotel/rooms")
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error('Error creating room:', error);
+                                });
+                        }
                     }
 
                     dialogProps.onClose()
@@ -178,7 +187,7 @@ const HotelRoomForm = (props) => {
                 {({ setFieldValue, values, handleChange, handleBlur, touched, errors }) => (
                     <Form>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} md={6}>
+                            {!path && <Grid item xs={12} md={6}>
                                 <Autocomplete
                                     options={hotels?.hotels || []}
                                     getOptionLabel={(option) => option.name || ""}
@@ -200,46 +209,53 @@ const HotelRoomForm = (props) => {
                                         />
                                     )}
                                 />
-                            </Grid>
+                            </Grid>}
 
                             <Grid item xs={12} md={6}>
                                 <FormControl fullWidth error={touched.roomCategory && Boolean(errors.roomCategory)} color='secondary'
                                 >
+
                                     <InputLabel id="roomCategory-label">Room Category</InputLabel>
                                     <Select
                                         labelId="roomCategory-label"
                                         id="roomCategory"
                                         name="roomCategory"
-                                        value={values.roomCategory}
+                                        value={values.roomCategory?._id}
                                         onChange={(e) => {
-                                            const selectedCategory = roomCategories.categories.find(category => category._id === e.target.value._id);
-                                            setFieldValue("roomCategory", selectedCategory);
+                                            console.log("e", e.target.value)
+                                            setFieldValue("roomCategory", e.target.value);
                                         }}
                                         label="Room Category"
                                     >
-                                        {roomCategories?.categories?.map((category) => (
-                                            <MenuItem key={category._id} value={category}>
-                                                <ListItemText primary={category.name} />
-                                            </MenuItem>
-                                        ))}
+                                        {roomCategories?.categories?.map((category) => {
+                                            console.log("category", category)
+                                            return (
+                                                <MenuItem key={category._id} value={category?._id}>
+                                                    <ListItemText primary={category.name} />
+                                                </MenuItem>
+                                            )
+                                        })}
                                     </Select>
                                     {touched.roomCategory && errors.roomCategory && (
                                         <div style={{ color: 'red', fontSize: '12px' }}>{errors.roomCategory}</div>
                                     )}
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12}>
-                                <FormControl fullWidth error={touched.amenities && Boolean(errors.amenities)} color='secondary'
-                                >
+                            <Grid item xs={6} md={path ? 6 : 12}>
+                                <FormControl fullWidth color='secondary'>
                                     <InputLabel id="amenities-label">Amenities</InputLabel>
+                                    {console.log("amenities", values.amenities)}
                                     <Select
                                         labelId="amenities-label"
-                                        id="amenities"
-                                        name="amenities"
+                                        id="amenitiesId"
+                                        name="amenitiesId"
                                         multiple
-                                        color='secondary'
-                                        value={values.amenities}
-                                        onChange={(event) => setFieldValue('amenities', event.target.value)}
+                                        value={values.amenitiesId}
+                                        onChange={(event) => {
+
+                                            setFieldValue('amenitiesId', event.target.value)
+                                        }
+                                        }
                                         input={<OutlinedInput label="Amenities" />}
                                         renderValue={(selected) =>
                                             amenities?.data
@@ -252,15 +268,12 @@ const HotelRoomForm = (props) => {
                                             <MenuItem key={amenity._id} value={amenity._id}>
                                                 <Checkbox
                                                     color="secondary"
-                                                    checked={values?.amenities?.includes(amenity._id)}
+                                                    checked={values?.amenitiesId?.includes(amenity._id)}
                                                 />
                                                 <ListItemText primary={amenity.name} />
                                             </MenuItem>
                                         ))}
                                     </Select>
-                                    {touched.amenities && errors.amenities && (
-                                        <div style={{ color: 'red', fontSize: '12px' }}>{errors.amenities}</div>
-                                    )}
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} md={6}>
@@ -271,6 +284,7 @@ const HotelRoomForm = (props) => {
                                     name="price"
                                     label="Price"
                                     variant="outlined"
+                                    type='number'
                                     value={values.price}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -282,7 +296,7 @@ const HotelRoomForm = (props) => {
                                 <TextField
                                     fullWidth
                                     color='secondary'
-
+                                    type='number'
                                     name="offerPrice"
                                     label="Offer Price"
                                     variant="outlined"
@@ -296,7 +310,7 @@ const HotelRoomForm = (props) => {
                             <Grid item xs={12} md={6}>
                                 <TextField
                                     color='secondary'
-
+                                    type='number'
                                     fullWidth
                                     name="totalNoOfRooms"
                                     label="Total Number of Rooms"
@@ -313,7 +327,7 @@ const HotelRoomForm = (props) => {
                                     fullWidth
                                     name="area"
                                     color='secondary'
-
+                                    type='number'
                                     label="Area"
                                     variant="outlined"
                                     value={values.area}
@@ -328,7 +342,7 @@ const HotelRoomForm = (props) => {
                                     fullWidth
                                     name="floor"
                                     color='secondary'
-
+                                    type='number'
                                     label="Floor"
                                     variant="outlined"
                                     value={values.floor}
@@ -342,7 +356,7 @@ const HotelRoomForm = (props) => {
                                 <TextField
                                     fullWidth
                                     color='secondary'
-
+                                    // type='number'
                                     name="bedSize"
                                     label="Bed Size"
                                     variant="outlined"

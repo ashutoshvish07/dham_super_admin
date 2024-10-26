@@ -60,6 +60,7 @@ import blogSlice from './Slice/blogSlice';
 import eventTourSlice from './Slice/eventTourSlice';
 import bookingSlice from './Slice/bookingSlice';
 import dashboardSlice from './Slice/dashboardSlice';
+import hotelAdminSlice from './Slice/hotelAdminSlice';
 
 const persistConfig = {
     key: 'root',
@@ -78,6 +79,7 @@ const rootReducer = combineReducers({
     eventTour: eventTourSlice,
     bookings: bookingSlice,
     dashboard: dashboardSlice,
+    hotelAdminRooms: hotelAdminSlice,
 
 });
 

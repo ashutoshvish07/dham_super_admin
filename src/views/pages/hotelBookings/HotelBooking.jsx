@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { debounce } from 'lodash';
 import DataTable from 'ui-component/DataTable/DataTable'
 import { useNavigate } from 'react-router-dom'
-import { getBookingsAsync } from 'Redux/Slice/bookingSlice';
-const Bookings = () => {
+import { getBookingsAsync, gethotelBookingsAsync } from 'Redux/Slice/bookingSlice';
+
+const HotelBooking = () => {
+
 
     const [dialogProps, setDialogProps] = useState({
         open: false,
@@ -25,11 +27,11 @@ const Bookings = () => {
 
 
 
-    const { loading, bookings } = useSelector((state) => state.bookings)
+    const { loading, hotelbooking } = useSelector((state) => state.bookings)
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getBookingsAsync({ page: 1, page_size: 10 }))
+        dispatch(gethotelBookingsAsync({ page: 1, page_size: 10 }))
     }, [dispatch])
 
     const addnearBY = () => {
@@ -69,15 +71,6 @@ const Bookings = () => {
                 return (`${customerFirstName} ${customerLastName}`)
             },
             flex: 1,
-        },
-        {
-            field: 'hotelId',
-            headerName: 'Hotel',
-            renderCell: (param) => {
-                return param.value.name
-            },
-            flex: 2,
-
         },
         {
             field: 'totalPrice',
@@ -132,12 +125,6 @@ const Bookings = () => {
                 return moment(params.value).format('DD/MM/YYYY, HH:mm');
             },
         },
-        // {
-        //     field: '_id',
-        //     headerName: 'Action',
-        //     flex: 1,
-        //     renderCell: (params) => GetTwoAction(params.value, editNearBy, deleteEvent)
-        // },
     ]
     const debouncedDispatch = useCallback(
         debounce((value) => {
@@ -152,47 +139,45 @@ const Bookings = () => {
         debouncedDispatch(value);
     };
 
-    return (
-        <div>
-            <Box sx={{ display: 'flex', justifyContent: "space-between", flexDirection: "row-reverse", alignItems: "center", marginBottom: 2 }}>
-                <Box>
-                    <SearchBar
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        placeholder="Search..."
-                        size='small'
-                        color="secondary"
-                    />
-
-                </Box>
-                <Box sx={{ borderRadius: 2 }}  >
-                    <Typography variant='h2' color='secondary' >
-                        Bookings Details
-                    </Typography>
-                </Box>
-            </Box>
-            <Paper>
-                <DataTable
-                    data={bookings?.bookings}
-                    columns={columns}
-                    getRowId={(row) => row._id}
-                    loading={loading}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 10,
-                            },
-                        },
-                    }}
-                    rowCount={bookings?.count}
-                    paginationMode="server"
-                    onPaginationModelChange={onChangeCount}
-                    pageSizeOptions={[10]}
-                    disableRowSelectionOnClick
+    return <div>
+        <Box sx={{ display: 'flex', justifyContent: "space-between", flexDirection: "row-reverse", alignItems: "center", marginBottom: 2 }}>
+            <Box>
+                <SearchBar
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Search..."
+                    size='small'
+                    color="secondary"
                 />
-            </Paper>
-        </div>
-    )
+
+            </Box>
+            <Box sx={{ borderRadius: 2 }}  >
+                <Typography variant='h2' color='secondary' >
+                    Bookings Details
+                </Typography>
+            </Box>
+        </Box>
+        <Paper>
+            <DataTable
+                data={hotelbooking?.bookings}
+                columns={columns}
+                getRowId={(row) => row._id}
+                loading={loading}
+                initialState={{
+                    pagination: {
+                        paginationModel: {
+                            pageSize: 10,
+                        },
+                    },
+                }}
+                rowCount={hotelbooking?.count}
+                paginationMode="server"
+                onPaginationModelChange={onChangeCount}
+                pageSizeOptions={[10]}
+                disableRowSelectionOnClick
+            />
+        </Paper>
+    </div>
 }
 
-export default Bookings
+export default HotelBooking

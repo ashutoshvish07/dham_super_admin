@@ -33,6 +33,22 @@ export const getGuidBookingsAsync = createAsyncThunk(
     }
 )
 
+export const gethotelBookingsAsync = createAsyncThunk(
+    'bookings/gethotelBookingsAsync',
+    async ({ page, page_size, search }, { rejectWithValue }) => {
+        try {
+            let url = `/get-booking-by-hotel?page=${page}&page_size=${page_size}`
+            if (search) {
+                url += `&search=${search}`;
+            }
+            const response = await Axios.get(url)
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
 
 
 const bookingSlice = createSlice({
@@ -40,6 +56,7 @@ const bookingSlice = createSlice({
     initialState: {
         bookings: {},
         guidBooking: {},
+        hotelbooking: {},
         loading: false,
         error: null,
     },
@@ -71,6 +88,17 @@ const bookingSlice = createSlice({
                 state.guidBooking = action.payload;
             })
             .addCase(getGuidBookingsAsync.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(gethotelBookingsAsync.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(gethotelBookingsAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.hotelbooking = action.payload;
+            })
+            .addCase(gethotelBookingsAsync.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

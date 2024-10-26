@@ -11,12 +11,9 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
 
 // sample page routing
 
-const RoomCategory = Loadable(lazy(() => import("views/pages/hotel/RoomCategories")))
-const Aminities = Loadable(lazy(() => import("views/pages/hotel/Aminities")))
-const HotleRooms = Loadable(lazy(() => import("views/pages/hotel/HotelRooms")))
-const Properties = Loadable(lazy(() => import("views/pages/hotel/Properties")))
+const HotleRooms = Loadable(lazy(() => import("views/pages/hotelAdmin/hotelAdminRooms")))
 const RoomForm = Loadable(lazy(() => import("Forms/HotelRoomForm")))
-
+const HotelBookings = Loadable(lazy(() => import("views/pages/hotelBookings/HotelBooking")))
 
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -29,7 +26,6 @@ const HotelAdminRoutes = {
             path: '/',
             element: <DashboardDefault />
         },
-
         {
             path: 'dashboard',
             children: [
@@ -39,44 +35,24 @@ const HotelAdminRoutes = {
                 }
             ]
         },
+
         {
-            path: '/',
-            children: [
-                {
-                    path: '/hotel/aminities',
-                    element: <Aminities />,
-                }
-            ]
+            path: '/hotel-rooms-bookings',
+            element: <HotelBookings />,
+        },
+        {
+            path: '/rooms',
+            element: <HotleRooms />,
         },
 
         {
-            path: '/',
-            children: [
-                {
-                    path: '/hotel/rooms',
-                    element: <HotleRooms />,
-                }
-            ]
+            path: '/rooms/create',
+            element: <RoomForm />,
         },
         {
-            path: '/',
-            children: [
-                {
-                    path: '/hotel/rooms/create',
-                    element: <RoomForm />,
-                }
-            ]
+            path: '/rooms/update/:id',
+            element: <RoomForm />,
         },
-        {
-            path: '/',
-            children: [
-                {
-                    path: '/hotel/rooms/update/:id',
-                    element: <RoomForm />,
-                }
-            ]
-        },
-
 
     ]
 };

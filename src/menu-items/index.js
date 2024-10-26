@@ -8,28 +8,41 @@ import blogs from './blogs';
 import eventTour from './eventTour';
 import hoteldashboard from './hoteldashboard';
 import booking from './bookings';
-
-// ==============================|| MENU ITEMS ||============================== //
-// utilities, other
-
-// Export menu based on the role of the user
+import { useEffect, useState } from 'react';
+import hotelRooms from './hotelRooms';
+import hotelBookings from './hotelBookings';
 
 
-let role = ''
+// Hook to fetch role from persisted state
+const useUserRole = () => {
+  const [role, setRole] = useState('');
 
-const persistedState = JSON.parse(localStorage.getItem('persist:root'));
+  useEffect(() => {
+    const persistedState = JSON.parse(localStorage.getItem('persist:root'));
 
-if (persistedState && persistedState.auth) {
-  const authState = JSON.parse(persistedState.auth); // Parse the auth state
-  console.log(authState); // Now you can access the actual auth state
-  role = authState?.user?.role;
-}
+    if (persistedState && persistedState.auth) {
+      const authState = JSON.parse(persistedState.auth); // Parse the auth state
+      setRole(authState?.user?.role || ''); // Set the role dynamically
+    }
+  }, []);
 
-
-const menuItems = {
-  items: role !== "Hotel" ? [dashboard, booking, pages, ManageHotel, guid, nearby, advertisement, blogs, eventTour] : [hoteldashboard, ManageHotel],
+  return role;
 };
 
 
+// Hook to generate menu items based on the role
+const useMenuItems = () => {
+  const role = useUserRole();
 
-export default menuItems;
+  // Dynamically generate menu items based on the role
+  const menuItems = {
+    items: role !== 'Hotel'
+      ? [dashboard, booking, pages, ManageHotel, guid, nearby, advertisement, blogs, eventTour]
+      : [hoteldashboard, hotelBookings, hotelRooms],
+  };
+
+  return menuItems;
+};
+
+export default useMenuItems;
+
