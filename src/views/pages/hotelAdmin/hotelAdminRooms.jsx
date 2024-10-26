@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DataTable from 'ui-component/DataTable/DataTable';
 
-const hotelAdminRooms = () => {
-
+const HotelAdminRooms = (props) => {
+    const { view } = props;
     const user = useUser()
 
     const [dialogProps, setDialogProps] = useState({
@@ -53,13 +53,6 @@ const hotelAdminRooms = () => {
         })
     }
     const columns = [
-
-        {
-            field: 'userId',
-            headerName: 'Hotel Name ',
-            renderCell: (params) => (params.value?.name),
-            flex: 1,
-        },
         {
             field: 'area',
             headerName: 'Room Size ',
@@ -108,6 +101,29 @@ const hotelAdminRooms = () => {
         },
     ]
 
+    const dashcolumns = [
+        {
+            field: 'price',
+            headerName: 'Price ',
+            flex: 1,
+        },
+        {
+            field: 'area',
+            headerName: 'Room Size ',
+            flex: 1,
+        },
+        {
+            field: 'offerPrice',
+            headerName: 'OfferPrice ',
+            flex: 1,
+        },
+        {
+            field: 'totalNoOfRooms',
+            headerName: 'Rooms ',
+            flex: 1,
+        },
+    ]
+
     const onChangeCount = (e) => {
         if (e.pageSize == paginationModel.pageSize) {
             dispatch(getHotelRoomsAsync({ page: e.page + 1, page_size: e.pageSize }));
@@ -135,18 +151,18 @@ const hotelAdminRooms = () => {
         <div>
 
 
-            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+            {view != "dashboard" && <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
                 <Box>
                     <SearchSection value={searchTerm} handleSearchChange={handleSearchChange} />
                 </Box>
                 <Button sx={{ borderRadius: 2 }} variant='outlined' color='secondary' size='large' onClick={addRooms} startIcon={<FaPlus size={14} />} >
                     Rooms
                 </Button>
-            </Box>
+            </Box>}
             <Paper>
                 <DataTable
                     data={rooms?.rooms}
-                    columns={columns}
+                    columns={view === "dashboard" ? dashcolumns : columns}
                     getRowId={(row) => row._id}
                     loading={loading}
                     initialState={{
@@ -167,4 +183,4 @@ const hotelAdminRooms = () => {
     )
 }
 
-export default hotelAdminRooms
+export default HotelAdminRooms

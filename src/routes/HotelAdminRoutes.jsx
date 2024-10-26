@@ -6,14 +6,14 @@ import Loadable from 'ui-component/Loadable';
 import PrivateRoute from './PrivateRoute';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/hotelDashboard')));
 
 
 // sample page routing
 
-const HotleRooms = Loadable(lazy(() => import("views/pages/hotelAdmin/hotelAdminRooms")))
 const RoomForm = Loadable(lazy(() => import("Forms/HotelRoomForm")))
 const HotelBookings = Loadable(lazy(() => import("views/pages/hotelBookings/HotelBooking")))
+const HotleRooms = Loadable(lazy(() => import("views/pages/hotelAdmin/HotelAdminRooms")))
 
 
 // ==============================|| MAIN ROUTING ||============================== //
