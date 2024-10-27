@@ -22,7 +22,7 @@ import HotelAdminRooms from 'views/pages/hotelAdmin/HotelAdminRooms';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
-const hotelDashboard = () => {
+const HotelDashboard = () => {
     const [isLoading, setLoading] = useState(true);
 
     const { dashboardData, graphData } = useSelector((state) => state?.dashboard)
@@ -95,4 +95,4 @@ const hotelDashboard = () => {
     );
 };
 
-export default hotelDashboard;
+export default HotelDashboard;

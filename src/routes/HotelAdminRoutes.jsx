@@ -6,7 +6,7 @@ import Loadable from 'ui-component/Loadable';
 import PrivateRoute from './PrivateRoute';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/hotelDashboard')));
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/HotelDashboard')));
 
 
 // sample page routing
