@@ -11,7 +11,10 @@ export default defineConfig({
   base: '/',
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    rollupOptions: {
+      external: ["views/pages/hotelAdmin/HotelAdminRooms"],
+    },
   },
   define: {
     global: 'window'
