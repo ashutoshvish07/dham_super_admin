@@ -18,7 +18,7 @@ import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
 import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDashboardAsync, getDashboardGraphDataAsync } from 'Redux/Slice/dashboardSlice';
-import HotelAdminRooms from 'views/pages/hotelAdmin/HotelAdminRooms';
+import HotelAdminRooms from 'views/pages/hotelAdmin/hotelAdminRooms';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 

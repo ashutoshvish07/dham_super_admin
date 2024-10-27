@@ -13,7 +13,7 @@ const DashboardHotel = Loadable(lazy(() => import("views/dashboard/hotelDashboar
 
 const RoomForm = Loadable(lazy(() => import("Forms/HotelRoomForm")))
 const HotelBookings = Loadable(lazy(() => import("views/pages/hotelBookings/HotelBooking")))
-const HotleRooms = Loadable(lazy(() => import("views/pages/hotelAdmin/HotelAdminRooms")))
+const HotleRooms = Loadable(lazy(() => import("views/pages/hotelAdmin/hotelAdminRooms")))
 
 
 // ==============================|| MAIN ROUTING ||============================== //

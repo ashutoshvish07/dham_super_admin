@@ -18,7 +18,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 
-const HotelAdminRooms = (props) => {
+const hotelAdminRooms = (props) => {
     const { view } = props;
     const user = useUser()
 
@@ -223,8 +223,6 @@ const HotelAdminRooms = (props) => {
 
     return (
         <div>
-
-
             {view != "dashboard" && <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
                 <Box>
                     <SearchSection value={searchTerm} handleSearchChange={handleSearchChange} />
@@ -257,4 +255,4 @@ const HotelAdminRooms = (props) => {
     )
 }
 
-export default HotelAdminRooms
+export default hotelAdminRooms
