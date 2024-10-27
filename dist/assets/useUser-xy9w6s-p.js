@@ -1,0 +1,1 @@
+import{r as t}from"./index-nP3sWgOM.js";const u=()=>{const[r,o]=t.useState("");return t.useEffect(()=>{const e=JSON.parse(localStorage.getItem("persist:root"));if(e&&e.auth){const s=JSON.parse(e.auth);o((s==null?void 0:s.user)||"")}},[]),r};export{u};
