@@ -1,5 +1,5 @@
-import { Box, Button, Paper } from '@mui/material';
-import { deleteHotelRoomAsync, getHotelRoomsAsync } from 'Redux/Slice/hotelAdminSlice';
+import { Box, Button, Paper, TextField, IconButton } from '@mui/material';
+import { deleteHotelRoomAsync, getHotelRoomsAsync, updateHotelRoomAsync } from 'Redux/Slice/hotelAdminSlice';
 import { deleteRoomAsync, getAllRoomsAsync } from 'Redux/Slice/hotelSlice';
 import { GetTwoAction } from 'components/Comtrol/Actions/GetToAction';
 import AlertDialog from 'components/Dialog/Dialog';
@@ -12,6 +12,11 @@ import { FaPlus } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DataTable from 'ui-component/DataTable/DataTable';
+
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 
 const HotelAdminRooms = (props) => {
     const { view } = props;
@@ -31,6 +36,38 @@ const HotelAdminRooms = (props) => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const { rooms, loading, error } = useSelector(state => state.hotelAdminRooms);
+
+    const [editingRowId, setEditingRowId] = useState(null);
+    const [editedRoomsCount, setEditedRoomsCount] = useState({});
+
+    // Function to handle input change for "totalNoOfRooms"
+    const handleRoomsCountChange = (event) => {
+        setEditedRoomsCount((prev) => ({
+            ...prev,
+            [editingRowId]: event.target.value,
+        }));
+    };
+
+    // Function to handle save action
+    const saveRoomsCount = (row) => {
+        // Make API call or update state here
+        const formData = new FormData();
+
+        formData.append('totalNoOfRooms', editedRoomsCount[editingRowId]);
+
+        console.log(`Updated totalNoOfRooms for row ${row._id}`);
+        dispatch(updateHotelRoomAsync({ formData: formData, id: row._id })).then((res) => {
+            const { requestStatus } = res.meta;
+            if (requestStatus === 'fulfilled') {
+                dispatch(getHotelRoomsAsync({ id: user?._id, page: 1, page_size: 10 }));
+            }
+        }).catch((error) => {
+            console.error('Error creating room:', error);
+        });
+
+        setEditingRowId(null);
+    };
+
 
 
     useEffect(() => {
@@ -119,8 +156,45 @@ const HotelAdminRooms = (props) => {
         },
         {
             field: 'totalNoOfRooms',
-            headerName: 'Rooms ',
+            headerName: 'Rooms',
             flex: 1,
+            renderCell: (params) => (
+                editingRowId === params.row._id ? (
+                    <TextField
+                        sx={{ mt: 0.5 }}
+                        type="number"
+                        value={editedRoomsCount[params.row._id] || params.value}
+                        onChange={handleRoomsCountChange}
+                        size="small"
+                    />
+                ) : (
+                    params.value
+                )
+            ),
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            flex: 1,
+            renderCell: (params) => (
+                editingRowId === params.row._id ? (
+                    <>
+                        <IconButton title='Save' onClick={() => saveRoomsCount(params.row)}>
+                            <SaveIcon />
+                        </IconButton>
+                        <IconButton title='Cancle' onClick={() => setEditingRowId(null)}>
+                            <CancelIcon />
+                        </IconButton>
+                    </>
+                ) : (
+                    <IconButton title='Edit' onClick={() => {
+                        setEditingRowId(params.row._id);
+                        setEditedRoomsCount((prev) => ({ ...prev, [params.row._id]: params.row.totalNoOfRooms }));
+                    }}>
+                        <EditIcon />
+                    </IconButton>
+                )
+            ),
         },
     ]
 
