@@ -6,8 +6,8 @@ import Loadable from 'ui-component/Loadable';
 import PrivateRoute from './PrivateRoute';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/HotelDashboard')));
 
+const DashboardHotel = Loadable(lazy(() => import("views/dashboard/hotelDashboard")))
 
 // sample page routing
 
@@ -24,14 +24,14 @@ const HotelAdminRoutes = {
     children: [
         {
             path: '/',
-            element: <DashboardDefault />
+            element: <DashboardHotel />
         },
         {
             path: 'dashboard',
             children: [
                 {
                     path: 'hotel-admin',
-                    element: <DashboardDefault />
+                    element: <DashboardHotel />
                 }
             ]
         },
