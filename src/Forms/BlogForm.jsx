@@ -211,7 +211,6 @@ const BlogForm = (props) => {
                                         }}
                                         error={touched.cityId && Boolean(errors.cityId)}
                                         helperText={touched.cityId && errors.cityId}
-                                        required
                                         optionKey="_id"
                                         optionLabel="name"
                                         color="secondary"
